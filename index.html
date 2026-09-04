@@ -1,239 +1,76 @@
 <!doctype html>
 <html lang="ru">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
-  <meta name="theme-color" content="#1f241d">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="apple-mobile-web-app-title" content="Королевства Пепла">
-  <link rel="manifest" href="manifest.webmanifest">
-  <link rel="apple-touch-icon" href="icon-180.png">
-  <title>Королевства Пепла</title>
-  <style>
-    :root{
-      --bg:#151912;--panel:#22291e;--card:#2c3427;--border:#475240;
-      --text:#f1ead8;--muted:#bdb5a4;--accent:#c59b48;--danger:#a95b4e;
-    }
-    *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-    html,body{margin:0;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
-    body{min-height:100%;padding:calc(env(safe-area-inset-top) + 10px) 10px calc(env(safe-area-inset-bottom) + 14px)}
-    button{font:inherit;color:inherit}
-    .app{max-width:980px;margin:auto}
-    .top{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px}
-    .pill{background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:8px 10px;font-size:14px}
-    .layout{display:grid;grid-template-columns:minmax(0,1fr);gap:10px}
-    @media(min-width:760px){.layout{grid-template-columns:minmax(0,1fr) 280px}}
-    .panel{background:var(--panel);border:1px solid var(--border);border-radius:14px;padding:10px}
-    .map-wrap{overflow:auto}
-    .map{display:grid;grid-template-columns:repeat(10,minmax(30px,1fr));gap:4px;min-width:350px}
-    .tile{aspect-ratio:1;border:1px solid var(--border);border-radius:8px;background:var(--card);display:flex;align-items:center;justify-content:center;font-size:21px;min-width:0}
-    .tile.fog{opacity:.28}
-    .tile.hero{outline:2px solid var(--accent)}
-    .controls{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
-    .btn{border:1px solid var(--border);background:var(--card);border-radius:12px;padding:11px 13px;min-height:44px}
-    .btn.primary{background:#43361d;border-color:#806735}
-    .btn.danger{background:#452924;border-color:#754238}
-    .section-title{font-weight:700;margin-bottom:8px}
-    .stats{display:grid;gap:6px;font-size:14px}
-    .row{display:flex;justify-content:space-between;gap:10px}
-    .log{max-height:170px;overflow:auto;font-size:13px;line-height:1.35}
-    .town,.battle{margin-top:10px}
-    .hidden{display:none}
-    .shop{display:grid;grid-template-columns:1fr;gap:8px}
-    @media(min-width:560px){.shop{grid-template-columns:repeat(3,1fr)}}
-    .shop .btn{text-align:left}
-    .muted{color:var(--muted);font-size:13px}
-    .battle-grid{display:grid;grid-template-columns:1fr;gap:8px}
-    @media(min-width:560px){.battle-grid{grid-template-columns:1fr 1fr}}
-    .battle-unit{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:10px}
-    .footer{margin-top:12px;color:var(--muted);font-size:12px;text-align:center}
-  </style>
-</head>
-<body>
-<div class="app">
-  <div class="top">
-    <div class="pill">💰 <b id="gold">1200</b></div>
-    <div class="pill">🪵 <b id="wood">8</b></div>
-    <div class="pill">🪨 <b id="stone">6</b></div>
-    <div class="pill">⚡ <b id="moves">8</b></div>
-    <div class="pill">⭐ Ур. <b id="level">1</b></div>
-  </div>
-
-  <div class="layout">
-    <section>
-      <div class="panel map-wrap">
-        <div id="map" class="map" aria-label="Карта мира"></div>
-      </div>
-      <div class="controls">
-        <button class="btn primary" id="endTurn">Завершить ход</button>
-        <button class="btn" id="visitTown">Открыть замок</button>
-        <button class="btn danger" id="restart">Новая игра</button>
-      </div>
-
-      <div class="panel town hidden" id="townPanel">
-        <div class="section-title">🏰 Замок Светогорск</div>
-        <div class="shop">
-          <button class="btn" data-buy="peasants"><b>Ополченцы ×5</b><br><span class="muted">250 золота</span></button>
-          <button class="btn" data-buy="archers"><b>Стрелки ×3</b><br><span class="muted">420 золота + 1 дерево</span></button>
-          <button class="btn" data-buy="riders"><b>Всадники ×2</b><br><span class="muted">700 золота + 1 камень</span></button>
-        </div>
-      </div>
-
-      <div class="panel battle hidden" id="battlePanel">
-        <div class="row"><div class="section-title">⚔️ Битва</div><div id="battleRound" class="muted"></div></div>
-        <div class="battle-grid">
-          <div class="battle-unit"><b>Твоя армия</b><div id="playerPower" class="muted"></div></div>
-          <div class="battle-unit"><b>Противник</b><div id="enemyPower" class="muted"></div></div>
-        </div>
-        <div class="controls">
-          <button class="btn primary" id="battleAttack">Атаковать</button>
-          <button class="btn" id="battleSpell">🔥 Огненная стрела</button>
-          <button class="btn danger" id="battleRetreat">Отступить</button>
-        </div>
-      </div>
-    </section>
-
-    <aside>
-      <div class="panel">
-        <div class="section-title">Герой — Арден</div>
-        <div class="stats">
-          <div class="row"><span>⚔️ Атака</span><b id="atk">2</b></div>
-          <div class="row"><span>🛡️ Защита</span><b id="def">1</b></div>
-          <div class="row"><span>🧠 Магия</span><b id="power">1</b></div>
-          <div class="row"><span>📜 Опыт</span><b id="xp">0</b></div>
-        </div>
-      </div>
-
-      <div class="panel" style="margin-top:10px">
-        <div class="section-title">Армия</div>
-        <div class="stats">
-          <div class="row"><span>🗡️ Ополченцы</span><b id="peasants">18</b></div>
-          <div class="row"><span>🏹 Стрелки</span><b id="archers">7</b></div>
-          <div class="row"><span>🐎 Всадники</span><b id="riders">0</b></div>
-        </div>
-      </div>
-
-      <div class="panel" style="margin-top:10px">
-        <div class="section-title">Журнал</div>
-        <div id="log" class="log" aria-live="polite"></div>
-      </div>
-    </aside>
-  </div>
-
-  <div class="footer">Королевства Пепла · PWA-версия</div>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+<meta name="theme-color" content="#15170f">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Королевства Пепла">
+<link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="icon-180.png">
+<title>Королевства Пепла II</title>
+<style>
+:root{--bg:#11140d;--panel:#202619;--panel2:#2a3020;--line:#536047;--gold:#d7ad54;--text:#f4ecd8;--muted:#b8b09c;--red:#9e5041;--blue:#58728c}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}html,body{margin:0;background:radial-gradient(circle at 50% 0,#28301e,#11140d 55%);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}body{padding:calc(env(safe-area-inset-top) + 8px) 8px calc(env(safe-area-inset-bottom) + 12px)}
+button{font:inherit;color:inherit}.app{max-width:1000px;margin:auto}.bar{display:flex;gap:6px;overflow:auto;padding:3px 0 8px}.res{white-space:nowrap;background:linear-gradient(#303724,#202619);border:1px solid var(--line);border-radius:12px;padding:7px 9px;font-size:13px;box-shadow:inset 0 1px rgba(255,255,255,.06)}
+.panel{background:linear-gradient(180deg,rgba(42,48,32,.97),rgba(29,35,23,.97));border:1px solid var(--line);border-radius:14px;padding:10px;box-shadow:0 5px 18px rgba(0,0,0,.2)}
+.world{position:relative;overflow:auto;border-radius:12px}.map{display:grid;grid-template-columns:repeat(12,48px);grid-auto-rows:48px;gap:1px;width:max-content;background:#15180f;padding:4px;border-radius:10px}
+.tile{position:relative;border:0;border-radius:5px;display:flex;align-items:center;justify-content:center;font-size:24px;background:#455b2c;overflow:hidden}.tile:after{content:"";position:absolute;inset:0;background:linear-gradient(135deg,rgba(255,255,255,.05),transparent 45%,rgba(0,0,0,.12));pointer-events:none}.tile.water{background:#304b54}.tile.road{background:#685c3e}.tile.rock{background:#4d5045}.tile.fog{filter:brightness(.25) saturate(.4)}.tile.hero{outline:3px solid var(--gold);z-index:2}.tile.target{box-shadow:inset 0 0 0 2px #e8c76e}
+.grid2{display:grid;grid-template-columns:1fr;gap:8px}@media(min-width:760px){.grid2{grid-template-columns:minmax(0,1fr) 280px}}.actions{display:flex;gap:7px;flex-wrap:wrap;margin-top:8px}.btn{min-height:44px;border:1px solid var(--line);border-radius:11px;background:#303725;padding:9px 12px}.btn.gold{background:#57431d;border-color:#947330}.btn.red{background:#512c26;border-color:#7c443a}.btn:disabled{opacity:.45}
+.row{display:flex;justify-content:space-between;gap:10px}.small{font-size:13px;color:var(--muted)}.title{font-weight:800;margin-bottom:7px}.log{font-size:12px;line-height:1.35;max-height:120px;overflow:auto}.hidden{display:none!important}
+.tabs{display:flex;gap:6px;margin-bottom:8px}.tab{flex:1}.shop{display:grid;grid-template-columns:repeat(2,1fr);gap:7px}.building{padding:9px;border:1px solid var(--line);border-radius:10px;background:#2c3323;text-align:left}.built{border-color:#a88643}
+.army{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}.unit{background:#2c3323;border:1px solid var(--line);border-radius:10px;padding:7px;text-align:center}.unit .ico{font-size:26px}.xp{height:6px;background:#15180f;border-radius:6px;overflow:hidden;margin-top:5px}.xp>i{display:block;height:100%;background:var(--gold)}
+.modal{position:absolute;inset:4px;background:rgba(13,15,10,.96);z-index:5;border-radius:10px;padding:10px;overflow:auto}.battlefield{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin:9px 0}.hex{aspect-ratio:1;border:1px solid #5c654e;border-radius:10px;background:#303827;display:flex;align-items:center;justify-content:center;font-size:20px}.hex.enemy{background:#4b2925}.hex.friend{background:#293b48}.quest{border-left:3px solid var(--gold);padding-left:8px;margin:7px 0}
+</style></head>
+<body><main class="app">
+<div class="bar"><span class="res">💰 <b id="gold"></b></span><span class="res">🪵 <b id="wood"></b></span><span class="res">🪨 <b id="ore"></b></span><span class="res">💎 <b id="gems"></b></span><span class="res">📅 День <b id="day"></b></span><span class="res">⚡ <b id="moves"></b></span></div>
+<div class="grid2"><section>
+<div class="panel world"><div id="map" class="map"></div>
+<div id="battle" class="modal hidden">
+ <div class="row"><b>⚔️ Тактическая битва</b><span id="round" class="small"></span></div>
+ <div id="battleInfo" class="small"></div><div id="field" class="battlefield"></div>
+ <div class="actions"><button id="attack" class="btn gold">⚔️ Атака</button><button id="spell" class="btn">🔥 Огненный шар</button><button id="defend" class="btn">🛡️ Оборона</button><button id="retreat" class="btn red">Отступить</button></div>
+</div></div>
+<div class="actions"><button id="end" class="btn gold">Завершить день</button><button id="town" class="btn">🏰 Город</button><button id="save" class="btn">💾 Сохранить</button></div>
+<div id="townPanel" class="panel hidden" style="margin-top:8px">
+ <div class="tabs"><button class="btn tab gold" data-tab="build">Строительство</button><button class="btn tab" data-tab="recruit">Найм</button></div>
+ <div id="buildPane"><div class="shop" id="buildings"></div></div>
+ <div id="recruitPane" class="hidden"><div class="shop" id="recruits"></div></div>
 </div>
-
+</section><aside>
+<div class="panel"><div class="title">🧙 Арден, рыцарь</div><div class="row"><span>⚔️ Атака</span><b id="atk"></b></div><div class="row"><span>🛡️ Защита</span><b id="def"></b></div><div class="row"><span>✨ Сила магии</span><b id="magic"></b></div><div class="row"><span>📖 Знания</span><b id="knowledge"></b></div><div class="small">Уровень <b id="level"></b> · опыт <b id="xp"></b></div><div class="xp"><i id="xpbar"></i></div></div>
+<div class="panel" style="margin-top:8px"><div class="title">Армия</div><div class="army"><div class="unit"><div class="ico">🗡️</div><b id="pikes"></b><div class="small">Копейщики</div></div><div class="unit"><div class="ico">🏹</div><b id="bows"></b><div class="small">Стрелки</div></div><div class="unit"><div class="ico">🐎</div><b id="cavs"></b><div class="small">Рыцари</div></div></div></div>
+<div class="panel" style="margin-top:8px"><div class="title">Задания</div><div id="quests"></div></div>
+<div class="panel" style="margin-top:8px"><div class="title">Журнал</div><div id="log" class="log"></div></div>
+</aside></div></main>
 <script>
-(() => {
-  const W=10,H=8;
-  const terrain=['🌲','🌿','🌿','🪨','🌿','🌲','🌿','🌿','🌲','🌿'];
-  const initialObjects={
-    '1,1':{t:'town',icon:'🏰',name:'Светогорск'},
-    '3,1':{t:'gold',icon:'💰',amount:450},
-    '5,2':{t:'enemy',icon:'👹',name:'Гоблины',power:22,reward:600,xp:45},
-    '8,1':{t:'artifact',icon:'🗡️',name:'Клинок Пепла',atk:1},
-    '2,5':{t:'wood',icon:'🪵',amount:4},
-    '6,5':{t:'enemy',icon:'💀',name:'Скелеты',power:34,reward:900,xp:70},
-    '8,6':{t:'stone',icon:'🪨',amount:4},
-    '4,6':{t:'shrine',icon:'🔮',name:'Святилище',power:1}
-  };
-  const $=id=>document.getElementById(id);
-  let state;
-
-  function save(){ localStorage.setItem('ash-kingdoms-save', JSON.stringify({...state,fog:[...state.fog]})); }
-  function load(){
-    const raw=localStorage.getItem('ash-kingdoms-save');
-    if(!raw)return false;
-    try{
-      const s=JSON.parse(raw); s.fog=new Set(s.fog||[]); state=s; return true;
-    }catch(e){return false}
-  }
-  function log(t){const d=document.createElement('div');d.textContent='• '+t;$('log').prepend(d)}
-  function key(x,y){return x+','+y}
-  function reveal(){for(let dy=-2;dy<=2;dy++)for(let dx=-2;dx<=2;dx++){const x=state.x+dx,y=state.y+dy;if(x>=0&&y>=0&&x<W&&y<H)state.fog.add(key(x,y));}}
-  function reset(){
-    state={x:1,y:1,moves:8,gold:1200,wood:8,stone:6,atk:2,def:1,power:1,xp:0,level:1,peasants:18,archers:7,riders:0,objects:JSON.parse(JSON.stringify(initialObjects)),fog:new Set(),battle:null};
-    reveal(); $('townPanel').classList.add('hidden'); $('battlePanel').classList.add('hidden'); $('log').innerHTML=''; log('Арден начинает путь из Светогорска.'); render(); save();
-  }
-  function render(){
-    ['gold','wood','stone','moves','atk','def','power','xp','level','peasants','archers','riders'].forEach(k=>$(k).textContent=state[k]);
-    const m=$('map');m.innerHTML='';
-    for(let y=0;y<H;y++)for(let x=0;x<W;x++){
-      const b=document.createElement('button');b.type='button';b.className='tile';
-      const seen=state.fog.has(key(x,y));if(!seen)b.classList.add('fog');
-      const obj=state.objects[key(x,y)];
-      b.textContent=!seen?'❔':(x===state.x&&y===state.y?'🧙':obj?obj.icon:terrain[(x*3+y*7)%terrain.length]);
-      if(x===state.x&&y===state.y)b.classList.add('hero');
-      b.addEventListener('click',()=>moveTo(x,y));m.appendChild(b);
-    }
-    if(state.battle)renderBattle();
-    save();
-  }
-  function moveTo(x,y){
-    if(state.battle)return;
-    const dist=Math.abs(x-state.x)+Math.abs(y-state.y);
-    if(dist!==1){log('Можно идти только на соседнюю клетку.');return}
-    if(state.moves<=0){log('Ходы закончились. Заверши ход.');return}
-    state.x=x;state.y=y;state.moves--;reveal();
-    const obj=state.objects[key(x,y)]; if(obj)resolveObject(obj,key(x,y)); render();
-  }
-  function resolveObject(o,k){
-    if(o.t==='gold'){state.gold+=o.amount;delete state.objects[k];log('Найдено золото: +'+o.amount+'.')}
-    if(o.t==='wood'){state.wood+=o.amount;delete state.objects[k];log('Собрано дерево: +'+o.amount+'.')}
-    if(o.t==='stone'){state.stone+=o.amount;delete state.objects[k];log('Собран камень: +'+o.amount+'.')}
-    if(o.t==='artifact'){state.atk+=o.atk;delete state.objects[k];log('Получен артефакт «'+o.name+'». Атака +'+o.atk+'.')}
-    if(o.t==='shrine'){state.power+=o.power;delete state.objects[k];log('Святилище усилило магию: +'+o.power+'.')}
-    if(o.t==='town'){log('Ты у ворот Светогорска. Можно открыть замок.')}
-    if(o.t==='enemy')startBattle(o,k);
-  }
-  function armyPower(){return state.peasants*1+state.archers*2.2+state.riders*4.5+state.atk*5+state.def*2}
-  function startBattle(enemy,k){state.battle={enemy,key:k,hp:enemy.power*5,max:enemy.power*5,round:1};$('battlePanel').classList.remove('hidden');log('Началась битва: '+enemy.name+'.');renderBattle()}
-  function renderBattle(){
-    const b=state.battle;if(!b)return;
-    $('battleRound').textContent='Раунд '+b.round;
-    $('playerPower').textContent='Сила: '+Math.round(armyPower())+' | '+state.peasants+' / '+state.archers+' / '+state.riders;
-    $('enemyPower').textContent=b.enemy.name+' — '+Math.max(0,Math.round(b.hp))+' HP';
-  }
-  function enemyHit(){
-    const b=state.battle;if(!b)return;
-    const dmg=Math.max(1,Math.round(b.enemy.power*0.08+Math.random()*3-state.def*.6));
-    let left=dmg;
-    while(left>0&&state.peasants>0){state.peasants--;left--}
-    while(left>0&&state.archers>0){state.archers--;left-=2}
-    while(left>0&&state.riders>0){state.riders--;left-=4}
-    log(b.enemy.name+' наносит потери примерно на '+dmg+' силы.');
-    if(state.peasants+state.archers+state.riders<=0){log('Армия разгромлена.');setTimeout(reset,400);return false}
-    return true;
-  }
-  function playerAttack(mult=1){
-    const b=state.battle;if(!b)return;
-    const dmg=Math.round((armyPower()*0.23+Math.random()*5)*mult);b.hp-=dmg;log('Ты наносишь '+dmg+' урона.');
-    if(b.hp<=0){state.gold+=b.enemy.reward;state.xp+=b.enemy.xp;delete state.objects[b.key];log('Победа! +'+b.enemy.reward+' золота, +'+b.enemy.xp+' опыта.');state.battle=null;$('battlePanel').classList.add('hidden');levelCheck();render();return}
-    b.round++;if(enemyHit())render();
-  }
-  function levelCheck(){while(state.xp>=state.level*80){state.level++;state.atk++;state.def++;log('Новый уровень '+state.level+': атака и защита +1.')}}
-  $('battleAttack').addEventListener('click',()=>playerAttack(1));
-  $('battleSpell').addEventListener('click',()=>{
-    if(!state.battle)return;
-    const dmg=10+state.power*8;state.battle.hp-=dmg;log('Огненная стрела наносит '+dmg+' урона.');
-    if(state.battle.hp<=0){playerAttack(0);return}
-    state.battle.round++;if(enemyHit())render();
-  });
-  $('battleRetreat').addEventListener('click',()=>{if(!state.battle)return;log('Арден отступает. Потеряно 200 золота.');state.gold=Math.max(0,state.gold-200);state.battle=null;$('battlePanel').classList.add('hidden');render()});
-  $('endTurn').addEventListener('click',()=>{state.moves=8;state.gold+=100;log('Новый день. Доход королевства: +100 золота.');render()});
-  $('visitTown').addEventListener('click',()=>{const onTown=state.objects[key(state.x,state.y)]?.t==='town';if(!onTown){log('Чтобы открыть замок, встань на клетку 🏰.');return}$('townPanel').classList.toggle('hidden')});
-  document.querySelectorAll('[data-buy]').forEach(btn=>btn.addEventListener('click',()=>{
-    const t=btn.dataset.buy;
-    if(t==='peasants'){if(state.gold<250){log('Не хватает золота.');return}state.gold-=250;state.peasants+=5;log('Нанято 5 ополченцев.')}
-    if(t==='archers'){if(state.gold<420||state.wood<1){log('Не хватает ресурсов.');return}state.gold-=420;state.wood--;state.archers+=3;log('Нанято 3 стрелка.')}
-    if(t==='riders'){if(state.gold<700||state.stone<1){log('Не хватает ресурсов.');return}state.gold-=700;state.stone--;state.riders+=2;log('Нанято 2 всадника.')}
-    render();
-  }));
-  $('restart').addEventListener('click',()=>{localStorage.removeItem('ash-kingdoms-save');reset()});
-  if(!load())reset(); else {reveal();render();log('Сохранение загружено.')}
-  if('serviceWorker' in navigator) navigator.serviceWorker.register('./sw.js').catch(()=>{});
+(()=>{const W=12,H=10,$=x=>document.getElementById(x),K=(x,y)=>x+','+y;
+const baseObjs={'1,1':{t:'town',i:'🏰'},'3,1':{t:'gold',i:'💰',v:600},'5,1':{t:'mine',i:'⛏️'},'6,2':{t:'enemy',i:'👺',n:'Гоблины',hp:95,p:20,r:650,xp:55},'9,2':{t:'artifact',i:'🗡️',n:'Меч Стража'},'2,5':{t:'wood',i:'🪵',v:5},'4,5':{t:'enemy',i:'🐺',n:'Волчьи всадники',hp:145,p:29,r:850,xp:80},'8,5':{t:'gems',i:'💎',v:3},'10,7':{t:'enemy',i:'💀',n:'Некромант',hp:230,p:42,r:1500,xp:140,boss:true},'6,8':{t:'shrine',i:'🔮'},'2,8':{t:'ore',i:'🪨',v:5}};
+let s;
+function fresh(){s={x:1,y:1,gold:1800,wood:10,ore:8,gems:2,day:1,moves:12,atk:2,def:2,magic:1,knowledge:1,level:1,xp:0,pikes:22,bows:9,cavs:0,mana:10,objs:structuredClone(baseObjs),seen:[],build:{hall:true,barracks:false,range:false,stable:false,mage:false},mine:false,battle:null,quest:{mine:false,boss:false}};reveal();write('Новый поход начался. Захвати шахту и уничтожь Некроманта.');render()}
+function persist(){localStorage.setItem('ash-v2',JSON.stringify(s))}
+function restore(){try{let q=JSON.parse(localStorage.getItem('ash-v2'));if(q){s=q;return true}}catch(e){}return false}
+function write(t){let d=document.createElement('div');d.textContent='• '+t;$('log').prepend(d)}
+function reveal(){let set=new Set(s.seen);for(let dy=-2;dy<=2;dy++)for(let dx=-2;dx<=2;dx++){let x=s.x+dx,y=s.y+dy;if(x>=0&&y>=0&&x<W&&y<H)set.add(K(x,y))}s.seen=[...set]}
+function terrain(x,y){if(y===3&&x>6)return['water','🌊'];if((x+y)%11===0)return['rock','⛰️'];if((x===1&&y<6)||(y===5&&x<8))return['road','▫️'];return['',''+(['🌲','🌳','🌿','🌾','🍂'][(x*5+y*3)%5])]}
+function render(){['gold','wood','ore','gems','day','moves','atk','def','magic','knowledge','level','xp','pikes','bows','cavs'].forEach(k=>$(k).textContent=s[k]);$('xpbar').style.width=Math.min(100,(s.xp/(s.level*100))*100)+'%';let m=$('map');m.innerHTML='';for(let y=0;y<H;y++)for(let x=0;x<W;x++){let b=document.createElement('button');b.className='tile';let [cl,ti]=terrain(x,y);if(cl)b.classList.add(cl);let seen=s.seen.includes(K(x,y)),o=s.objs[K(x,y)];if(!seen)b.classList.add('fog');if(x===s.x&&y===s.y){b.textContent='🧙';b.classList.add('hero')}else b.textContent=seen?(o?o.i:ti):' ';b.addEventListener('click',()=>move(x,y));m.appendChild(b)}renderTown();renderQuest();if(s.battle)renderBattle();persist()}
+function move(x,y){if(s.battle)return;let d=Math.abs(x-s.x)+Math.abs(y-s.y);if(d!==1){write('Выбери соседнюю клетку.');return}if(s.moves<1){write('Очки передвижения закончились.');return}let [cl]=terrain(x,y);if(cl==='water'||cl==='rock'){write('Путь непроходим.');return}s.x=x;s.y=y;s.moves--;reveal();let o=s.objs[K(x,y)];if(o)event(o,K(x,y));render()}
+function event(o,k){if(['gold','wood','ore','gems'].includes(o.t)){s[o.t]+=o.v;delete s.objs[k];write('Получен ресурс: +'+o.v)}else if(o.t==='mine'){s.mine=true;s.quest.mine=true;delete s.objs[k];write('Шахта захвачена! Теперь +2 руды каждый день.')}else if(o.t==='artifact'){s.atk+=2;delete s.objs[k];write('Найден «'+o.n+'»: атака +2.')}else if(o.t==='shrine'){s.magic++;s.mana+=5;delete s.objs[k];write('Святилище усилило магию.')}else if(o.t==='enemy')startBattle(o,k)}
+function power(){return s.pikes*1.2+s.bows*2.3+s.cavs*5+s.atk*5+s.def*2}
+function startBattle(e,k){s.battle={e,k,hp:e.hp,round:1,guard:false};$('battle').classList.remove('hidden');renderBattle()}
+function renderBattle(){let b=s.battle;if(!b)return;$('round').textContent='Раунд '+b.round;$('battleInfo').textContent=`${b.e.n}: ${Math.max(0,Math.round(b.hp))} HP · Мана ${s.mana}`;let f=$('field');f.innerHTML='';for(let i=0;i<21;i++){let d=document.createElement('div');d.className='hex';if(i===15){d.classList.add('friend');d.textContent='🗡️'}if(i===16){d.classList.add('friend');d.textContent='🏹'}if(i===5){d.classList.add('enemy');d.textContent=b.e.i}f.appendChild(d)}}
+function enemyTurn(){let b=s.battle;if(!b)return;let dmg=Math.max(1,Math.round(b.e.p*.12+Math.random()*3-s.def*.5));if(b.guard)dmg=Math.ceil(dmg*.55);b.guard=false;let loss=dmg;while(loss>0&&s.pikes){s.pikes--;loss--}while(loss>0&&s.bows){s.bows--;loss-=2}while(loss>0&&s.cavs){s.cavs--;loss-=4}write(b.e.n+' наносит потери: '+dmg);if(s.pikes+s.bows+s.cavs<=0){alert('Армия разгромлена. Поход начинается заново.');localStorage.removeItem('ash-v2');fresh();return false}return true}
+function hit(mult=1){let b=s.battle;if(!b)return;let dmg=Math.round((power()*.22+Math.random()*7)*mult);b.hp-=dmg;write('Армия наносит '+dmg+' урона.');finishOrEnemy()}
+function finishOrEnemy(){let b=s.battle;if(b.hp<=0){s.gold+=b.e.r;s.xp+=b.e.xp;if(b.e.boss)s.quest.boss=true;delete s.objs[b.k];write('Победа! +'+b.e.r+' золота, +'+b.e.xp+' опыта.');s.battle=null;$('battle').classList.add('hidden');levelUp();render();return}b.round++;if(enemyTurn())render()}
+function levelUp(){while(s.xp>=s.level*100){s.level++;s.atk++;s.def++;s.magic++;s.mana+=5;write('Уровень '+s.level+'! Основные характеристики выросли.')}}
+$('attack').onclick=()=>hit(1);$('spell').onclick=()=>{if(!s.battle)return;if(s.mana<4){write('Недостаточно маны.');return}s.mana-=4;s.battle.hp-=18+s.magic*12;write('Огненный шар поражает врага.');finishOrEnemy()};$('defend').onclick=()=>{if(!s.battle)return;s.battle.guard=true;write('Армия занимает оборону.');s.battle.round++;if(enemyTurn())render()};$('retreat').onclick=()=>{if(!s.battle)return;s.gold=Math.max(0,s.gold-250);s.battle=null;$('battle').classList.add('hidden');write('Отступление. Потеряно 250 золота.');render()};
+$('end').onclick=()=>{s.day++;s.moves=12;s.gold+=250;if(s.mine)s.ore+=2;s.mana=Math.min(10+s.knowledge*5,s.mana+3);write('Наступил день '+s.day+'. Казна получила 250 золота.');render()};
+$('town').onclick=()=>{if(K(s.x,s.y)!=='1,1'){write('Город можно открыть только из Светогорска.');return}$('townPanel').classList.toggle('hidden')};$('save').onclick=()=>{persist();write('Игра сохранена.')};
+const buildings={barracks:['🛡️ Казармы',700,3,0],range:['🏹 Стрельбище',900,4,0],stable:['🐎 Конюшни',1400,3,3],mage:['🔮 Гильдия магов',1100,2,2]};
+function renderTown(){let box=$('buildings');box.innerHTML='';Object.entries(buildings).forEach(([k,v])=>{let b=document.createElement('button');b.className='building'+(s.build[k]?' built':'');b.innerHTML='<b>'+v[0]+'</b><br><span class=small>'+(s.build[k]?'Построено':`${v[1]}💰 ${v[2]}🪵 ${v[3]}🪨`)+'</span>';b.disabled=s.build[k];b.onclick=()=>{if(s.gold<v[1]||s.wood<v[2]||s.ore<v[3]){write('Не хватает ресурсов.');return}s.gold-=v[1];s.wood-=v[2];s.ore-=v[3];s.build[k]=true;if(k==='mage'){s.magic++;s.mana+=5}write('Построено: '+v[0]);render()};box.appendChild(b)});let r=$('recruits');r.innerHTML='';[['pikes','🗡️ 8 копейщиков',320,'barracks',8],['bows','🏹 5 стрелков',500,'range',5],['cavs','🐎 2 рыцаря',900,'stable',2]].forEach(v=>{let b=document.createElement('button');b.className='building';b.innerHTML='<b>'+v[1]+'</b><br><span class=small>'+v[2]+' золота</span>';b.disabled=!s.build[v[3]];b.onclick=()=>{if(s.gold<v[2]){write('Не хватает золота.');return}s.gold-=v[2];s[v[0]]+=v[4];render()};r.appendChild(b)})}
+document.querySelectorAll('[data-tab]').forEach(b=>b.onclick=()=>{let build=b.dataset.tab==='build';$('buildPane').classList.toggle('hidden',!build);$('recruitPane').classList.toggle('hidden',build);document.querySelectorAll('[data-tab]').forEach(x=>x.classList.toggle('gold',x===b))});
+function renderQuest(){$('quests').innerHTML=`<div class=quest>${s.quest.mine?'✅':'⬜'} Захватить железную шахту</div><div class=quest>${s.quest.boss?'✅':'⬜'} Победить Некроманта</div>`+(s.quest.boss?'<div class=quest><b>🏆 Победа! Северные земли освобождены.</b></div>':'')}
+if(!restore())fresh();else{reveal();render();write('Сохранение загружено.')}
+if('serviceWorker'in navigator)navigator.serviceWorker.register('./sw.js').catch(()=>{});
 })();
-</script>
-</body>
-</html>
+</script></body></html>
