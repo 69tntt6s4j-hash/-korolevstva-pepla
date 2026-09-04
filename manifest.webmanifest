@@ -1,10 +1,10 @@
 {
-  "name": "Королевства Пепла II",
-  "short_name": "Пепел II",
+  "name": "Королевства Пепла III",
+  "short_name": "Пепел III",
   "start_url": "./",
   "display": "standalone",
-  "background_color": "#11140d",
-  "theme_color": "#15170f",
+  "background_color": "#090b08",
+  "theme_color": "#11140d",
   "orientation": "portrait-primary",
   "icons": [
     {

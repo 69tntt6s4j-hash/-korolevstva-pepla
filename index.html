@@ -3,74 +3,306 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
-<meta name="theme-color" content="#15170f">
+<meta name="theme-color" content="#11140d">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Королевства Пепла">
-<link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="icon-180.png">
-<title>Королевства Пепла II</title>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icon-180.png">
+<title>Королевства Пепла III</title>
 <style>
-:root{--bg:#11140d;--panel:#202619;--panel2:#2a3020;--line:#536047;--gold:#d7ad54;--text:#f4ecd8;--muted:#b8b09c;--red:#9e5041;--blue:#58728c}
-*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}html,body{margin:0;background:radial-gradient(circle at 50% 0,#28301e,#11140d 55%);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}body{padding:calc(env(safe-area-inset-top) + 8px) 8px calc(env(safe-area-inset-bottom) + 12px)}
-button{font:inherit;color:inherit}.app{max-width:1000px;margin:auto}.bar{display:flex;gap:6px;overflow:auto;padding:3px 0 8px}.res{white-space:nowrap;background:linear-gradient(#303724,#202619);border:1px solid var(--line);border-radius:12px;padding:7px 9px;font-size:13px;box-shadow:inset 0 1px rgba(255,255,255,.06)}
-.panel{background:linear-gradient(180deg,rgba(42,48,32,.97),rgba(29,35,23,.97));border:1px solid var(--line);border-radius:14px;padding:10px;box-shadow:0 5px 18px rgba(0,0,0,.2)}
-.world{position:relative;overflow:auto;border-radius:12px}.map{display:grid;grid-template-columns:repeat(12,48px);grid-auto-rows:48px;gap:1px;width:max-content;background:#15180f;padding:4px;border-radius:10px}
-.tile{position:relative;border:0;border-radius:5px;display:flex;align-items:center;justify-content:center;font-size:24px;background:#455b2c;overflow:hidden}.tile:after{content:"";position:absolute;inset:0;background:linear-gradient(135deg,rgba(255,255,255,.05),transparent 45%,rgba(0,0,0,.12));pointer-events:none}.tile.water{background:#304b54}.tile.road{background:#685c3e}.tile.rock{background:#4d5045}.tile.fog{filter:brightness(.25) saturate(.4)}.tile.hero{outline:3px solid var(--gold);z-index:2}.tile.target{box-shadow:inset 0 0 0 2px #e8c76e}
-.grid2{display:grid;grid-template-columns:1fr;gap:8px}@media(min-width:760px){.grid2{grid-template-columns:minmax(0,1fr) 280px}}.actions{display:flex;gap:7px;flex-wrap:wrap;margin-top:8px}.btn{min-height:44px;border:1px solid var(--line);border-radius:11px;background:#303725;padding:9px 12px}.btn.gold{background:#57431d;border-color:#947330}.btn.red{background:#512c26;border-color:#7c443a}.btn:disabled{opacity:.45}
-.row{display:flex;justify-content:space-between;gap:10px}.small{font-size:13px;color:var(--muted)}.title{font-weight:800;margin-bottom:7px}.log{font-size:12px;line-height:1.35;max-height:120px;overflow:auto}.hidden{display:none!important}
-.tabs{display:flex;gap:6px;margin-bottom:8px}.tab{flex:1}.shop{display:grid;grid-template-columns:repeat(2,1fr);gap:7px}.building{padding:9px;border:1px solid var(--line);border-radius:10px;background:#2c3323;text-align:left}.built{border-color:#a88643}
-.army{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}.unit{background:#2c3323;border:1px solid var(--line);border-radius:10px;padding:7px;text-align:center}.unit .ico{font-size:26px}.xp{height:6px;background:#15180f;border-radius:6px;overflow:hidden;margin-top:5px}.xp>i{display:block;height:100%;background:var(--gold)}
-.modal{position:absolute;inset:4px;background:rgba(13,15,10,.96);z-index:5;border-radius:10px;padding:10px;overflow:auto}.battlefield{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin:9px 0}.hex{aspect-ratio:1;border:1px solid #5c654e;border-radius:10px;background:#303827;display:flex;align-items:center;justify-content:center;font-size:20px}.hex.enemy{background:#4b2925}.hex.friend{background:#293b48}.quest{border-left:3px solid var(--gold);padding-left:8px;margin:7px 0}
-</style></head>
-<body><main class="app">
-<div class="bar"><span class="res">💰 <b id="gold"></b></span><span class="res">🪵 <b id="wood"></b></span><span class="res">🪨 <b id="ore"></b></span><span class="res">💎 <b id="gems"></b></span><span class="res">📅 День <b id="day"></b></span><span class="res">⚡ <b id="moves"></b></span></div>
-<div class="grid2"><section>
-<div class="panel world"><div id="map" class="map"></div>
-<div id="battle" class="modal hidden">
- <div class="row"><b>⚔️ Тактическая битва</b><span id="round" class="small"></span></div>
- <div id="battleInfo" class="small"></div><div id="field" class="battlefield"></div>
- <div class="actions"><button id="attack" class="btn gold">⚔️ Атака</button><button id="spell" class="btn">🔥 Огненный шар</button><button id="defend" class="btn">🛡️ Оборона</button><button id="retreat" class="btn red">Отступить</button></div>
-</div></div>
-<div class="actions"><button id="end" class="btn gold">Завершить день</button><button id="town" class="btn">🏰 Город</button><button id="save" class="btn">💾 Сохранить</button></div>
-<div id="townPanel" class="panel hidden" style="margin-top:8px">
- <div class="tabs"><button class="btn tab gold" data-tab="build">Строительство</button><button class="btn tab" data-tab="recruit">Найм</button></div>
- <div id="buildPane"><div class="shop" id="buildings"></div></div>
- <div id="recruitPane" class="hidden"><div class="shop" id="recruits"></div></div>
+:root{
+ --bg:#0d100a;--panel:#171d14;--panel2:#20281b;--line:#6f5a2b;--line2:#3f4a36;
+ --gold:#d5ad56;--gold2:#80652f;--text:#f4ecd9;--muted:#b9b09b;--red:#8d3f34;
+ --blue:#315d87;--green:#3d6338;--black:#090b08
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;background:#090b08;color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+body{min-height:100%;padding:env(safe-area-inset-top) 0 env(safe-area-inset-bottom)}
+button{font:inherit;color:inherit}
+.app{max-width:1050px;margin:auto;min-height:100%;background:linear-gradient(#14180f,#090b08)}
+.topbar{display:flex;align-items:center;gap:5px;padding:7px 8px;overflow:auto;background:linear-gradient(#181d15,#10130e);border-bottom:1px solid var(--line)}
+.res{white-space:nowrap;border:1px solid #66552c;background:#20261b;border-radius:7px;padding:6px 8px;font-size:12px;box-shadow:inset 0 1px rgba(255,255,255,.06)}
+.spacer{flex:1}.day{min-width:max-content}
+.screen{display:none}.screen.active{display:block}
+.world-wrap{position:relative;height:68vh;min-height:510px;max-height:760px;overflow:auto;background:#11160f}
+.world-bg{position:absolute;inset:0;background:url('world-art.jpg') center/cover no-repeat;opacity:.48;filter:saturate(.85) brightness(.72)}
+.map{position:relative;display:grid;grid-template-columns:repeat(14,52px);grid-auto-rows:52px;gap:1px;padding:8px;width:max-content;min-height:100%;z-index:1}
+.tile{position:relative;border:0;border-radius:5px;background:rgba(48,69,37,.76);display:flex;align-items:center;justify-content:center;font-size:23px;overflow:hidden;text-shadow:0 2px 3px #000}
+.tile:before{content:"";position:absolute;inset:0;background:linear-gradient(135deg,rgba(255,255,255,.08),transparent 42%,rgba(0,0,0,.16))}
+.tile.road{background:rgba(103,88,54,.82)}.tile.water{background:rgba(42,75,87,.84)}.tile.rock{background:rgba(74,73,65,.86)}
+.tile.fog{background:#090b08!important;color:transparent;filter:none}.tile.fog:after{content:"";position:absolute;inset:0;background:radial-gradient(circle at 45% 45%,#141811,#050604)}
+.tile.hero{outline:3px solid #efc76c;z-index:3;animation:pulse 1.6s infinite}
+.tile.enemyHero{outline:2px solid #b55347}
+.tile.path{box-shadow:inset 0 0 0 2px rgba(235,210,110,.75)}
+@keyframes pulse{50%{filter:brightness(1.22)}} @media(prefers-reduced-motion:reduce){.tile.hero{animation:none}}
+.hud{position:absolute;left:8px;right:8px;bottom:8px;z-index:4;display:flex;gap:7px;pointer-events:none}
+.hud-card{pointer-events:auto;background:rgba(12,15,10,.91);border:1px solid var(--line);border-radius:10px;padding:8px;backdrop-filter:blur(6px)}
+.hero-mini{display:grid;grid-template-columns:42px 1fr;gap:7px;min-width:180px}.portrait{width:42px;height:42px;border-radius:7px;object-fit:cover;border:1px solid var(--gold2)}
+.movebar{height:5px;background:#070906;border-radius:4px;margin-top:4px;overflow:hidden}.movebar i{display:block;height:100%;background:#cda54e}
+.hud-actions{display:flex;gap:5px;margin-left:auto}.iconbtn{width:44px;height:44px;border:1px solid var(--line);border-radius:9px;background:#20261a;font-size:21px}
+.nav{display:grid;grid-template-columns:repeat(5,1fr);border-top:1px solid var(--line);background:#11150f}
+.nav button{border:0;border-right:1px solid #302c20;background:#161b13;padding:8px 2px 6px;min-height:58px;font-size:11px}.nav button b{display:block;font-size:21px;margin-bottom:2px}.nav button.active{background:#342a17;color:#f2ce76}
+.panel{margin:8px;border:1px solid var(--line);border-radius:12px;background:linear-gradient(#20271b,#151a12);padding:11px}
+.title{font-size:19px;font-weight:800;margin-bottom:8px}.small{font-size:12px;color:var(--muted)}.row{display:flex;justify-content:space-between;gap:10px}.grid{display:grid;gap:8px}.grid2{grid-template-columns:repeat(2,1fr)}.grid3{grid-template-columns:repeat(3,1fr)}
+.card{border:1px solid var(--line2);background:#252d20;border-radius:10px;padding:9px}.btn{min-height:44px;border:1px solid var(--line);background:#252d20;border-radius:9px;padding:8px 10px}.btn.gold{background:#57421d;border-color:#9c7832}.btn.red{background:#4b2924;border-color:#744139}.btn:disabled{opacity:.42}
+.town-art{height:180px;border-radius:10px;background:linear-gradient(to top,rgba(8,10,7,.4),rgba(8,10,7,.04)),url('world-art.jpg') 16% 20%/145% auto no-repeat;border:1px solid #62532d}
+.building{position:relative;min-height:102px;text-align:left}.building .ico{font-size:27px}.building.built{border-color:#a6823d;background:#342d1d}.badge{position:absolute;right:7px;top:7px;font-size:11px;color:#e9cf8c}
+.unit-card{text-align:center}.unit-card .ico{font-size:32px}.unit-card b{display:block;font-size:18px}
+.hero-large{display:grid;grid-template-columns:105px 1fr;gap:10px}.hero-large img{width:105px;height:132px;object-fit:cover;border-radius:9px;border:1px solid var(--gold2)}
+.slotrow{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}.slot{aspect-ratio:1;border:1px solid var(--line2);border-radius:8px;background:#11150f;display:flex;align-items:center;justify-content:center;font-size:26px}
+.skill{border-left:3px solid var(--gold);padding-left:8px;margin:7px 0}
+.spell{display:flex;align-items:center;gap:8px}.spell .ico{font-size:30px}.mana{color:#75aee0}
+.quest{padding:9px;border:1px solid var(--line2);border-radius:9px;margin-bottom:7px;background:#20271b}.quest.done{opacity:.68}
+.log{max-height:180px;overflow:auto;font-size:12px;line-height:1.45}
+.modal{position:fixed;inset:0;z-index:20;background:rgba(0,0,0,.86);display:flex;align-items:center;justify-content:center;padding:16px}.modal.hidden{display:none}.dialog{width:min(680px,100%);max-height:88vh;overflow:auto;border:1px solid var(--line);background:linear-gradient(#242b1d,#10140e);border-radius:14px;padding:12px}
+.battlefield{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin:10px 0}.hex{aspect-ratio:1;border:1px solid #56604a;border-radius:12px;background:#293122;display:flex;align-items:center;justify-content:center;font-size:21px}.hex.enemy{background:#492924}.hex.friend{background:#233948}
+.reward{text-align:center;font-size:16px}.hidden{display:none!important}
+@media(min-width:760px){.world-wrap{height:72vh}.map{grid-template-columns:repeat(14,60px);grid-auto-rows:60px}.tile{font-size:27px}}
+</style>
+</head>
+<body><div class="app">
+<div class="topbar">
+ <span class="res">🪙 <b id="gold"></b></span><span class="res">🪵 <b id="wood"></b></span><span class="res">🪨 <b id="ore"></b></span><span class="res">💎 <b id="gems"></b></span><span class="res">🔮 <b id="crystal"></b></span>
+ <span class="spacer"></span><span class="res day">☀️ День <b id="day"></b> · нед. <b id="week"></b></span>
 </div>
-</section><aside>
-<div class="panel"><div class="title">🧙 Арден, рыцарь</div><div class="row"><span>⚔️ Атака</span><b id="atk"></b></div><div class="row"><span>🛡️ Защита</span><b id="def"></b></div><div class="row"><span>✨ Сила магии</span><b id="magic"></b></div><div class="row"><span>📖 Знания</span><b id="knowledge"></b></div><div class="small">Уровень <b id="level"></b> · опыт <b id="xp"></b></div><div class="xp"><i id="xpbar"></i></div></div>
-<div class="panel" style="margin-top:8px"><div class="title">Армия</div><div class="army"><div class="unit"><div class="ico">🗡️</div><b id="pikes"></b><div class="small">Копейщики</div></div><div class="unit"><div class="ico">🏹</div><b id="bows"></b><div class="small">Стрелки</div></div><div class="unit"><div class="ico">🐎</div><b id="cavs"></b><div class="small">Рыцари</div></div></div></div>
-<div class="panel" style="margin-top:8px"><div class="title">Задания</div><div id="quests"></div></div>
-<div class="panel" style="margin-top:8px"><div class="title">Журнал</div><div id="log" class="log"></div></div>
-</aside></div></main>
+
+<section id="screen-map" class="screen active">
+ <div class="world-wrap" id="worldWrap"><div class="world-bg"></div><div id="map" class="map"></div>
+  <div class="hud">
+   <div class="hud-card hero-mini"><img class="portrait" src="hero-art.jpg"><div><b>Арден</b><div class="small">Ур. <span id="levelMini"></span> · ⚔️ <span id="armyPower"></span></div><div class="movebar"><i id="moveBar"></i></div></div></div>
+   <div class="hud-actions"><button class="iconbtn" id="endDay" title="Следующий день">⌛</button><button class="iconbtn" id="saveBtn" title="Сохранить">💾</button></div>
+  </div>
+ </div>
+</section>
+
+<section id="screen-town" class="screen">
+ <div class="panel"><div class="town-art"></div><div class="title" style="margin-top:9px">🏰 Светогорск</div><div class="small">Столица Северных земель</div></div>
+ <div class="panel"><div class="title">Строительство</div><div id="buildings" class="grid grid2"></div></div>
+ <div class="panel"><div class="title">Найм войск</div><div id="recruits" class="grid grid3"></div></div>
+</section>
+
+<section id="screen-hero" class="screen">
+ <div class="panel hero-large"><img src="hero-art.jpg"><div><div class="title">Арден</div><div class="small">Рыцарь Светогорска</div><div class="row"><span>⚔️ Атака</span><b id="atk"></b></div><div class="row"><span>🛡️ Защита</span><b id="def"></b></div><div class="row"><span>✨ Магия</span><b id="magic"></b></div><div class="row"><span>📖 Знания</span><b id="knowledge"></b></div><div class="small">Уровень <b id="level"></b> · опыт <b id="xp"></b></div></div></div>
+ <div class="panel"><div class="title">Артефакты</div><div id="artifacts" class="slotrow"></div></div>
+ <div class="panel"><div class="title">Навыки</div><div id="skills"></div></div>
+ <div class="panel"><div class="title">Армия</div><div id="armyCards" class="grid grid3"></div></div>
+</section>
+
+<section id="screen-magic" class="screen">
+ <div class="panel"><div class="title">📖 Книга магии</div><div class="small">Мана: <b id="mana" class="mana"></b>/<b id="manaMax"></b></div></div>
+ <div class="panel"><div id="spellList" class="grid"></div></div>
+</section>
+
+<section id="screen-quests" class="screen">
+ <div class="panel"><div class="title">📜 Задания</div><div id="questList"></div></div>
+ <div class="panel"><div class="title">Журнал событий</div><div id="log" class="log"></div></div>
+</section>
+
+<nav class="nav">
+ <button data-screen="map" class="active"><b>🗺️</b>Карта</button>
+ <button data-screen="hero"><b>🛡️</b>Герой</button>
+ <button data-screen="town"><b>🏰</b>Город</button>
+ <button data-screen="magic"><b>📖</b>Магия</button>
+ <button data-screen="quests"><b>📜</b>Задания</button>
+</nav>
+</div>
+
+<div id="battleModal" class="modal hidden"><div class="dialog">
+ <div class="row"><div class="title">⚔️ Битва</div><div id="battleRound" class="small"></div></div>
+ <div id="battleName"></div><div id="battleStats" class="small"></div><div id="battlefield" class="battlefield"></div>
+ <div class="grid grid2"><button class="btn gold" id="battleAttack">⚔️ Атаковать</button><button class="btn" id="battleSpell">🔥 Огненный шар</button><button class="btn" id="battleDefend">🛡️ Оборона</button><button class="btn red" id="battleRetreat">Отступить</button></div>
+</div></div>
+
+<div id="levelModal" class="modal hidden"><div class="dialog">
+ <div class="title">⭐ Новый уровень</div><div class="small">Выбери вторичный навык:</div><div id="levelChoices" class="grid" style="margin-top:10px"></div>
+</div></div>
+
+<div id="rewardModal" class="modal hidden"><div class="dialog reward"><div class="title">🏆 Победа</div><div id="rewardText"></div><button class="btn gold" id="rewardClose" style="margin-top:12px">Продолжить</button></div></div>
+
 <script>
-(()=>{const W=12,H=10,$=x=>document.getElementById(x),K=(x,y)=>x+','+y;
-const baseObjs={'1,1':{t:'town',i:'🏰'},'3,1':{t:'gold',i:'💰',v:600},'5,1':{t:'mine',i:'⛏️'},'6,2':{t:'enemy',i:'👺',n:'Гоблины',hp:95,p:20,r:650,xp:55},'9,2':{t:'artifact',i:'🗡️',n:'Меч Стража'},'2,5':{t:'wood',i:'🪵',v:5},'4,5':{t:'enemy',i:'🐺',n:'Волчьи всадники',hp:145,p:29,r:850,xp:80},'8,5':{t:'gems',i:'💎',v:3},'10,7':{t:'enemy',i:'💀',n:'Некромант',hp:230,p:42,r:1500,xp:140,boss:true},'6,8':{t:'shrine',i:'🔮'},'2,8':{t:'ore',i:'🪨',v:5}};
+(()=> {
+const W=14,H=12,$=id=>document.getElementById(id),K=(x,y)=>x+','+y;
+const terrains=['🌲','🌳','🌿','🌾','🍂','🌲','🌿'];
+const initialObjects={
+ '1,1':{t:'town',i:'🏰',name:'Светогорск'},
+ '3,1':{t:'gold',i:'🪙',v:700},'5,2':{t:'wood',i:'🪵',v:5},'7,1':{t:'mine',i:'⛏️',kind:'ore'},
+ '9,2':{t:'enemy',i:'👺',name:'Гоблины',hp:100,p:20,reward:650,xp:55},
+ '11,1':{t:'artifact',i:'🗡️',name:'Меч Стража',stat:'atk',v:2},
+ '2,5':{t:'chest',i:'🎁'},'4,5':{t:'enemy',i:'🐺',name:'Волчьи всадники',hp:150,p:30,reward:850,xp:80},
+ '8,5':{t:'mine',i:'💎',kind:'gems'},'10,6':{t:'shrine',i:'🔮'},
+ '12,8':{t:'enemy',i:'💀',name:'Некромант Морвейн',hp:270,p:46,reward:1800,xp:170,boss:true},
+ '6,9':{t:'artifact',i:'🛡️',name:'Щит Серого Льва',stat:'def',v:2},'3,9':{t:'crystal',i:'🔮',v:3}
+};
+const buildDefs={
+ barracks:{name:'Казармы',ico:'🛡️',cost:[800,3,0],req:null},
+ range:{name:'Стрельбище',ico:'🏹',cost:[1000,4,0],req:'barracks'},
+ stable:{name:'Конюшни',ico:'🐎',cost:[1500,3,3],req:'barracks'},
+ monastery:{name:'Монастырь',ico:'⛪',cost:[1900,5,4],req:'range'},
+ griffin:{name:'Башня грифонов',ico:'🦅',cost:[2400,6,5],req:'stable'},
+ mage:{name:'Гильдия магов',ico:'🔮',cost:[1300,3,2],req:null}
+};
+const unitDefs={
+ pikes:{name:'Копейщики',ico:'🗡️',power:1.2,qty:8,cost:320,req:'barracks'},
+ bows:{name:'Стрелки',ico:'🏹',power:2.4,qty:5,cost:520,req:'range'},
+ cavs:{name:'Рыцари',ico:'🐎',power:5.2,qty:2,cost:950,req:'stable'},
+ monks:{name:'Монахи',ico:'⛪',power:7.0,qty:2,cost:1250,req:'monastery'},
+ griffins:{name:'Грифоны',ico:'🦅',power:9.3,qty:1,cost:1500,req:'griffin'}
+};
+const skillDefs={
+ logistics:{name:'Логистика',desc:'+2 очка движения каждый день'},
+ archery:{name:'Стрельба',desc:'+15% к силе стрелков'},
+ leadership:{name:'Лидерство',desc:'+10% к силе всей армии'},
+ wisdom:{name:'Мудрость',desc:'+5 максимальной маны'},
+ estates:{name:'Поместья',desc:'+150 золота ежедневно'},
+ resistance:{name:'Сопротивление',desc:'-10% получаемого урона'}
+};
 let s;
-function fresh(){s={x:1,y:1,gold:1800,wood:10,ore:8,gems:2,day:1,moves:12,atk:2,def:2,magic:1,knowledge:1,level:1,xp:0,pikes:22,bows:9,cavs:0,mana:10,objs:structuredClone(baseObjs),seen:[],build:{hall:true,barracks:false,range:false,stable:false,mage:false},mine:false,battle:null,quest:{mine:false,boss:false}};reveal();write('Новый поход начался. Захвати шахту и уничтожь Некроманта.');render()}
-function persist(){localStorage.setItem('ash-v2',JSON.stringify(s))}
-function restore(){try{let q=JSON.parse(localStorage.getItem('ash-v2'));if(q){s=q;return true}}catch(e){}return false}
-function write(t){let d=document.createElement('div');d.textContent='• '+t;$('log').prepend(d)}
+function fresh(){
+ s={x:1,y:1,enemyX:12,enemyY:10,gold:2300,wood:10,ore:8,gems:2,crystal:1,day:1,week:1,moves:12,maxMoves:12,
+ atk:2,def:2,magic:1,knowledge:1,level:1,xp:0,mana:12,manaMax:12,
+ pikes:22,bows:9,cavs:0,monks:0,griffins:0,
+ seen:[],objects:JSON.parse(JSON.stringify(initialObjects)),
+ buildings:{barracks:false,range:false,stable:false,monastery:false,griffin:false,mage:false},
+ weekly:{pikes:16,bows:10,cavs:4,monks:3,griffins:2},available:{pikes:16,bows:0,cavs:0,monks:0,griffins:0},
+ mines:{ore:false,gems:false},artifacts:[],skills:{},battle:null,quest:{mine:false,boss:false,artifact:false},logs:[]};
+ reveal();log('Поход начался. Морвейн собирает армию на востоке.');render();
+}
+function save(){localStorage.setItem('ash-v3',JSON.stringify(s))}
+function load(){try{let q=JSON.parse(localStorage.getItem('ash-v3'));if(q){s=q;return true}}catch(e){}return false}
+function log(t){s.logs.unshift('• '+t);s.logs=s.logs.slice(0,40)}
 function reveal(){let set=new Set(s.seen);for(let dy=-2;dy<=2;dy++)for(let dx=-2;dx<=2;dx++){let x=s.x+dx,y=s.y+dy;if(x>=0&&y>=0&&x<W&&y<H)set.add(K(x,y))}s.seen=[...set]}
-function terrain(x,y){if(y===3&&x>6)return['water','🌊'];if((x+y)%11===0)return['rock','⛰️'];if((x===1&&y<6)||(y===5&&x<8))return['road','▫️'];return['',''+(['🌲','🌳','🌿','🌾','🍂'][(x*5+y*3)%5])]}
-function render(){['gold','wood','ore','gems','day','moves','atk','def','magic','knowledge','level','xp','pikes','bows','cavs'].forEach(k=>$(k).textContent=s[k]);$('xpbar').style.width=Math.min(100,(s.xp/(s.level*100))*100)+'%';let m=$('map');m.innerHTML='';for(let y=0;y<H;y++)for(let x=0;x<W;x++){let b=document.createElement('button');b.className='tile';let [cl,ti]=terrain(x,y);if(cl)b.classList.add(cl);let seen=s.seen.includes(K(x,y)),o=s.objs[K(x,y)];if(!seen)b.classList.add('fog');if(x===s.x&&y===s.y){b.textContent='🧙';b.classList.add('hero')}else b.textContent=seen?(o?o.i:ti):' ';b.addEventListener('click',()=>move(x,y));m.appendChild(b)}renderTown();renderQuest();if(s.battle)renderBattle();persist()}
-function move(x,y){if(s.battle)return;let d=Math.abs(x-s.x)+Math.abs(y-s.y);if(d!==1){write('Выбери соседнюю клетку.');return}if(s.moves<1){write('Очки передвижения закончились.');return}let [cl]=terrain(x,y);if(cl==='water'||cl==='rock'){write('Путь непроходим.');return}s.x=x;s.y=y;s.moves--;reveal();let o=s.objs[K(x,y)];if(o)event(o,K(x,y));render()}
-function event(o,k){if(['gold','wood','ore','gems'].includes(o.t)){s[o.t]+=o.v;delete s.objs[k];write('Получен ресурс: +'+o.v)}else if(o.t==='mine'){s.mine=true;s.quest.mine=true;delete s.objs[k];write('Шахта захвачена! Теперь +2 руды каждый день.')}else if(o.t==='artifact'){s.atk+=2;delete s.objs[k];write('Найден «'+o.n+'»: атака +2.')}else if(o.t==='shrine'){s.magic++;s.mana+=5;delete s.objs[k];write('Святилище усилило магию.')}else if(o.t==='enemy')startBattle(o,k)}
-function power(){return s.pikes*1.2+s.bows*2.3+s.cavs*5+s.atk*5+s.def*2}
-function startBattle(e,k){s.battle={e,k,hp:e.hp,round:1,guard:false};$('battle').classList.remove('hidden');renderBattle()}
-function renderBattle(){let b=s.battle;if(!b)return;$('round').textContent='Раунд '+b.round;$('battleInfo').textContent=`${b.e.n}: ${Math.max(0,Math.round(b.hp))} HP · Мана ${s.mana}`;let f=$('field');f.innerHTML='';for(let i=0;i<21;i++){let d=document.createElement('div');d.className='hex';if(i===15){d.classList.add('friend');d.textContent='🗡️'}if(i===16){d.classList.add('friend');d.textContent='🏹'}if(i===5){d.classList.add('enemy');d.textContent=b.e.i}f.appendChild(d)}}
-function enemyTurn(){let b=s.battle;if(!b)return;let dmg=Math.max(1,Math.round(b.e.p*.12+Math.random()*3-s.def*.5));if(b.guard)dmg=Math.ceil(dmg*.55);b.guard=false;let loss=dmg;while(loss>0&&s.pikes){s.pikes--;loss--}while(loss>0&&s.bows){s.bows--;loss-=2}while(loss>0&&s.cavs){s.cavs--;loss-=4}write(b.e.n+' наносит потери: '+dmg);if(s.pikes+s.bows+s.cavs<=0){alert('Армия разгромлена. Поход начинается заново.');localStorage.removeItem('ash-v2');fresh();return false}return true}
-function hit(mult=1){let b=s.battle;if(!b)return;let dmg=Math.round((power()*.22+Math.random()*7)*mult);b.hp-=dmg;write('Армия наносит '+dmg+' урона.');finishOrEnemy()}
-function finishOrEnemy(){let b=s.battle;if(b.hp<=0){s.gold+=b.e.r;s.xp+=b.e.xp;if(b.e.boss)s.quest.boss=true;delete s.objs[b.k];write('Победа! +'+b.e.r+' золота, +'+b.e.xp+' опыта.');s.battle=null;$('battle').classList.add('hidden');levelUp();render();return}b.round++;if(enemyTurn())render()}
-function levelUp(){while(s.xp>=s.level*100){s.level++;s.atk++;s.def++;s.magic++;s.mana+=5;write('Уровень '+s.level+'! Основные характеристики выросли.')}}
-$('attack').onclick=()=>hit(1);$('spell').onclick=()=>{if(!s.battle)return;if(s.mana<4){write('Недостаточно маны.');return}s.mana-=4;s.battle.hp-=18+s.magic*12;write('Огненный шар поражает врага.');finishOrEnemy()};$('defend').onclick=()=>{if(!s.battle)return;s.battle.guard=true;write('Армия занимает оборону.');s.battle.round++;if(enemyTurn())render()};$('retreat').onclick=()=>{if(!s.battle)return;s.gold=Math.max(0,s.gold-250);s.battle=null;$('battle').classList.add('hidden');write('Отступление. Потеряно 250 золота.');render()};
-$('end').onclick=()=>{s.day++;s.moves=12;s.gold+=250;if(s.mine)s.ore+=2;s.mana=Math.min(10+s.knowledge*5,s.mana+3);write('Наступил день '+s.day+'. Казна получила 250 золота.');render()};
-$('town').onclick=()=>{if(K(s.x,s.y)!=='1,1'){write('Город можно открыть только из Светогорска.');return}$('townPanel').classList.toggle('hidden')};$('save').onclick=()=>{persist();write('Игра сохранена.')};
-const buildings={barracks:['🛡️ Казармы',700,3,0],range:['🏹 Стрельбище',900,4,0],stable:['🐎 Конюшни',1400,3,3],mage:['🔮 Гильдия магов',1100,2,2]};
-function renderTown(){let box=$('buildings');box.innerHTML='';Object.entries(buildings).forEach(([k,v])=>{let b=document.createElement('button');b.className='building'+(s.build[k]?' built':'');b.innerHTML='<b>'+v[0]+'</b><br><span class=small>'+(s.build[k]?'Построено':`${v[1]}💰 ${v[2]}🪵 ${v[3]}🪨`)+'</span>';b.disabled=s.build[k];b.onclick=()=>{if(s.gold<v[1]||s.wood<v[2]||s.ore<v[3]){write('Не хватает ресурсов.');return}s.gold-=v[1];s.wood-=v[2];s.ore-=v[3];s.build[k]=true;if(k==='mage'){s.magic++;s.mana+=5}write('Построено: '+v[0]);render()};box.appendChild(b)});let r=$('recruits');r.innerHTML='';[['pikes','🗡️ 8 копейщиков',320,'barracks',8],['bows','🏹 5 стрелков',500,'range',5],['cavs','🐎 2 рыцаря',900,'stable',2]].forEach(v=>{let b=document.createElement('button');b.className='building';b.innerHTML='<b>'+v[1]+'</b><br><span class=small>'+v[2]+' золота</span>';b.disabled=!s.build[v[3]];b.onclick=()=>{if(s.gold<v[2]){write('Не хватает золота.');return}s.gold-=v[2];s[v[0]]+=v[4];render()};r.appendChild(b)})}
-document.querySelectorAll('[data-tab]').forEach(b=>b.onclick=()=>{let build=b.dataset.tab==='build';$('buildPane').classList.toggle('hidden',!build);$('recruitPane').classList.toggle('hidden',build);document.querySelectorAll('[data-tab]').forEach(x=>x.classList.toggle('gold',x===b))});
-function renderQuest(){$('quests').innerHTML=`<div class=quest>${s.quest.mine?'✅':'⬜'} Захватить железную шахту</div><div class=quest>${s.quest.boss?'✅':'⬜'} Победить Некроманта</div>`+(s.quest.boss?'<div class=quest><b>🏆 Победа! Северные земли освобождены.</b></div>':'')}
-if(!restore())fresh();else{reveal();render();write('Сохранение загружено.')}
+function terr(x,y){if((y===3&&x>7)||(y===7&&x<3))return ['water','🌊'];if((x===6&&y>6)||(x===0&&y<4))return ['rock','⛰️'];if((x===1&&y<7)||(y===5&&x<10))return ['road','▫️'];return ['',terrains[(x*5+y*3)%terrains.length]]}
+function armyPower(){
+ let p=s.pikes*unitDefs.pikes.power+s.bows*unitDefs.bows.power+s.cavs*unitDefs.cavs.power+s.monks*unitDefs.monks.power+s.griffins*unitDefs.griffins.power+s.atk*5+s.def*2;
+ if(s.skills.leadership)p*=1.10;if(s.skills.archery)p+=s.bows*unitDefs.bows.power*.15;return p;
+}
+function render(){
+ ['gold','wood','ore','gems','crystal','day','week','atk','def','magic','knowledge','level','xp','mana','manaMax'].forEach(k=>$(k).textContent=s[k]);
+ $('levelMini').textContent=s.level;$('armyPower').textContent=Math.round(armyPower());$('moveBar').style.width=Math.round((s.moves/s.maxMoves)*100)+'%';
+ renderMap();renderTown();renderHero();renderMagic();renderQuests();save();
+}
+function renderMap(){
+ const m=$('map');m.innerHTML='';
+ for(let y=0;y<H;y++)for(let x=0;x<W;x++){
+  let b=document.createElement('button'),seen=s.seen.includes(K(x,y)),o=s.objects[K(x,y)],[cl,ico]=terr(x,y);
+  b.className='tile'+(cl?' '+cl:'')+(seen?'':' fog');
+  if(x===s.x&&y===s.y){b.textContent='🧙';b.classList.add('hero')}
+  else if(seen&&x===s.enemyX&&y===s.enemyY&&!s.quest.boss){b.textContent='🧛';b.classList.add('enemyHero')}
+  else b.textContent=seen?(o?o.i:ico):'';
+  b.addEventListener('click',()=>move(x,y));m.appendChild(b)
+ }
+}
+function move(x,y){
+ if(s.battle)return;let d=Math.abs(x-s.x)+Math.abs(y-s.y);
+ if(d!==1){log('Можно идти только на соседнюю клетку.');renderQuests();return}
+ if(s.moves<1){log('Очки передвижения закончились.');renderQuests();return}
+ let [cl]=terr(x,y);if(cl==='water'||cl==='rock'){log('Этот участок непроходим.');renderQuests();return}
+ s.x=x;s.y=y;s.moves--;reveal();let o=s.objects[K(x,y)];if(o)eventObject(o,K(x,y));render();
+}
+function eventObject(o,k){
+ if(['gold','wood','ore','gems','crystal'].includes(o.t)){s[o.t]+=o.v;delete s.objects[k];log(`Получено: ${o.v} ед. ресурса.`)}
+ else if(o.t==='mine'){s.mines[o.kind]=true;s.quest.mine=true;delete s.objects[k];log('Шахта захвачена и теперь приносит доход ежедневно.')}
+ else if(o.t==='artifact'){s[o.stat]+=o.v;s.artifacts.push({name:o.name,ico:o.i});s.quest.artifact=true;delete s.objects[k];log(`Найден артефакт «${o.name}».`)}
+ else if(o.t==='shrine'){s.magic++;s.manaMax+=4;s.mana=s.manaMax;delete s.objects[k];log('Древнее святилище усилило магию Ардена.')}
+ else if(o.t==='chest'){delete s.objects[k];if(Math.random()<.5){s.gold+=900;log('В сундуке найдено 900 золота.')}else{s.xp+=75;log('Арден получает 75 опыта из древних хроник.');checkLevel()}}
+ else if(o.t==='enemy')startBattle(o,k)
+}
+function startBattle(e,k){s.battle={e,k,hp:e.hp,round:1,guard:false};$('battleModal').classList.remove('hidden');renderBattle()}
+function renderBattle(){
+ let b=s.battle;if(!b)return;$('battleRound').textContent='Раунд '+b.round;$('battleName').textContent=b.e.name;
+ $('battleStats').textContent=`Враг: ${Math.max(0,Math.round(b.hp))} HP · Мана: ${s.mana}/${s.manaMax} · Сила армии: ${Math.round(armyPower())}`;
+ let f=$('battlefield');f.innerHTML='';for(let i=0;i<35;i++){let d=document.createElement('div');d.className='hex';
+ if(i===28){d.classList.add('friend');d.textContent='🗡️'}if(i===29){d.classList.add('friend');d.textContent='🏹'}if(i===30&&s.cavs){d.classList.add('friend');d.textContent='🐎'}
+ if(i===31&&s.monks){d.classList.add('friend');d.textContent='⛪'}if(i===32&&s.griffins){d.classList.add('friend');d.textContent='🦅'}
+ if(i===5){d.classList.add('enemy');d.textContent=b.e.i}f.appendChild(d)}
+}
+function damageLoss(points){
+ let loss=points;while(loss>0&&s.pikes){s.pikes--;loss--}while(loss>0&&s.bows){s.bows--;loss-=2}
+ while(loss>0&&s.cavs){s.cavs--;loss-=4}while(loss>0&&s.monks){s.monks--;loss-=5}while(loss>0&&s.griffins){s.griffins--;loss-=7}
+}
+function enemyTurn(){
+ let b=s.battle;if(!b)return false;let dmg=Math.max(1,Math.round(b.e.p*.13+Math.random()*4-s.def*.45));
+ if(b.guard)dmg=Math.ceil(dmg*.52);if(s.skills.resistance)dmg=Math.ceil(dmg*.9);b.guard=false;damageLoss(dmg);log(`${b.e.name}: потери армии ${dmg}.`);
+ if(totalUnits()<=0){alert('Армия разгромлена. Поход будет начат заново.');localStorage.removeItem('ash-v3');$('battleModal').classList.add('hidden');fresh();return false}return true
+}
+function totalUnits(){return s.pikes+s.bows+s.cavs+s.monks+s.griffins}
+function attack(mult=1){
+ let b=s.battle;if(!b)return;let dmg=Math.round((armyPower()*.21+Math.random()*8)*mult);b.hp-=dmg;log(`Армия наносит ${dmg} урона.`);finishOrEnemy();
+}
+function finishOrEnemy(){
+ let b=s.battle;if(b.hp<=0){s.gold+=b.e.reward;s.xp+=b.e.xp;if(b.e.boss){s.quest.boss=true;s.enemyX=-1;s.enemyY=-1}
+ delete s.objects[b.k];log(`Победа над ${b.e.name}. +${b.e.reward} золота, +${b.e.xp} опыта.`);let txt=`${b.e.name} повержен.<br><br>🪙 +${b.e.reward}<br>⭐ +${b.e.xp} опыта`;s.battle=null;$('battleModal').classList.add('hidden');$('rewardText').innerHTML=txt;$('rewardModal').classList.remove('hidden');checkLevel();render();return}
+ b.round++;if(enemyTurn()){renderBattle();renderHero();renderQuests();save()}
+}
+function checkLevel(){
+ let need=s.level*100;if(s.xp>=need){s.level++;s.atk++;s.def++;showLevelChoices()}
+}
+function showLevelChoices(){
+ let keys=Object.keys(skillDefs).filter(k=>!s.skills[k]);if(!keys.length)return;
+ keys.sort(()=>Math.random()-.5);let picks=keys.slice(0,2),box=$('levelChoices');box.innerHTML='';
+ picks.forEach(k=>{let d=skillDefs[k],b=document.createElement('button');b.className='btn';b.innerHTML=`<b>${d.name}</b><br><span class=small>${d.desc}</span>`;
+ b.onclick=()=>{s.skills[k]=1;if(k==='logistics'){s.maxMoves+=2;s.moves+=2}if(k==='wisdom'){s.manaMax+=5;s.mana+=5}$('levelModal').classList.add('hidden');log('Изучен навык: '+d.name+'.');render()};box.appendChild(b)});
+ $('levelModal').classList.remove('hidden');
+}
+function nextDay(){
+ s.day++;if(s.day%7===1){s.week++;Object.keys(s.available).forEach(k=>s.available[k]+=s.buildings[unitDefs[k].req]?s.weekly[k]:0);log(`Началась неделя ${s.week}. В городе появились новые войска.`)}
+ s.maxMoves=12+(s.skills.logistics?2:0);s.moves=s.maxMoves;s.gold+=250+(s.skills.estates?150:0);if(s.mines.ore)s.ore+=2;if(s.mines.gems)s.gems+=1;
+ s.mana=Math.min(s.manaMax,s.mana+3+s.knowledge);enemyAI();log(`День ${s.day}: казна получила ежедневный доход.`);render();
+}
+function enemyAI(){
+ if(s.quest.boss)return;
+ let tx=s.x,ty=s.y,dx=Math.sign(tx-s.enemyX),dy=Math.sign(ty-s.enemyY);
+ if(Math.random()<.55)s.enemyX=Math.max(0,Math.min(W-1,s.enemyX+dx));else s.enemyY=Math.max(0,Math.min(H-1,s.enemyY+dy));
+ if(Math.abs(s.enemyX-s.x)+Math.abs(s.enemyY-s.y)<=1){let boss=s.objects['12,8'];if(boss){log('Морвейн приблизился к Ардену. Его армия становится опаснее.');boss.hp+=8;boss.p+=1}}
+}
+function renderTown(){
+ const box=$('buildings');box.innerHTML='';Object.entries(buildDefs).forEach(([k,d])=>{
+ let b=document.createElement('button');b.className='btn building'+(s.buildings[k]?' built':'');let req=d.req&&!s.buildings[d.req];
+ b.innerHTML=`<span class=ico>${d.ico}</span><b>${d.name}</b><br><span class=small>${s.buildings[k]?'Построено':`${d.cost[0]}🪙 ${d.cost[1]}🪵 ${d.cost[2]}🪨`}</span>${req?'<span class=badge>🔒</span>':''}`;
+ b.disabled=s.buildings[k]||req;b.onclick=()=>build(k);box.appendChild(b)
+ });
+ const r=$('recruits');r.innerHTML='';Object.entries(unitDefs).forEach(([k,d])=>{
+ let b=document.createElement('button');b.className='btn unit-card';let unlocked=s.buildings[d.req];
+ b.innerHTML=`<div class=ico>${d.ico}</div><b>${d.name}</b><span class=small>${unlocked?`Доступно: ${s.available[k]}<br>${d.qty} за ${d.cost}🪙`:'🔒 Нужно здание'}</span>`;
+ b.disabled=!unlocked||s.available[k]<d.qty;b.onclick=()=>recruit(k);r.appendChild(b)
+ })
+}
+function build(k){let d=buildDefs[k];if(s.gold<d.cost[0]||s.wood<d.cost[1]||s.ore<d.cost[2]){log('Недостаточно ресурсов для строительства.');renderQuests();return}
+ s.gold-=d.cost[0];s.wood-=d.cost[1];s.ore-=d.cost[2];s.buildings[k]=true;if(k==='mage'){s.magic++;s.manaMax+=5;s.mana=s.manaMax}
+ Object.entries(unitDefs).forEach(([u,ud])=>{if(ud.req===k)s.available[u]+=s.weekly[u]});log('Построено: '+d.name+'.');render()
+}
+function recruit(k){let d=unitDefs[k];if(s.gold<d.cost){log('Недостаточно золота.');renderQuests();return}s.gold-=d.cost;s[k]+=d.qty;s.available[k]-=d.qty;log(`Нанято: ${d.name} ×${d.qty}.`);render()}
+function renderHero(){
+ $('artifacts').innerHTML='';for(let i=0;i<8;i++){let a=s.artifacts[i],d=document.createElement('div');d.className='slot';d.textContent=a?a.ico:'·';d.title=a?a.name:'Пустой слот';$('artifacts').appendChild(d)}
+ $('skills').innerHTML=Object.keys(s.skills).length?Object.keys(s.skills).map(k=>`<div class=skill><b>${skillDefs[k].name}</b><div class=small>${skillDefs[k].desc}</div></div>`).join(''):'<div class=small>Навыки появятся при повышении уровня.</div>';
+ $('armyCards').innerHTML='';Object.entries(unitDefs).forEach(([k,d])=>{let c=document.createElement('div');c.className='card unit-card';c.innerHTML=`<div class=ico>${d.ico}</div><b>${s[k]}</b><span class=small>${d.name}</span>`;$('armyCards').appendChild(c)})
+}
+function renderMagic(){
+ let spells=[['🔥','Огненный шар','4 маны','Наносит прямой урон в бою.'],['✨','Благословение','5 маны','В будущей версии усилит армию на 3 раунда.'],['🌩️','Цепная молния','8 маны','Откроется после Гильдии магов II.']];
+ $('spellList').innerHTML=spells.map((x,i)=>`<div class="card spell"><div class=ico>${x[0]}</div><div><b>${x[1]}</b><div class=small>${x[2]} · ${x[3]}</div></div></div>`).join('')
+}
+function renderQuests(){
+ $('questList').innerHTML=[
+  ['mine','Захватить любую шахту','Получить постоянный ежедневный доход.'],
+  ['artifact','Найти древний артефакт','Усилить Ардена перед решающей битвой.'],
+  ['boss','Победить Некроманта Морвейна','Освободить Северные земли.']
+ ].map(([k,n,d])=>`<div class="quest ${s.quest[k]?'done':''}">${s.quest[k]?'✅':'⬜'} <b>${n}</b><div class=small>${d}</div></div>`).join('');
+ $('log').innerHTML=s.logs.map(x=>`<div>${x}</div>`).join('')
+}
+function switchScreen(name){
+ document.querySelectorAll('.screen').forEach(x=>x.classList.remove('active'));$('screen-'+name).classList.add('active');
+ document.querySelectorAll('.nav button').forEach(x=>x.classList.toggle('active',x.dataset.screen===name));
+}
+document.querySelectorAll('.nav button').forEach(b=>b.onclick=()=>switchScreen(b.dataset.screen));
+$('endDay').onclick=nextDay;$('saveBtn').onclick=()=>{save();log('Игра сохранена.');renderQuests()};
+$('battleAttack').onclick=()=>attack(1);
+$('battleSpell').onclick=()=>{if(!s.battle)return;if(s.mana<4){log('Недостаточно маны.');renderQuests();return}s.mana-=4;s.battle.hp-=20+s.magic*13;log('Огненный шар поражает врага.');finishOrEnemy()};
+$('battleDefend').onclick=()=>{if(!s.battle)return;s.battle.guard=true;s.battle.round++;log('Армия занимает оборону.');if(enemyTurn())renderBattle()};
+$('battleRetreat').onclick=()=>{if(!s.battle)return;s.gold=Math.max(0,s.gold-300);s.battle=null;$('battleModal').classList.add('hidden');log('Арден отступил. Потеряно 300 золота.');render()};
+$('rewardClose').onclick=()=>$('rewardModal').classList.add('hidden');
+if(!load())fresh();else{reveal();log('Сохранение 3.0 загружено.');render()}
 if('serviceWorker'in navigator)navigator.serviceWorker.register('./sw.js').catch(()=>{});
 })();
-</script></body></html>
+</script>
+</body></html>
