@@ -3,228 +3,158 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
-<meta name="theme-color" content="#0b0e0b">
+<meta name="theme-color" content="#090c09">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Королевства Пепла">
-<link rel="manifest" href="manifest.webmanifest">
-<link rel="apple-touch-icon" href="icon-180.png">
-<title>Королевства Пепла V</title>
+<link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="icon-180.png">
+<title>Королевства Пепла 6.0 — Canvas Edition</title>
 <style>
-:root{
- --bg:#070907;--panel:#101611;--panel2:#192219;--line:#7d642c;--line2:#394637;
- --gold:#dfb75f;--text:#f5ecd9;--muted:#b9b19f;--red:#874038;--blue:#2d557a;--green:#365b35
-}
+:root{--gold:#ddb45c;--text:#f4ecd8;--muted:#b8af9c;--line:#735b29;--panel:#101611;--panel2:#192219}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-html,body{margin:0;background:#050705;color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
-body{padding:env(safe-area-inset-top) 0 env(safe-area-inset-bottom)}
-button{font:inherit;color:inherit}.app{max-width:1100px;margin:auto;background:#080b08;min-height:100%}
-.top{display:flex;gap:4px;align-items:center;overflow:auto;padding:6px;background:linear-gradient(#171d17,#0c100d);border-bottom:1px solid var(--line)}
-.r{white-space:nowrap;border:1px solid #5f502c;background:#171d17;border-radius:5px;padding:5px 7px;font-size:12px}.grow{flex:1}
-.screen{display:none}.screen.active{display:block}
-.world{height:72vh;min-height:540px;position:relative;overflow:auto;background:#0b0f0b}
-.world:before{content:"";position:absolute;inset:0;background:url('world.jpg') center/cover no-repeat;opacity:.34;filter:saturate(.9) brightness(.72)}
-.map{position:relative;z-index:1;display:grid;grid-template-columns:repeat(15,58px);grid-auto-rows:58px;gap:1px;padding:9px;width:max-content}
-.tile{position:relative;border:0;border-radius:3px;background:rgba(55,79,43,.68);overflow:hidden}
-.tile.road{background:rgba(111,93,55,.68)}.tile.water{background:rgba(42,77,88,.76)}.tile.mountain{background:rgba(73,74,67,.76)}
-.tile.fog{background:#050705!important}.tile.fog>*{visibility:hidden}.tile.fog:after{content:"";position:absolute;inset:-2px;background:radial-gradient(circle,#111811 0,#050705 70%)}
-.tile.reachable{box-shadow:inset 0 0 0 2px rgba(229,190,92,.7)}.tile.selected{outline:3px solid var(--gold);z-index:4}
-.obj{position:absolute;inset:4px;border-radius:5px;background-size:cover;background-position:center;box-shadow:0 2px 4px #0008}.obj.hero{background-image:url('hero.jpg');background-position:50% 18%}.obj.enemyHero{background-image:url('necromancer.jpg')}
-.obj.castle{background-image:url('castle.jpg')}.obj.mine{background-image:url('mine.jpg')}.obj.sawmill{background-image:url('sawmill.jpg')}.obj.chest{background-image:url('chest.jpg')}.obj.portal{background-image:url('portal.jpg')}
-.obj.orc{background-image:url('orc.jpg')}.obj.wolf{background-image:url('wolf.jpg')}.obj.necro{background-image:url('necromancer.jpg')}
-.badge{position:absolute;right:1px;bottom:1px;z-index:5;background:#050705dd;border:1px solid #75602e;border-radius:5px;padding:1px 4px;font-size:10px}
-.hud{position:absolute;z-index:5;left:8px;right:8px;bottom:8px;display:flex;gap:7px;pointer-events:none}
-.hcard{pointer-events:auto;background:#0a0e0bd9;border:1px solid var(--line);border-radius:8px;padding:7px;backdrop-filter:blur(5px)}
-.hm{display:grid;grid-template-columns:40px 1fr;gap:6px;min-width:185px}.hm img{width:40px;height:40px;object-fit:cover;border-radius:5px;border:1px solid #886c30}
-.progress{height:5px;background:#050705;border-radius:4px;overflow:hidden;margin-top:4px}.progress i{display:block;height:100%;background:var(--gold)}
-.hactions{display:flex;gap:5px;margin-left:auto;pointer-events:auto}.ib{min-width:44px;height:44px;border:1px solid var(--line);border-radius:7px;background:#1a2119;font-size:20px;padding:0 10px;pointer-events:auto;touch-action:manipulation}
-.nav{display:grid;grid-template-columns:repeat(5,1fr);background:#0e130f;border-top:1px solid var(--line)}.nav button{min-height:58px;border:0;border-right:1px solid #2c342b;background:#111711;font-size:11px;padding:6px 2px}.nav b{display:block;font-size:21px}.nav button.active{background:#312817;color:#f0ca72}
-.panel{margin:8px;border:1px solid var(--line);background:linear-gradient(#1b241b,#0e140f);border-radius:10px;padding:10px}.title{font-size:19px;font-weight:800;margin-bottom:8px}.small{font-size:12px;color:var(--muted)}.row{display:flex;justify-content:space-between;gap:8px}.grid{display:grid;gap:7px}.g2{grid-template-columns:repeat(2,1fr)}.g3{grid-template-columns:repeat(3,1fr)}
-.btn{min-height:44px;border:1px solid var(--line);background:#1b241b;border-radius:7px;padding:8px}.btn.gold{background:#57431d}.btn.red{background:#4b2924}.btn:disabled{opacity:.42}
-.heroPane{display:grid;grid-template-columns:110px 1fr;gap:10px}.heroPane img{width:110px;height:150px;object-fit:cover;border-radius:7px;border:1px solid var(--line)}
-.unitcard{border:1px solid var(--line2);border-radius:8px;overflow:hidden;background:#151d16}.unitcard img{width:100%;height:92px;object-fit:cover;display:block}.unitcard .txt{padding:6px;text-align:center}.unitcard b{display:block;font-size:17px}
-.cityArt{height:200px;border:1px solid var(--line);border-radius:8px;background:url('city.jpg') center/cover no-repeat}
-.building{position:relative;text-align:left}.built{border-color:#b48f43;background:#332b1b}.lock{position:absolute;right:6px;top:5px}
-.skill{border-left:3px solid var(--gold);padding-left:8px;margin:7px 0}.quest{border:1px solid var(--line2);border-radius:7px;padding:8px;margin-bottom:6px}.quest.done{opacity:.6}.log{max-height:190px;overflow:auto;font-size:12px;line-height:1.45}
-.modal{position:fixed;inset:0;z-index:30;background:#000d;display:flex;align-items:center;justify-content:center;padding:10px}.modal.hidden{display:none}.dialog{width:min(820px,100%);max-height:94vh;overflow:auto;border:1px solid var(--line);border-radius:10px;background:#0d120e;padding:10px}
-.battleArt{position:relative;height:280px;border-radius:8px;overflow:hidden;background:url('battlefield.jpg') center/cover no-repeat;border:1px solid var(--line)}
-.bgrid{position:absolute;inset:8px;display:grid;grid-template-columns:repeat(8,1fr);grid-template-rows:repeat(5,1fr);gap:3px}.cell{position:relative;border:1px solid rgba(226,201,111,.28);border-radius:9px;background:rgba(35,49,29,.16)}.cell.move{background:rgba(74,115,64,.32);border-color:#739267}.cell.attack{background:rgba(129,55,45,.33);border-color:#a66050}.cell.sel{outline:2px solid var(--gold)}
+html,body{margin:0;background:#050705;color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;overflow:hidden}
+button{font:inherit;color:inherit;touch-action:manipulation}
+.app{height:100dvh;max-width:1100px;margin:auto;background:#070a07;display:flex;flex-direction:column}
+.top{display:flex;gap:4px;align-items:center;overflow:auto;padding:calc(6px + env(safe-area-inset-top)) 6px 6px;background:linear-gradient(#171d17,#0c100d);border-bottom:1px solid var(--line);z-index:20;flex:0 0 auto}
+.r{white-space:nowrap;border:1px solid #5f502c;background:#171d17;border-radius:6px;padding:5px 7px;font-size:12px}.grow{flex:1}
+.main{position:relative;flex:1;min-height:0;overflow:hidden}.screen{position:absolute;inset:0;display:none;overflow:auto;background:#080b08}.screen.active{display:block}
+#s-map{overflow:hidden;background:#050705}
+#mapCanvas{position:absolute;inset:0;width:100%;height:100%;touch-action:none;background:#0a0e0a}
+.mapHud{position:absolute;left:8px;right:8px;bottom:8px;display:flex;gap:7px;align-items:flex-end;pointer-events:none;z-index:8}
+.heroCard{pointer-events:auto;background:rgba(8,12,9,.91);border:1px solid var(--line);border-radius:10px;padding:7px;display:grid;grid-template-columns:44px 1fr;gap:7px;min-width:205px;box-shadow:0 7px 22px #0008;backdrop-filter:blur(6px)}
+.heroCard img{width:44px;height:44px;border-radius:7px;object-fit:cover;border:1px solid #8e7130}.small{font-size:12px;color:var(--muted)}
+.progress{height:5px;background:#050705;border-radius:5px;overflow:hidden;margin-top:4px}.progress i{display:block;height:100%;background:var(--gold)}
+.mapBtns{margin-left:auto;display:grid;gap:6px;pointer-events:auto}.roundBtn{width:44px;height:44px;border-radius:9px;border:1px solid var(--line);background:#182018;font-size:21px}
+.nextDay{position:absolute;right:8px;bottom:72px;z-index:9;min-height:48px;padding:9px 14px;border:1px solid #a9863b;border-radius:10px;background:linear-gradient(#695124,#453514);font-weight:800;color:#fff1c5;box-shadow:0 6px 18px #0009;touch-action:manipulation}
+.zoom{position:absolute;left:8px;top:8px;z-index:9;display:flex;gap:5px}.zoom button{width:40px;height:40px;border:1px solid var(--line);border-radius:9px;background:#101710de;font-size:20px}
+.panel{margin:8px;border:1px solid var(--line);background:linear-gradient(#1b241b,#0e140f);border-radius:10px;padding:10px}.title{font-size:19px;font-weight:800;margin-bottom:8px}.row{display:flex;justify-content:space-between;gap:8px}.grid{display:grid;gap:7px}.g2{grid-template-columns:repeat(2,1fr)}.g3{grid-template-columns:repeat(3,1fr)}
+.btn{min-height:44px;border:1px solid var(--line);background:#1b241b;border-radius:8px;padding:8px}.btn.gold{background:#57431d}.btn.red{background:#4b2924}.btn.blue{background:#233f55}.btn:disabled{opacity:.42}
+.heroSelect{display:grid;grid-template-columns:repeat(2,1fr);gap:7px}.heroBtn{display:grid;grid-template-columns:52px 1fr;gap:8px;align-items:center;text-align:left}.heroBtn img{width:52px;height:62px;object-fit:cover;border-radius:7px}.heroBtn.active{border-color:var(--gold);background:#302918}
+.heroPane{display:grid;grid-template-columns:110px 1fr;gap:10px}.heroPane img{width:110px;height:150px;object-fit:cover;border-radius:8px;border:1px solid var(--line)}
+.unitcard{border:1px solid #3c473a;border-radius:8px;overflow:hidden;background:#151d16}.unitcard img{width:100%;height:92px;object-fit:cover;display:block}.unitcard .txt{padding:6px;text-align:center}.unitcard b{display:block;font-size:17px}
+.cityArt{height:205px;border:1px solid var(--line);border-radius:8px;background:url('city.jpg') center/cover no-repeat}.building{position:relative;text-align:left}.built{border-color:#b48f43;background:#332b1b}.lock{position:absolute;right:6px;top:5px}
+.skill{border-left:3px solid var(--gold);padding-left:8px;margin:7px 0}.quest{border:1px solid #3c473a;border-radius:7px;padding:8px;margin-bottom:6px}.quest.done{opacity:.6}.log{max-height:230px;overflow:auto;font-size:12px;line-height:1.45}
+.nav{display:grid;grid-template-columns:repeat(6,1fr);background:#0e130f;border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom);flex:0 0 auto;z-index:20}
+.nav button{min-height:59px;border:0;border-right:1px solid #2c342b;background:#111711;font-size:10px;padding:6px 2px}.nav b{display:block;font-size:20px}.nav button.active{background:#312817;color:#f0ca72}
+.modal{position:fixed;inset:0;z-index:40;background:#000d;display:flex;align-items:center;justify-content:center;padding:10px}.modal.hidden{display:none}.dialog{width:min(850px,100%);max-height:94vh;overflow:auto;border:1px solid var(--line);border-radius:10px;background:#0d120e;padding:10px}
+.battleArt{position:relative;height:300px;border-radius:8px;overflow:hidden;background:url('battlefield.jpg') center/cover no-repeat;border:1px solid var(--line)}.bgrid{position:absolute;inset:8px;display:grid;grid-template-columns:repeat(8,1fr);grid-template-rows:repeat(5,1fr);gap:3px}.cell{position:relative;border:1px solid rgba(226,201,111,.28);border-radius:9px;background:rgba(35,49,29,.16)}.cell.move{background:rgba(74,115,64,.32);border-color:#739267}.cell.attack{background:rgba(129,55,45,.33);border-color:#a66050}.cell.sel{outline:2px solid var(--gold)}
 .stack{position:absolute;inset:2px;border-radius:8px;background-size:cover;background-position:center;border:1px solid #0009}.stack.player{box-shadow:0 0 0 2px #557d9b}.stack.enemy{box-shadow:0 0 0 2px #9b554b}.stack .qty{position:absolute;right:1px;bottom:1px;background:#050705e8;border-radius:4px;padding:1px 4px;font-size:10px}
-.turnbar{display:flex;gap:5px;overflow:auto;margin:8px 0}.turnchip{min-width:50px;border:1px solid var(--line2);background:#161d17;border-radius:7px;padding:4px;text-align:center;font-size:10px}.turnchip.active{border-color:var(--gold)}
-.hidden{display:none!important}
-.dayAction{position:absolute;z-index:6;right:8px;bottom:62px;pointer-events:auto}
-.dayBtn{min-height:46px;border:1px solid #a8873b;border-radius:9px;background:linear-gradient(#6b5425,#473715);color:#fff2c9;padding:9px 13px;font-weight:800;box-shadow:0 4px 12px #0008;touch-action:manipulation}
-.toast{position:fixed;z-index:60;left:50%;top:calc(env(safe-area-inset-top) + 12px);transform:translateX(-50%);max-width:92%;background:#121812ef;border:1px solid var(--gold);border-radius:9px;padding:9px 12px;color:var(--text);font-size:13px;box-shadow:0 5px 18px #000a;opacity:0;pointer-events:none;transition:opacity .18s}
-.toast.show{opacity:1}
-.income{font-size:11px;color:#dbc57f}
-
-@media(min-width:760px){.world{height:75vh}.map{grid-template-columns:repeat(15,66px);grid-auto-rows:66px}.battleArt{height:390px}}
-</style>
-</head><body><main class="app">
+.turnbar{display:flex;gap:5px;overflow:auto;margin:8px 0}.turnchip{min-width:50px;border:1px solid #3c473a;background:#161d17;border-radius:7px;padding:4px;text-align:center;font-size:10px}.turnchip.active{border-color:var(--gold)}
+.toast{position:fixed;z-index:70;left:50%;top:calc(env(safe-area-inset-top) + 12px);transform:translateX(-50%);max-width:92%;background:#121812ef;border:1px solid var(--gold);border-radius:9px;padding:9px 12px;box-shadow:0 6px 18px #0009;opacity:0;pointer-events:none;transition:opacity .18s}.toast.show{opacity:1}
+</style></head>
+<body><main class="app">
 <div class="top"><span class="r">🪙 <b id="gold"></b></span><span class="r">🪵 <b id="wood"></b></span><span class="r">🪨 <b id="ore"></b></span><span class="r">💎 <b id="gems"></b></span><span class="r">🔮 <b id="crystal"></b></span><span class="grow"></span><span class="r">☀️ День <b id="day"></b> · Нед. <b id="week"></b> · Мес. <b id="month"></b></span></div>
+<div class="main">
+<section class="screen active" id="s-map">
+<canvas id="mapCanvas"></canvas>
+<div class="zoom"><button id="zoomOut">−</button><button id="zoomIn">＋</button></div>
+<button class="nextDay" id="endDay">⌛ Следующий день</button>
+<div class="mapHud"><div class="heroCard"><img id="hudPortrait"><div><b id="hudName"></b><div class="small">Ур. <span id="lvlm"></span> · армия <span id="pow"></span></div><div class="progress"><i id="mvbar"></i></div></div></div><div class="mapBtns"><button class="roundBtn" id="switchHero">👥</button><button class="roundBtn" id="save">💾</button></div></div>
+</section>
 
-<section class="screen active" id="s-map"><div class="world"><div class="map" id="map"></div>
-<div class="hud"><div class="hcard hm"><img src="hero.jpg"><div><b>Арден</b><div class="small">Ур. <span id="lvlm"></span> · армия <span id="pow"></span></div><div class="progress"><i id="mvbar"></i></div></div></div>
-<div class="hactions"><button class="ib" id="save" title="Сохранить">💾</button></div></div><div class="dayAction"><button class="dayBtn" id="endDay">⌛ Следующий день</button></div></div></section>
+<section class="screen" id="s-hero"><div class="panel"><div class="title">Герои</div><div class="heroSelect" id="heroSelect"></div></div><div class="panel heroPane"><img id="heroPortrait"><div><div class="title" id="heroName"></div><div class="small" id="heroClass"></div><div class="row"><span>Атака</span><b id="atk"></b></div><div class="row"><span>Защита</span><b id="def"></b></div><div class="row"><span>Магия</span><b id="magic"></b></div><div class="row"><span>Знания</span><b id="knowledge"></b></div><div class="small">Ур. <b id="level"></b> · Опыт <b id="xp"></b></div></div></div><div class="panel"><div class="title">Армия</div><div class="grid g3" id="army"></div></div><div class="panel"><div class="title">Навыки</div><div id="skills"></div></div><div class="panel"><div class="title">Артефакты</div><div id="artifacts"></div></div></section>
 
-<section class="screen" id="s-hero"><div class="panel heroPane"><img src="hero.jpg"><div><div class="title">Арден</div><div class="small">Рыцарь Стального Холма</div><div class="row"><span>Атака</span><b id="atk"></b></div><div class="row"><span>Защита</span><b id="def"></b></div><div class="row"><span>Магия</span><b id="magic"></b></div><div class="row"><span>Знания</span><b id="knowledge"></b></div><div class="small">Ур. <b id="level"></b> · Опыт <b id="xp"></b></div></div></div>
-<div class="panel"><div class="title">Армия</div><div class="grid g3" id="army"></div></div>
-<div class="panel"><div class="title">Навыки</div><div id="skills"></div></div></section>
-
-<section class="screen" id="s-town"><div class="panel"><div class="cityArt"></div><div class="title" style="margin-top:8px">Стальной Холм</div><div class="small">Еженедельный прирост армии зависит от построек.</div></div><div class="panel"><div class="title">Строительство</div><div class="grid g2" id="buildings"></div></div><div class="panel"><div class="title">Найм</div><div class="grid g3" id="recruits"></div></div></section>
+<section class="screen" id="s-town"><div class="panel"><div class="cityArt"></div><div class="title" style="margin-top:8px">Стальной Холм</div><div class="small">Столица северного королевства</div></div><div class="panel"><div class="title">Строительство</div><div class="grid g2" id="buildings"></div></div><div class="panel"><div class="title">Найм</div><div class="grid g3" id="recruits"></div></div></section>
 
 <section class="screen" id="s-magic"><div class="panel"><div class="title">Книга магии</div><div>Мана: <b id="mana"></b>/<b id="manaMax"></b></div></div><div class="panel grid" id="spells"></div></section>
 
-<section class="screen" id="s-quests"><div class="panel"><div class="title">Задания</div><div id="quests"></div><div class="income" id="incomeLine" style="margin-top:8px"></div></div><div class="panel"><div class="title">Журнал</div><div class="log" id="log"></div></div></section>
+<section class="screen" id="s-quests"><div class="panel"><div class="title">Кампания: Пепельный Север</div><div id="quests"></div></div><div class="panel"><div class="title">Журнал</div><div class="log" id="log"></div></div></section>
 
-<nav class="nav"><button data-s="map" class="active"><b>🗺️</b>Карта</button><button data-s="hero"><b>🛡️</b>Герой</button><button data-s="town"><b>🏰</b>Город</button><button data-s="magic"><b>📖</b>Магия</button><button data-s="quests"><b>📜</b>Задания</button></nav>
-</main><div class="toast" id="toast"></div>
+<section class="screen" id="s-settings"><div class="panel"><div class="title">Настройки</div><div class="grid"><button class="btn" id="soundToggle"></button><button class="btn" id="centerHero">🎯 Центрировать карту</button><button class="btn gold" id="manualSave">💾 Сохранить игру</button><button class="btn red" id="newGame">♻️ Новая игра</button></div></div></section>
+</div>
+<nav class="nav"><button data-s="map" class="active"><b>🗺️</b>Карта</button><button data-s="hero"><b>🛡️</b>Герои</button><button data-s="town"><b>🏰</b>Город</button><button data-s="magic"><b>📖</b>Магия</button><button data-s="quests"><b>📜</b>Кампания</button><button data-s="settings"><b>⚙️</b>Опции</button></nav>
+</main>
+<div class="toast" id="toast"></div>
 
-<div class="modal hidden" id="battleModal"><div class="dialog"><div class="row"><div class="title">Битва: <span id="battleName"></span></div><div class="small" id="battleRound"></div></div><div class="turnbar" id="turnbar"></div><div class="battleArt"><div class="bgrid" id="bgrid"></div></div><div class="small" id="battleHint" style="margin-top:6px"></div><div class="grid g2" style="margin-top:8px"><button class="btn gold" id="waitBtn">⏳ Ждать</button><button class="btn" id="defBtn">🛡️ Оборона</button><button class="btn" id="spellBtn">🔥 Огненный шар</button><button class="btn red" id="retreatBtn">Отступить</button></div></div></div>
+<div class="modal hidden" id="battleModal"><div class="dialog"><div class="row"><div class="title">Битва: <span id="battleName"></span></div><div class="small" id="battleRound"></div></div><div class="turnbar" id="turnbar"></div><div class="battleArt"><div class="bgrid" id="bgrid"></div></div><div class="small" id="battleHint" style="margin-top:6px"></div><div class="grid g2" style="margin-top:8px"><button class="btn gold" id="waitBtn">⏳ Ждать</button><button class="btn" id="defBtn">🛡️ Оборона</button><button class="btn blue" id="spellBtn">🔥 Заклинание</button><button class="btn red" id="retreatBtn">Отступить</button></div></div></div>
 <div class="modal hidden" id="levelModal"><div class="dialog"><div class="title">Новый уровень</div><div class="small">Выбери навык</div><div class="grid" id="levelChoices" style="margin-top:8px"></div></div></div>
+<div class="modal hidden" id="victoryModal"><div class="dialog"><div class="title">🏆 Победа</div><div>Морвейн повержен. Северные земли освобождены.</div><button class="btn gold" id="victoryClose" style="margin-top:10px">Продолжить</button></div></div>
 
 <script>
 (()=> {
-const $=id=>document.getElementById(id), W=15,H=12,K=(x,y)=>x+','+y;
-const units={
- pikes:{n:'Копейщики',img:'pikeman.jpg',p:1.25,hp:9,spd:3,range:1,cost:360,qty:8,req:'barracks'},
- bows:{n:'Стрелки',img:'archer.jpg',p:2.45,hp:7,spd:3,range:4,cost:540,qty:5,req:'range'},
- cavs:{n:'Рыцари',img:'cavalier.jpg',p:5.4,hp:18,spd:5,range:1,cost:980,qty:2,req:'stable'},
- griffins:{n:'Грифоны',img:'griffin.jpg',p:8.8,hp:28,spd:6,range:1,cost:1450,qty:1,req:'griffin'},
- mages:{n:'Маги',img:'mage.jpg',p:10.2,hp:20,spd:4,range:5,cost:1650,qty:1,req:'mage'}
-};
-const enemies={
- orcs:{n:'Орки',img:'orc.jpg',p:3.2,hp:14,spd:3,range:1},
- wolves:{n:'Волки',img:'wolf.jpg',p:4.0,hp:13,spd:5,range:1},
- skeletons:{n:'Скелеты',img:'skeleton.jpg',p:2.7,hp:10,spd:3,range:1},
- necros:{n:'Некроманты',img:'necromancer.jpg',p:9.5,hp:24,spd:3,range:5}
-};
-const objs={
- '1,1':{t:'castle',img:'castle'},
- '3,2':{t:'sawmill',img:'sawmill'},
- '6,1':{t:'mine',img:'mine'},
- '8,2':{t:'enemy',img:'orc',name:'Орочий дозор',stacks:[['orcs',12],['wolves',5]],reward:700,xp:65},
- '11,1':{t:'chest',img:'chest'},
- '4,5':{t:'portal',img:'portal'},
- '6,5':{t:'enemy',img:'wolf',name:'Стая кровавых волков',stacks:[['wolves',12],['orcs',7]],reward:950,xp:90},
- '10,6':{t:'chest',img:'chest'},
- '12,8':{t:'enemy',img:'necro',name:'Армия Морвейна',stacks:[['necros',6],['skeletons',22],['orcs',10]],reward:2400,xp:220,boss:true}
-};
-const builds={
- barracks:{n:'Казармы',cost:[800,3,0],req:null},range:{n:'Стрельбище',cost:[1000,4,0],req:'barracks'},stable:{n:'Конюшни',cost:[1500,3,3],req:'barracks'},griffin:{n:'Башня грифонов',cost:[2200,5,4],req:'stable'},mage:{n:'Гильдия магов',cost:[1800,4,3],req:'range'}
-};
+const $=id=>document.getElementById(id),W=18,H=14,K=(x,y)=>x+','+y;
+const WORLD_W=1800,WORLD_H=1400,CELL_W=WORLD_W/W,CELL_H=WORLD_H/H;
+const units={pikes:{n:'Копейщики',img:'pikeman.jpg',p:1.25,hp:9,spd:3,range:1,cost:360,qty:8,req:'barracks'},bows:{n:'Стрелки',img:'archer.jpg',p:2.45,hp:7,spd:3,range:4,cost:540,qty:5,req:'range'},cavs:{n:'Рыцари',img:'cavalier.jpg',p:5.4,hp:18,spd:5,range:1,cost:980,qty:2,req:'stable'},griffins:{n:'Грифоны',img:'griffin.jpg',p:8.8,hp:28,spd:6,range:1,cost:1450,qty:1,req:'griffin'},mages:{n:'Маги',img:'mage.jpg',p:10.2,hp:20,spd:4,range:5,cost:1650,qty:1,req:'mage'}};
+const enemies={orcs:{n:'Орки',img:'orc.jpg',p:3.2,hp:14,spd:3,range:1},wolves:{n:'Волки',img:'wolf.jpg',p:4,hp:13,spd:5,range:1},skeletons:{n:'Скелеты',img:'skeleton.jpg',p:2.7,hp:10,spd:3,range:1},necros:{n:'Некроманты',img:'necromancer.jpg',p:9.5,hp:24,spd:3,range:5}};
+const builds={barracks:{n:'Казармы',cost:[800,3,0],req:null},range:{n:'Стрельбище',cost:[1000,4,0],req:'barracks'},stable:{n:'Конюшни',cost:[1500,3,3],req:'barracks'},griffin:{n:'Башня грифонов',cost:[2200,5,4],req:'stable'},mage:{n:'Гильдия магов',cost:[1800,4,3],req:'range'},market:{n:'Рынок',cost:[1200,2,2],req:null},citadel:{n:'Цитадель',cost:[2600,6,6],req:'barracks'}};
 const skillDefs={logistics:['Логистика','+2 движения'],leadership:['Лидерство','+10% силы армии'],archery:['Стрельба','+15% урона стрелков'],wisdom:['Мудрость','+5 маны'],estates:['Поместья','+150 золота/день'],resistance:['Сопротивление','-10% входящего урона']};
-let s, selectedMap=null;
-function fresh(){
- s={x:1,y:1,ex:12,ey:9,gold:2600,wood:12,ore:9,gems:3,crystal:2,day:1,week:1,month:1,moves:12,maxMoves:12,atk:2,def:2,magic:1,knowledge:1,level:1,xp:0,mana:14,manaMax:14,
- pikes:24,bows:10,cavs:0,griffins:0,mages:0,seen:[],objects:JSON.parse(JSON.stringify(objs)),build:{barracks:false,range:false,stable:false,griffin:false,mage:false},avail:{pikes:16,bows:0,cavs:0,griffins:0,mages:0},skills:{},mines:{wood:false,ore:false},q:{wood:false,ore:false,boss:false},logs:[],battle:null};
- reveal();log('Арден покидает Стальной Холм. Морвейн укрепляется на востоке.');render()
+const artifactDefs={sword:{n:'Меч Стража',icon:'🗡️',stat:'atk',v:2},shield:{n:'Щит Серого Льва',icon:'🛡️',stat:'def',v:2},crown:{n:'Корона Мудрых',icon:'👑',stat:'magic',v:2}};
+const baseObjects={'1,1':{t:'castle',img:'castle.jpg',owner:'player',label:'Стальной Холм'},'3,3':{t:'sawmill',img:'sawmill.jpg',owner:null,label:'Лесопилка'},'6,2':{t:'mine',img:'mine.jpg',kind:'ore',owner:null,label:'Железная шахта'},'8,3':{t:'enemy',img:'orc.jpg',name:'Орочий дозор',stacks:[['orcs',12],['wolves',5]],reward:700,xp:65},'11,2':{t:'chest',img:'chest.jpg'},'4,6':{t:'portal',img:'portal.jpg'},'7,6':{t:'enemy',img:'wolf.jpg',name:'Стая кровавых волков',stacks:[['wolves',12],['orcs',7]],reward:950,xp:90},'10,7':{t:'artifact',img:'chest.jpg',artifact:'sword'},'14,4':{t:'mine',img:'mine.jpg',kind:'gems',owner:null,label:'Шахта самоцветов'},'15,9':{t:'artifact',img:'chest.jpg',artifact:'shield'},'12,11':{t:'enemy',img:'necromancer.jpg',name:'Легион Морвейна',stacks:[['necros',6],['skeletons',22],['orcs',10]],reward:2400,xp:220,boss:true},'16,11':{t:'artifact',img:'chest.jpg',artifact:'crown'}};
+const assetNames=['world-v6.jpg','hero.jpg','mage.jpg','castle.jpg','mine.jpg','sawmill.jpg','chest.jpg','portal.jpg','orc.jpg','wolf.jpg','necromancer.jpg','pikeman.jpg','archer.jpg','cavalier.jpg','griffin.jpg','skeleton.jpg'];
+const assets={};let s,cam={x:0,y:0,zoom:1},drag=null,toastTimer=null,routeTimer=null,audioCtx=null,mapReady=false;
+function loadAssets(){return Promise.all(assetNames.map(n=>new Promise(res=>{let im=new Image();im.onload=()=>{assets[n]=im;res()};im.onerror=res;im.src=n}))).then(()=>{mapReady=true;resizeCanvas();drawMap()})}
+function heroTemplate(name,cls,img,x,y,stats,army){return{name,cls,img,x,y,px:x*CELL_W+CELL_W/2,py:y*CELL_H+CELL_H/2,moves:12,maxMoves:12,atk:stats[0],def:stats[1],magic:stats[2],knowledge:stats[3],level:1,xp:0,mana:14,manaMax:14,skills:{},artifacts:[],army:{pikes:army[0],bows:army[1],cavs:army[2],griffins:army[3],mages:army[4]},route:[]}}
+function fresh(){s={gold:2800,wood:12,ore:10,gems:3,crystal:2,day:1,week:1,month:1,activeHero:'arden',heroes:{arden:heroTemplate('Арден','Рыцарь','hero.jpg',1,1,[2,2,1,1],[24,10,0,0,0]),lyra:heroTemplate('Лира','Боевой маг','mage.jpg',2,1,[1,1,3,2],[10,7,0,0,2])},enemy:{x:15,y:11,power:1,alive:true},seen:[],objects:JSON.parse(JSON.stringify(baseObjects)),build:{barracks:false,range:false,stable:false,griffin:false,mage:false,market:false,citadel:false},avail:{pikes:16,bows:0,cavs:0,griffins:0,mages:0},settings:{sound:true},q:{wood:false,ore:false,gems:false,artifacts:0,boss:false},logs:[],battle:null,freePlay:false};revealAll();log('Кампания началась. Морвейн укрепляет восточные земли.');render();centerOnHero(false)}
+function save(){localStorage.setItem('ash-v6-canvas',JSON.stringify(s))}
+function load(){try{let raw=localStorage.getItem('ash-v6-canvas');if(raw){s=JSON.parse(raw);Object.values(s.heroes).forEach(hr=>{if(hr.px==null){hr.px=hr.x*CELL_W+CELL_W/2;hr.py=hr.y*CELL_H+CELL_H/2}});return true}}catch(e){}return false}
+function h(){return s.heroes[s.activeHero]}function log(t){s.logs.unshift('• '+t);s.logs=s.logs.slice(0,80)}function toast(t){let el=$('toast');el.textContent=t;el.classList.add('show');clearTimeout(toastTimer);toastTimer=setTimeout(()=>el.classList.remove('show'),1900)}
+function sound(f=440,d=.07){if(!s.settings.sound)return;try{audioCtx=audioCtx||new(window.AudioContext||window.webkitAudioContext)();let o=audioCtx.createOscillator(),g=audioCtx.createGain();o.frequency.value=f;g.gain.value=.025;o.connect(g);g.connect(audioCtx.destination);o.start();o.stop(audioCtx.currentTime+d)}catch(e){}}
+function terrain(x,y){if((y===4&&x>10)||(y===9&&x<4))return'water';if((x===7&&y>8)||(x===0&&y<4)||(x===13&&y<3))return'mountain';return'land'}function passable(x,y){return x>=0&&x<W&&y>=0&&y<H&&terrain(x,y)==='land'}
+function revealAll(){let set=new Set(s.seen);Object.values(s.heroes).forEach(hr=>{for(let dy=-2;dy<=2;dy++)for(let dx=-2;dx<=2;dx++){let x=hr.x+dx,y=hr.y+dy;if(x>=0&&y>=0&&x<W&&y<H)set.add(K(x,y))}});s.seen=[...set]}
+function heroPower(hr){let p=hr.army.pikes*units.pikes.p+hr.army.bows*units.bows.p+hr.army.cavs*units.cavs.p+hr.army.griffins*units.griffins.p+hr.army.mages*units.mages.p+hr.atk*5+hr.def*2;if(hr.skills.leadership)p*=1.1;if(hr.skills.archery)p+=hr.army.bows*units.bows.p*.15;return p}
+function pathfind(sx,sy,tx,ty){let q=[[sx,sy]],prev=new Map([[K(sx,sy),null]]);while(q.length){let [x,y]=q.shift();if(x===tx&&y===ty)break;for(let[dx,dy]of[[1,0],[-1,0],[0,1],[0,-1]]){let nx=x+dx,ny=y+dy,k=K(nx,ny);if(passable(nx,ny)&&!prev.has(k)){prev.set(k,K(x,y));q.push([nx,ny])}}}if(!prev.has(K(tx,ty)))return[];let cur=K(tx,ty),arr=[];while(cur!==K(sx,sy)){let[x,y]=cur.split(',').map(Number);arr.unshift([x,y]);cur=prev.get(cur)}return arr}
+function resizeCanvas(){let c=$('mapCanvas'),r=c.getBoundingClientRect(),dpr=Math.min(2,devicePixelRatio||1);c.width=Math.floor(r.width*dpr);c.height=Math.floor(r.height*dpr);c._dpr=dpr;drawMap()}
+window.addEventListener('resize',resizeCanvas);
+function worldToScreen(wx,wy){let c=$('mapCanvas'),r=c.getBoundingClientRect();return{x:(wx-cam.x)*cam.zoom,y:(wy-cam.y)*cam.zoom,w:r.width,h:r.height}}
+function screenToWorld(sx,sy){return{x:sx/cam.zoom+cam.x,y:sy/cam.zoom+cam.y}}
+function tileCenter(x,y){return{x:x*CELL_W+CELL_W/2,y:y*CELL_H+CELL_H/2}}
+function drawImageCircle(ctx,img,x,y,size,border='#ddb45c'){ctx.save();ctx.beginPath();ctx.arc(x,y,size/2,0,Math.PI*2);ctx.clip();ctx.drawImage(img,x-size/2,y-size/2,size,size);ctx.restore();ctx.beginPath();ctx.arc(x,y,size/2,0,Math.PI*2);ctx.strokeStyle=border;ctx.lineWidth=3;ctx.stroke()}
+function drawMap(){
+ if(!mapReady||!s)return;let c=$('mapCanvas'),ctx=c.getContext('2d'),dpr=c._dpr||1,r=c.getBoundingClientRect();ctx.setTransform(dpr,0,0,dpr,0,0);ctx.clearRect(0,0,r.width,r.height);
+ ctx.save();ctx.scale(cam.zoom,cam.zoom);ctx.translate(-cam.x,-cam.y);
+ if(assets['world-v6.jpg'])ctx.drawImage(assets['world-v6.jpg'],0,0,WORLD_W,WORLD_H);
+ // subtle unexplored desaturation overlay handled later
+ // paths
+ Object.values(s.heroes).forEach(hr=>{if(hr.route?.length){ctx.beginPath();ctx.moveTo(hr.px,hr.py);hr.route.forEach(([x,y])=>{let p=tileCenter(x,y);ctx.lineTo(p.x,p.y)});ctx.strokeStyle='rgba(99,225,111,.88)';ctx.lineWidth=5/cam.zoom;ctx.setLineDash([8/cam.zoom,12/cam.zoom]);ctx.stroke();ctx.setLineDash([]);hr.route.forEach(([x,y])=>{let p=tileCenter(x,y);ctx.beginPath();ctx.arc(p.x,p.y,6/cam.zoom,0,Math.PI*2);ctx.fillStyle='#78e57e';ctx.fill()})}});
+ // objects
+ for(let key in s.objects){let o=s.objects[key],[x,y]=key.split(',').map(Number);if(!s.seen.includes(key))continue;let p=tileCenter(x,y),img=assets[o.img];if(img){let sz=o.t==='castle'?125:o.t==='enemy'?82:90;ctx.drawImage(img,p.x-sz/2,p.y-sz/2,sz,sz);ctx.strokeStyle=o.owner==='player'?'#5fa9ff':o.owner==='enemy'?'#e45b4d':'rgba(221,180,92,.7)';ctx.lineWidth=3;ctx.strokeRect(p.x-sz/2,p.y-sz/2,sz,sz)}if(o.label){ctx.font='bold 19px -apple-system';ctx.textAlign='center';ctx.fillStyle='rgba(4,6,4,.82)';let tw=ctx.measureText(o.label).width+18;ctx.fillRect(p.x-tw/2,p.y+52,tw,28);ctx.fillStyle='#f2e7ca';ctx.fillText(o.label,p.x,p.y+73)}}
+ // enemy hero
+ if(s.enemy.alive&&s.seen.includes(K(s.enemy.x,s.enemy.y))){let p=tileCenter(s.enemy.x,s.enemy.y);drawImageCircle(ctx,assets['necromancer.jpg'],p.x,p.y,78,'#b95447')}
+ // heroes
+ for(let k in s.heroes){let hr=s.heroes[k],p={x:hr.px,y:hr.py};drawImageCircle(ctx,assets[hr.img],p.x,p.y,k===s.activeHero?88:72,k===s.activeHero?'#f0c55e':'#5d81aa');if(k===s.activeHero){ctx.beginPath();ctx.arc(p.x,p.y,50,0,Math.PI*2);ctx.strokeStyle='rgba(240,197,94,.35)';ctx.lineWidth=9;ctx.stroke()}}
+ // Fog as continuous veil with circular reveals
+ ctx.save();ctx.fillStyle='rgba(2,4,3,.86)';ctx.fillRect(0,0,WORLD_W,WORLD_H);ctx.globalCompositeOperation='destination-out';Object.values(s.heroes).forEach(hr=>{let g=ctx.createRadialGradient(hr.px,hr.py,90,hr.px,hr.py,280);g.addColorStop(0,'rgba(0,0,0,1)');g.addColorStop(.6,'rgba(0,0,0,.92)');g.addColorStop(1,'rgba(0,0,0,0)');ctx.fillStyle=g;ctx.beginPath();ctx.arc(hr.px,hr.py,285,0,Math.PI*2);ctx.fill()});ctx.restore();
+ ctx.restore()
 }
-function save(){localStorage.setItem('ash-v5',JSON.stringify(s))}
-function load(){try{let raw=localStorage.getItem('ash-v5');if(!raw){let old=localStorage.getItem('ash-v4');if(old){let migrated=JSON.parse(old);migrated.month=Math.floor((migrated.day-1)/28)+1;localStorage.setItem('ash-v5',JSON.stringify(migrated));raw=JSON.stringify(migrated)}}if(raw){s=JSON.parse(raw);if(!s.month)s.month=Math.floor((s.day-1)/28)+1;return true}}catch(e){}return false}
-function log(t){s.logs.unshift('• '+t);s.logs=s.logs.slice(0,60)}
-let toastTimer=null;function toast(t){const el=$('toast');if(!el)return;el.textContent=t;el.classList.add('show');clearTimeout(toastTimer);toastTimer=setTimeout(()=>el.classList.remove('show'),1900)}
-function reveal(){let a=new Set(s.seen);for(let dy=-2;dy<=2;dy++)for(let dx=-2;dx<=2;dx++){let x=s.x+dx,y=s.y+dy;if(x>=0&&y>=0&&x<W&&y<H)a.add(K(x,y))}s.seen=[...a]}
-function terrain(x,y){if((y===4&&x>8)||(y===8&&x<3))return 'water';if((x===7&&y>7)||(x===0&&y<4))return 'mountain';if((x===1&&y<8)||(y===5&&x<11))return 'road';return ''}
-function pow(){let p=s.pikes*units.pikes.p+s.bows*units.bows.p+s.cavs*units.cavs.p+s.griffins*units.griffins.p+s.mages*units.mages.p+s.atk*5+s.def*2;if(s.skills.leadership)p*=1.1;if(s.skills.archery)p+=s.bows*units.bows.p*.15;return p}
-function render(){
- ['gold','wood','ore','gems','crystal','day','week','month','atk','def','magic','knowledge','level','xp','mana','manaMax'].forEach(k=>$(k).textContent=s[k]);
- $('lvlm').textContent=s.level;$('pow').textContent=Math.round(pow());$('mvbar').style.width=Math.max(0,Math.min(100,s.moves/s.maxMoves*100))+'%';
- renderMap();renderHero();renderTown();renderMagic();renderQuests();save()
-}
-function renderMap(){
- let m=$('map');m.innerHTML='';
- for(let y=0;y<H;y++)for(let x=0;x<W;x++){
-  let b=document.createElement('button');let seen=s.seen.includes(K(x,y)),t=terrain(x,y),o=s.objects[K(x,y)];
-  b.className='tile'+(t?' '+t:'')+(seen?'':' fog');
-  let div=null;
-  if(x===s.x&&y===s.y){div=document.createElement('span');div.className='obj hero';b.classList.add('selected')}
-  else if(seen&&x===s.ex&&y===s.ey&&!s.q.boss){div=document.createElement('span');div.className='obj enemyHero'}
-  else if(seen&&o){div=document.createElement('span');div.className='obj '+o.img;if(o.t==='enemy'){let badge=document.createElement('span');badge.className='badge';badge.textContent=o.stacks.reduce((a,v)=>a+v[1],0);b.appendChild(badge)}}
-  if(div)b.appendChild(div);
-  if(selectedMap&&Math.abs(x-s.x)+Math.abs(y-s.y)===1)b.classList.add('reachable');
-  b.onclick=()=>mapTap(x,y);m.appendChild(b)
- }
-}
-function mapTap(x,y){
- let d=Math.abs(x-s.x)+Math.abs(y-s.y);
- if(d===1){move(x,y);selectedMap=null}else{selectedMap={x,y};log(d===0?'Арден готов к походу.':'Для дальнего пути двигайся по соседним клеткам.');renderMap();renderQuests()}
-}
-function move(x,y){
- if(s.battle||s.moves<=0){log('Невозможно двигаться.');return}
- let t=terrain(x,y);if(t==='water'||t==='mountain'){log('Путь непроходим.');return}
- s.x=x;s.y=y;s.moves--;reveal();let o=s.objects[K(x,y)];if(o)event(o,K(x,y));render()
-}
-function event(o,k){
- if(o.t==='sawmill'){s.mines.wood=true;s.q.wood=true;delete s.objects[k];log('Лесопилка захвачена: +2 дерева каждый день.')}
- else if(o.t==='mine'){s.mines.ore=true;s.q.ore=true;delete s.objects[k];log('Железная шахта захвачена: +2 руды каждый день.')}
- else if(o.t==='chest'){delete s.objects[k];if(Math.random()<.5){s.gold+=1000;log('Сундук: +1000 золота.')}else{s.xp+=85;log('Сундук знаний: +85 опыта.');checkLevel()}}
- else if(o.t==='portal'){s.mana=Math.min(s.manaMax,s.mana+6);delete s.objects[k];log('Камень маны восстановил 6 маны.')}
- else if(o.t==='enemy')startBattle(o,k)
-}
-function nextDay(){
- if(s.battle){toast('Сначала заверши битву.');return}
- const btn=$('endDay');if(btn.dataset.busy==='1')return;btn.dataset.busy='1';btn.disabled=true;
- s.day++;s.week=Math.floor((s.day-1)/7)+1;s.month=Math.floor((s.day-1)/28)+1;
- const newWeek=(s.day>1&&(s.day-1)%7===0);
- if(newWeek){for(let k in units){if(s.build[units[k].req])s.avail[k]+=({pikes:16,bows:10,cavs:4,griffins:2,mages:2})[k]}log('Новая неделя: в городе появился прирост существ.')}
- s.maxMoves=12+(s.skills.logistics?2:0);s.moves=s.maxMoves;
- let goldIncome=300+(s.skills.estates?150:0),woodIncome=s.mines.wood?2:0,oreIncome=s.mines.ore?2:0;
- s.gold+=goldIncome;s.wood+=woodIncome;s.ore+=oreIncome;s.mana=Math.min(s.manaMax,s.mana+3+s.knowledge);
- enemyAI();let parts=[`+${goldIncome} золота`];if(woodIncome)parts.push(`+${woodIncome} дерева`);if(oreIncome)parts.push(`+${oreIncome} руды`);
- log(`Наступил день ${s.day}. Доход: ${parts.join(', ')}.`);toast(`День ${s.day} · ${parts.join(' · ')}`);render();
- setTimeout(()=>{btn.disabled=false;btn.dataset.busy='0'},280)
-}
-function enemyAI(){if(s.q.boss)return;let candidates=[[s.ex+Math.sign(s.x-s.ex),s.ey],[s.ex,s.ey+Math.sign(s.y-s.ey)],[s.ex+1,s.ey],[s.ex-1,s.ey],[s.ex,s.ey+1],[s.ex,s.ey-1]].filter(([x,y])=>x>=0&&x<W&&y>=0&&y<H&&!['water','mountain'].includes(terrain(x,y)));if(candidates.length){candidates.sort((a,b)=>(Math.abs(a[0]-s.x)+Math.abs(a[1]-s.y))-(Math.abs(b[0]-s.x)+Math.abs(b[1]-s.y)));let pick=Math.random()<.75?candidates[0]:candidates[Math.floor(Math.random()*candidates.length)];s.ex=pick[0];s.ey=pick[1]}if(Math.abs(s.ex-s.x)+Math.abs(s.ey-s.y)<=2)log('Разведчики сообщают: Морвейн совсем близко.')}
-function renderHero(){
- let box=$('army');box.innerHTML='';for(let k in units){let u=units[k],c=document.createElement('div');c.className='unitcard';c.innerHTML=`<img src="${u.img}"><div class=txt><b>${s[k]}</b><span class=small>${u.n}</span></div>`;box.appendChild(c)}
- $('skills').innerHTML=Object.keys(s.skills).length?Object.keys(s.skills).map(k=>`<div class=skill><b>${skillDefs[k][0]}</b><div class=small>${skillDefs[k][1]}</div></div>`).join(''):'<div class=small>Навыки появятся при повышении уровня.</div>'
-}
-function renderTown(){
- let b=$('buildings');b.innerHTML='';for(let k in builds){let d=builds[k],x=document.createElement('button');x.className='btn building'+(s.build[k]?' built':'');let locked=d.req&&!s.build[d.req];x.innerHTML=`<b>${d.n}</b><br><span class=small>${s.build[k]?'Построено':`${d.cost[0]}🪙 ${d.cost[1]}🪵 ${d.cost[2]}🪨`}</span>${locked?'<span class=lock>🔒</span>':''}`;x.disabled=s.build[k]||locked;x.onclick=()=>build(k);b.appendChild(x)}
- let r=$('recruits');r.innerHTML='';for(let k in units){let u=units[k],x=document.createElement('button');x.className='unitcard';let on=s.build[u.req];x.innerHTML=`<img src="${u.img}"><div class=txt><b>${u.n}</b><span class=small>${on?`Доступно ${s.avail[k]} · ${u.qty} за ${u.cost}🪙`:'Нужно здание'}</span></div>`;x.disabled=!on||s.avail[k]<u.qty;x.onclick=()=>recruit(k);r.appendChild(x)}
-}
-function build(k){let d=builds[k];if(s.gold<d.cost[0]||s.wood<d.cost[1]||s.ore<d.cost[2]){log('Не хватает ресурсов.');renderQuests();return}s.gold-=d.cost[0];s.wood-=d.cost[1];s.ore-=d.cost[2];s.build[k]=true;for(let u in units)if(units[u].req===k)s.avail[u]+=({pikes:16,bows:10,cavs:4,griffins:2,mages:2})[u];if(k==='mage'){s.magic++;s.manaMax+=5;s.mana=s.manaMax}log('Построено: '+d.n);render()}
-function recruit(k){let u=units[k];if(s.gold<u.cost)return;s.gold-=u.cost;s[k]+=u.qty;s.avail[k]-=u.qty;log(`Наняты ${u.n}: +${u.qty}`);render()}
-function renderMagic(){$('spells').innerHTML=`<div class=panel><b>🔥 Огненный шар</b><div class=small>4 маны · урон по выбранному вражескому отряду</div></div><div class=panel><b>⚡ Молния</b><div class=small>6 маны · сильный одиночный урон</div></div><div class=panel><b>🛡️ Каменная кожа</b><div class=small>4 маны · защита активного отряда</div></div>`}
-function renderQuests(){$('incomeLine').textContent=`Ежедневный доход: ${300+(s.skills.estates?150:0)} золота${s.mines.wood?' · 2 дерева':''}${s.mines.ore?' · 2 руды':''}`;$('quests').innerHTML=[['wood','Захватить лесопилку'],['ore','Захватить железную шахту'],['boss','Победить Морвейна']].map(([k,n])=>`<div class="quest ${s.q[k]?'done':''}">${s.q[k]?'✅':'⬜'} <b>${n}</b></div>`).join('');$('log').innerHTML=s.logs.map(x=>`<div>${x}</div>`).join('')}
-function checkLevel(){let need=s.level*100;if(s.xp>=need){s.level++;s.atk++;s.def++;let keys=Object.keys(skillDefs).filter(k=>!s.skills[k]).sort(()=>Math.random()-.5).slice(0,2),box=$('levelChoices');box.innerHTML='';keys.forEach(k=>{let bt=document.createElement('button');bt.className='btn';bt.innerHTML=`<b>${skillDefs[k][0]}</b><br><span class=small>${skillDefs[k][1]}</span>`;bt.onclick=()=>{s.skills[k]=1;if(k==='logistics'){s.maxMoves+=2;s.moves+=2}if(k==='wisdom'){s.manaMax+=5;s.mana+=5}$('levelModal').classList.add('hidden');render()};box.appendChild(bt)});$('levelModal').classList.remove('hidden')}}
-function startBattle(o,k){
- let ps=[];[['pikes',s.pikes],['bows',s.bows],['cavs',s.cavs],['griffins',s.griffins],['mages',s.mages]].forEach(([u,q],i)=>{if(q)ps.push({side:'p',type:u,qty:q,hp:q*units[u].hp,x:0,y:i})});
- let es=o.stacks.map((v,i)=>({side:'e',type:v[0],qty:v[1],hp:v[1]*enemies[v[0]].hp,x:7,y:i+1}));
- let all=[...ps,...es];all.sort((a,b)=>(b.side==='p'?units[b.type].spd:enemies[b.type].spd)-(a.side==='p'?units[a.type].spd:enemies[a.type].spd));
- s.battle={o,k,stacks:[...ps,...es],order:all.map(a=>({side:a.side,type:a.type})),turn:0,round:1,selected:null};$('battleModal').classList.remove('hidden');battleTurn()
-}
-function bdef(st){return st.side==='p'?units[st.type]:enemies[st.type]}
-function findStack(key){let [side,type]=key.split(':');return s.battle.stacks.find(z=>z.side===side&&z.type===type&&z.qty>0)}
-function battleTurn(){
- let b=s.battle;if(!b)return;b.stacks=b.stacks.filter(z=>z.qty>0&&z.hp>0);let p=b.stacks.some(z=>z.side==='p'),e=b.stacks.some(z=>z.side==='e');if(!p||!e){finishBattle(p);return}
- let guard=0;while(guard++<30){if(b.turn>=b.order.length){b.turn=0;b.round++;b.order=b.stacks.slice().sort((a,c)=>bdef(c).spd-bdef(a).spd).map(a=>({side:a.side,type:a.type}))}
- let key=b.order[b.turn++],st=findStack(key.side+':'+key.type);if(st){b.selected=st;break}}
- renderBattle();if(b.selected&&b.selected.side==='e')setTimeout(enemyBattleAI,350)
-}
-function renderBattle(){
- let b=s.battle;if(!b)return;$('battleName').textContent=b.o.name;$('battleRound').textContent='Раунд '+b.round;$('battleHint').textContent=b.selected?.side==='p'?'Выбери подсвеченную клетку для движения или вражеский отряд для атаки.':'Ход противника…';
- let tb=$('turnbar');tb.innerHTML='';b.order.forEach((k,i)=>{let st=findStack(k.side+':'+k.type);if(!st)return;let c=document.createElement('div');c.className='turnchip'+(st===b.selected?' active':'');c.textContent=(st.side==='p'?'🟦 ':'🟥 ')+bdef(st).n;tb.appendChild(c)});
- let g=$('bgrid');g.innerHTML='';for(let y=0;y<5;y++)for(let x=0;x<8;x++){let c=document.createElement('button');c.className='cell';let active=b.selected,dist=active?Math.abs(x-active.x)+Math.abs(y-active.y):99,occupied=b.stacks.find(z=>z.x===x&&z.y===y&&z.qty>0);
- if(active?.side==='p'&&!occupied&&dist<=bdef(active).spd)c.classList.add('move');if(active?.side==='p'&&occupied?.side==='e'&&dist<=bdef(active).range)c.classList.add('attack');if(occupied===active)c.classList.add('sel');
- if(occupied){let st=document.createElement('span');st.className='stack '+(occupied.side==='p'?'player':'enemy');st.style.backgroundImage=`url('${bdef(occupied).img}')`;let q=document.createElement('span');q.className='qty';q.textContent=occupied.qty;st.appendChild(q);c.appendChild(st)}
- c.onclick=()=>battleCell(x,y,occupied);g.appendChild(c)}
-}
-function battleCell(x,y,occ){let b=s.battle,a=b.selected;if(!a||a.side!=='p')return;let d=Math.abs(x-a.x)+Math.abs(y-a.y),def=bdef(a);if(occ&&occ.side==='e'&&d<=def.range){strike(a,occ);battleTurn()}else if(!occ&&d<=def.spd){a.x=x;a.y=y;renderBattle();setTimeout(battleTurn,120)}}
-function strike(a,t){let ad=bdef(a),td=bdef(t),base=a.qty*ad.p*(1+s.atk*.04);if(a.side==='p'&&a.type==='bows'&&s.skills.archery)base*=1.15;let dmg=Math.max(1,Math.round(base*(.78+Math.random()*.35)));t.hp-=dmg;t.qty=Math.max(0,Math.ceil(t.hp/td.hp));log(`${ad.n} наносят ${dmg} урона.`)}
+function clampCam(){let c=$('mapCanvas').getBoundingClientRect(),vw=c.width/cam.zoom,vh=c.height/cam.zoom;cam.x=Math.max(0,Math.min(WORLD_W-vw,cam.x));cam.y=Math.max(0,Math.min(WORLD_H-vh,cam.y))}
+function centerOnHero(animated=true){let hr=h(),c=$('mapCanvas').getBoundingClientRect();cam.x=hr.px-c.width/(2*cam.zoom);cam.y=hr.py-c.height/(2*cam.zoom);clampCam();drawMap()}
+function mapTap(clientX,clientY){let c=$('mapCanvas').getBoundingClientRect(),w=screenToWorld(clientX-c.left,clientY-c.top),tx=Math.floor(w.x/CELL_W),ty=Math.floor(w.y/CELL_H),hr=h();if(tx<0||ty<0||tx>=W||ty>=H)return;let path=pathfind(hr.x,hr.y,tx,ty);if(!path.length){toast('Нет доступного пути');return}hr.route=path;drawMap();toast(`Маршрут: ${path.length} клеток`);startRoute()}
+function startRoute(){clearInterval(routeTimer);routeTimer=setInterval(()=>{let hr=h();if(!hr.route.length||hr.moves<=0){clearInterval(routeTimer);render();return}let [tx,ty]=hr.route.shift(),startX=hr.px,startY=hr.py,end=tileCenter(tx,ty),t0=performance.now(),dur=180;function anim(now){let t=Math.min(1,(now-t0)/dur),e=1-(1-t)*(1-t);hr.px=startX+(end.x-startX)*e;hr.py=startY+(end.y-startY)*e;drawMap();if(t<1)requestAnimationFrame(anim);else{hr.x=tx;hr.y=ty;hr.moves--;revealAll();let o=s.objects[K(tx,ty)];if(o)eventObject(o,K(tx,ty));checkEnemyContact();sound(300,.03);render();if(!s.battle&&hr.route.length&&hr.moves>0){}else if(s.battle)clearInterval(routeTimer)}}requestAnimationFrame(anim)},210)}
+function eventObject(o,k){if(o.t==='sawmill'||o.t==='mine'){o.owner='player';if(o.t==='sawmill')s.q.wood=true;if(o.kind==='ore')s.q.ore=true;if(o.kind==='gems')s.q.gems=true;log(`${o.t==='sawmill'?'Лесопилка':'Шахта'} захвачена.`);toast('Объект захвачен')}else if(o.t==='chest'){delete s.objects[k];if(Math.random()<.5){s.gold+=1000;log('Сундук: +1000 золота.')}else{h().xp+=85;log('Сундук знаний: +85 опыта.');checkLevel(h())}}else if(o.t==='portal'){h().mana=Math.min(h().manaMax,h().mana+6);delete s.objects[k];log('Источник маны восстановил 6 маны.')}else if(o.t==='artifact'){let a=artifactDefs[o.artifact];h()[a.stat]+=a.v;h().artifacts.push(o.artifact);s.q.artifacts++;delete s.objects[k];log(`Найден артефакт: ${a.n}.`);toast(a.n)}else if(o.t==='enemy')startBattle(o,k)}
+function checkEnemyContact(){let hr=h();if(s.enemy.alive&&hr.x===s.enemy.x&&hr.y===s.enemy.y)startBattle({name:'Морвейн',stacks:[['necros',5+s.enemy.power],['skeletons',16+s.enemy.power*3]],reward:1500,xp:140,boss:false},null)}
+function nextDay(){if(s.battle){toast('Сначала завершите битву');return}let btn=$('endDay');if(btn.dataset.busy==='1')return;btn.dataset.busy='1';btn.disabled=true;s.day++;s.week=Math.floor((s.day-1)/7)+1;s.month=Math.floor((s.day-1)/28)+1;let newWeek=s.day>1&&(s.day-1)%7===0;if(newWeek){for(let k in units)if(s.build[units[k].req])s.avail[k]+=({pikes:16,bows:10,cavs:4,griffins:2,mages:2})[k];s.enemy.power++;log('Новая неделя: прирост войск и усиление Морвейна.')}let gi=300+(Object.values(s.heroes).some(x=>x.skills.estates)?150:0),wi=0,oi=0,gem=0;Object.values(s.objects).forEach(o=>{if(o.owner==='player'){if(o.t==='sawmill')wi+=2;if(o.kind==='ore')oi+=2;if(o.kind==='gems')gem+=1}});s.gold+=gi;s.wood+=wi;s.ore+=oi;s.gems+=gem;Object.values(s.heroes).forEach(hr=>{hr.maxMoves=12+(hr.skills.logistics?2:0);hr.moves=hr.maxMoves;hr.mana=Math.min(hr.manaMax,hr.mana+3+hr.knowledge);hr.route=[]});enemyAI();log(`День ${s.day}. Доход: ${gi} золота.`);toast(`День ${s.day} · +${gi} золота`);sound(520,.09);render();setTimeout(()=>{btn.disabled=false;btn.dataset.busy='0'},300)}
+function enemyAI(){if(!s.enemy.alive)return;let targets=Object.values(s.heroes).map(hr=>[hr.x,hr.y]);targets.sort((a,b)=>(Math.abs(a[0]-s.enemy.x)+Math.abs(a[1]-s.enemy.y))-(Math.abs(b[0]-s.enemy.x)+Math.abs(b[1]-s.enemy.y)));let t=targets[0],p=pathfind(s.enemy.x,s.enemy.y,t[0],t[1]);if(p.length)[s.enemy.x,s.enemy.y]=p[0];Object.values(s.heroes).forEach(hr=>{if(hr.x===s.enemy.x&&hr.y===s.enemy.y){s.activeHero=Object.keys(s.heroes).find(k=>s.heroes[k]===hr);checkEnemyContact()}})}
+function render(){['gold','wood','ore','gems','crystal','day','week','month'].forEach(k=>$(k).textContent=s[k]);let hr=h();$('lvlm').textContent=hr.level;$('pow').textContent=Math.round(heroPower(hr));$('mvbar').style.width=Math.max(0,Math.min(100,hr.moves/hr.maxMoves*100))+'%';$('hudName').textContent=hr.name;$('hudPortrait').src=hr.img;renderHero();renderTown();renderMagic();renderQuests();renderSettings();drawMap();save()}
+function selectHero(k){s.activeHero=k;render();centerOnHero(false);switchScreen('map')}
+function renderHero(){let hs=$('heroSelect');hs.innerHTML='';for(let k in s.heroes){let hr=s.heroes[k],b=document.createElement('button');b.className='btn heroBtn'+(k===s.activeHero?' active':'');b.innerHTML=`<img src="${hr.img}"><div><b>${hr.name}</b><div class=small>${hr.cls}<br>Ур. ${hr.level}</div></div>`;b.onclick=()=>selectHero(k);hs.appendChild(b)}let hr=h();$('heroPortrait').src=hr.img;$('heroName').textContent=hr.name;$('heroClass').textContent=hr.cls;['atk','def','magic','knowledge','level','xp'].forEach(k=>$(k).textContent=hr[k]);let a=$('army');a.innerHTML='';for(let k in units){let u=units[k],c=document.createElement('div');c.className='unitcard';c.innerHTML=`<img src="${u.img}"><div class=txt><b>${hr.army[k]}</b><span class=small>${u.n}</span></div>`;a.appendChild(c)}$('skills').innerHTML=Object.keys(hr.skills).length?Object.keys(hr.skills).map(k=>`<div class=skill><b>${skillDefs[k][0]}</b><div class=small>${skillDefs[k][1]}</div></div>`).join(''):'<div class=small>Навыки появятся при повышении уровня.</div>';$('artifacts').innerHTML=hr.artifacts.length?hr.artifacts.map(k=>`<div class=quest>${artifactDefs[k].icon} <b>${artifactDefs[k].n}</b></div>`).join(''):'<div class=small>Артефактов пока нет.</div>'}
+function renderTown(){let b=$('buildings');b.innerHTML='';for(let k in builds){let d=builds[k],x=document.createElement('button'),locked=d.req&&!s.build[d.req];x.className='btn building'+(s.build[k]?' built':'');x.innerHTML=`<b>${d.n}</b><br><span class=small>${s.build[k]?'Построено':`${d.cost[0]}🪙 ${d.cost[1]}🪵 ${d.cost[2]}🪨`}</span>${locked?'<span class=lock>🔒</span>':''}`;x.disabled=s.build[k]||locked;x.onclick=()=>build(k);b.appendChild(x)}let r=$('recruits');r.innerHTML='';for(let k in units){let u=units[k],x=document.createElement('button'),on=s.build[u.req];x.className='unitcard';x.innerHTML=`<img src="${u.img}"><div class=txt><b>${u.n}</b><span class=small>${on?`Доступно ${s.avail[k]} · ${u.qty} за ${u.cost}🪙`:'Нужно здание'}</span></div>`;x.disabled=!on||s.avail[k]<u.qty;x.onclick=()=>recruit(k);r.appendChild(x)}}
+function build(k){let d=builds[k];if(s.gold<d.cost[0]||s.wood<d.cost[1]||s.ore<d.cost[2]){toast('Не хватает ресурсов');return}s.gold-=d.cost[0];s.wood-=d.cost[1];s.ore-=d.cost[2];s.build[k]=true;for(let u in units)if(units[u].req===k)s.avail[u]+=({pikes:16,bows:10,cavs:4,griffins:2,mages:2})[u];if(k==='mage')Object.values(s.heroes).forEach(hr=>{hr.magic++;hr.manaMax+=5;hr.mana=hr.manaMax});log('Построено: '+d.n);render()}
+function recruit(k){let u=units[k],hr=h();if(s.gold<u.cost||s.avail[k]<u.qty)return;s.gold-=u.cost;hr.army[k]+=u.qty;s.avail[k]-=u.qty;log(`${hr.name}: ${u.n} +${u.qty}`);render()}
+function renderMagic(){let hr=h();$('mana').textContent=hr.mana;$('manaMax').textContent=hr.manaMax;$('spells').innerHTML=`<div class=quest><b>🔥 Огненный шар</b><div class=small>4 маны · прямой урон</div></div><div class=quest><b>⚡ Молния</b><div class=small>6 маны · высокий одиночный урон</div></div><div class=quest><b>🛡️ Каменная кожа</b><div class=small>4 маны · оборона</div></div><div class=quest><b>💚 Исцеление</b><div class=small>5 маны · восстановление</div></div>`}
+function renderQuests(){$('quests').innerHTML=[['Захватить лесопилку',s.q.wood],['Захватить железную шахту',s.q.ore],['Захватить шахту самоцветов',s.q.gems],['Найти 2 артефакта',s.q.artifacts>=2],['Победить Морвейна',s.q.boss]].map(([n,d])=>`<div class="quest ${d?'done':''}">${d?'✅':'⬜'} <b>${n}</b></div>`).join('');$('log').innerHTML=s.logs.map(x=>`<div>${x}</div>`).join('')}
+function renderSettings(){$('soundToggle').textContent='🔊 Звук: '+(s.settings.sound?'вкл':'выкл')}
+function checkLevel(hr){if(hr.xp>=hr.level*100){hr.level++;hr.atk++;hr.def++;let keys=Object.keys(skillDefs).filter(k=>!hr.skills[k]).sort(()=>Math.random()-.5).slice(0,2),box=$('levelChoices');box.innerHTML='';keys.forEach(k=>{let bt=document.createElement('button');bt.className='btn';bt.innerHTML=`<b>${skillDefs[k][0]}</b><br><span class=small>${skillDefs[k][1]}</span>`;bt.onclick=()=>{hr.skills[k]=1;if(k==='logistics'){hr.maxMoves+=2;hr.moves+=2}if(k==='wisdom'){hr.manaMax+=5;hr.mana+=5}$('levelModal').classList.add('hidden');render()};box.appendChild(bt)});$('levelModal').classList.remove('hidden')}}
+function startBattle(o,k){clearInterval(routeTimer);let hr=h(),ps=[];for(let u in units){let q=hr.army[u];if(q)ps.push({side:'p',type:u,qty:q,hp:q*units[u].hp,x:0,y:ps.length})}let es=o.stacks.map((v,i)=>({side:'e',type:v[0],qty:v[1],hp:v[1]*enemies[v[0]].hp,x:7,y:i+1}));let stacks=[...ps,...es],order=stacks.slice().sort((a,b)=>bdef(b).spd-bdef(a).spd).map(a=>({side:a.side,type:a.type}));s.battle={o,k,hero:s.activeHero,stacks,order,turn:0,round:1,selected:null};$('battleModal').classList.remove('hidden');battleTurn()}
+function bdef(st){return st.side==='p'?units[st.type]:enemies[st.type]}function findStack(key){let[side,type]=key.split(':');return s.battle.stacks.find(z=>z.side===side&&z.type===type&&z.qty>0)}
+function battleTurn(){let b=s.battle;if(!b)return;b.stacks=b.stacks.filter(z=>z.qty>0&&z.hp>0);let p=b.stacks.some(z=>z.side==='p'),e=b.stacks.some(z=>z.side==='e');if(!p||!e){finishBattle(p);return}let guard=0;while(guard++<40){if(b.turn>=b.order.length){b.turn=0;b.round++;b.order=b.stacks.slice().sort((a,c)=>bdef(c).spd-bdef(a).spd).map(a=>({side:a.side,type:a.type}))}let key=b.order[b.turn++],st=findStack(key.side+':'+key.type);if(st){b.selected=st;break}}renderBattle();if(b.selected&&b.selected.side==='e')setTimeout(enemyBattleAI,300)}
+function renderBattle(){let b=s.battle;if(!b)return;$('battleName').textContent=b.o.name;$('battleRound').textContent='Раунд '+b.round;$('battleHint').textContent=b.selected?.side==='p'?'Выберите клетку или цель.':'Ход противника…';let tb=$('turnbar');tb.innerHTML='';b.order.forEach(k=>{let st=findStack(k.side+':'+k.type);if(!st)return;let c=document.createElement('div');c.className='turnchip'+(st===b.selected?' active':'');c.textContent=(st.side==='p'?'🟦 ':'🟥 ')+bdef(st).n;tb.appendChild(c)});let g=$('bgrid');g.innerHTML='';for(let y=0;y<5;y++)for(let x=0;x<8;x++){let c=document.createElement('button');c.className='cell';let a=b.selected,dist=a?Math.abs(x-a.x)+Math.abs(y-a.y):99,occ=b.stacks.find(z=>z.x===x&&z.y===y&&z.qty>0);if(a?.side==='p'&&!occ&&dist<=bdef(a).spd)c.classList.add('move');if(a?.side==='p'&&occ?.side==='e'&&dist<=bdef(a).range)c.classList.add('attack');if(occ===a)c.classList.add('sel');if(occ){let st=document.createElement('span');st.className='stack '+(occ.side==='p'?'player':'enemy');st.style.backgroundImage=`url('${bdef(occ).img}')`;let q=document.createElement('span');q.className='qty';q.textContent=occ.qty;st.appendChild(q);c.appendChild(st)}c.onclick=()=>battleCell(x,y,occ);g.appendChild(c)}}
+function battleCell(x,y,occ){let b=s.battle,a=b.selected;if(!a||a.side!=='p')return;let d=Math.abs(x-a.x)+Math.abs(y-a.y),def=bdef(a);if(occ&&occ.side==='e'&&d<=def.range){strike(a,occ);battleTurn()}else if(!occ&&d<=def.spd){a.x=x;a.y=y;renderBattle();setTimeout(battleTurn,100)}}
+function strike(a,t){let hr=s.heroes[s.battle.hero],ad=bdef(a),td=bdef(t),base=a.qty*ad.p*(1+hr.atk*.04);if(a.side==='p'&&a.type==='bows'&&hr.skills.archery)base*=1.15;let dmg=Math.max(1,Math.round(base*(.78+Math.random()*.35)));t.hp-=dmg;t.qty=Math.max(0,Math.ceil(t.hp/td.hp));log(`${ad.n} наносят ${dmg} урона.`)}
 function enemyBattleAI(){let b=s.battle,a=b.selected;if(!a||a.side!=='e')return;let targets=b.stacks.filter(z=>z.side==='p'&&z.qty>0).sort((u,v)=>(Math.abs(u.x-a.x)+Math.abs(u.y-a.y))-(Math.abs(v.x-a.x)+Math.abs(v.y-a.y)));let t=targets[0];if(!t){battleTurn();return}let d=Math.abs(t.x-a.x)+Math.abs(t.y-a.y),ad=bdef(a);if(d<=ad.range){strike(a,t);battleTurn();return}let dx=Math.sign(t.x-a.x),dy=Math.sign(t.y-a.y);for(let step=0;step<ad.spd;step++){let nx=a.x+(Math.abs(t.x-a.x)>=Math.abs(t.y-a.y)?dx:0),ny=a.y+(Math.abs(t.x-a.x)<Math.abs(t.y-a.y)?dy:0);if(nx<0||nx>7||ny<0||ny>4||b.stacks.some(z=>z!==a&&z.x===nx&&z.y===ny&&z.qty>0))break;a.x=nx;a.y=ny}battleTurn()}
-function finishBattle(win){
- let b=s.battle;if(win){s.gold+=b.o.reward;s.xp+=b.o.xp;if(b.o.boss){s.q.boss=true;s.ex=-1;s.ey=-1}delete s.objects[b.k];syncArmyFromBattle();log(`Победа! +${b.o.reward} золота, +${b.o.xp} опыта.`);checkLevel()}else{alert('Армия разгромлена. Поход начинается заново.');localStorage.removeItem('ash-v5');$('battleModal').classList.add('hidden');fresh();return}
- s.battle=null;$('battleModal').classList.add('hidden');render()
-}
-function syncArmyFromBattle(){for(let k in units)s[k]=0;s.battle.stacks.filter(z=>z.side==='p').forEach(z=>s[z.type]=z.qty)}
-$('waitBtn').onclick=()=>{if(s.battle?.selected?.side==='p')battleTurn()};$('defBtn').onclick=()=>{let a=s.battle?.selected;if(a?.side==='p'){a.hp+=Math.ceil(bdef(a).hp*.15);battleTurn()}};
-$('spellBtn').onclick=()=>{let b=s.battle,a=b?.selected;if(!a||a.side!=='p'||s.mana<4)return;let enemiesNow=b.stacks.filter(z=>z.side==='e'&&z.qty>0);if(!enemiesNow.length)return;let t=enemiesNow.sort((u,v)=>u.qty-v.qty)[0];s.mana-=4;t.hp-=28+s.magic*14;t.qty=Math.max(0,Math.ceil(t.hp/bdef(t).hp));log('Огненный шар поражает '+bdef(t).n+'.');battleTurn()};
-$('retreatBtn').onclick=()=>{if(!s.battle)return;s.gold=Math.max(0,s.gold-350);syncArmyFromBattle();s.battle=null;$('battleModal').classList.add('hidden');log('Арден отступил. Потеряно 350 золота.');render()};
-$('endDay').addEventListener('click',nextDay);$('endDay').addEventListener('touchend',e=>{e.preventDefault();nextDay()},{passive:false});$('save').addEventListener('click',()=>{save();log('Игра сохранена.');toast('Игра сохранена');renderQuests()});
-document.querySelectorAll('.nav button').forEach(bt=>bt.onclick=()=>{document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));$('s-'+bt.dataset.s).classList.add('active');document.querySelectorAll('.nav button').forEach(x=>x.classList.toggle('active',x===bt))});
-if(!load())fresh();else{reveal();log('Сохранение 4.0 загружено.');render()}
-if('serviceWorker' in navigator)navigator.serviceWorker.register('./sw.js').catch(()=>{});
+function syncArmy(){let hr=s.heroes[s.battle.hero];for(let k in units)hr.army[k]=0;s.battle.stacks.filter(z=>z.side==='p').forEach(z=>hr.army[z.type]=z.qty)}
+function finishBattle(win){let b=s.battle,hr=s.heroes[b.hero];if(win){syncArmy();s.gold+=b.o.reward;hr.xp+=b.o.xp;if(b.k)delete s.objects[b.k];if(b.o.boss){s.q.boss=true;s.enemy.alive=false;$('victoryModal').classList.remove('hidden')}log(`Победа! +${b.o.reward} золота, +${b.o.xp} опыта.`);checkLevel(hr)}else{syncArmy();hr.x=1;hr.y=1;let p=tileCenter(1,1);hr.px=p.x;hr.py=p.y;hr.moves=0;log('Поражение. Герой вернулся в столицу.')}s.battle=null;$('battleModal').classList.add('hidden');render()}
+function switchScreen(name){document.querySelectorAll('.screen').forEach(x=>x.classList.remove('active'));$('s-'+name).classList.add('active');document.querySelectorAll('.nav button').forEach(x=>x.classList.toggle('active',x.dataset.s===name));if(name==='map'){resizeCanvas();drawMap()}}
+const canvas=$('mapCanvas');
+canvas.addEventListener('pointerdown',e=>{drag={id:e.pointerId,x:e.clientX,y:e.clientY,cx:cam.x,cy:cam.y,moved:false};canvas.setPointerCapture(e.pointerId)});
+canvas.addEventListener('pointermove',e=>{if(!drag||drag.id!==e.pointerId)return;let dx=e.clientX-drag.x,dy=e.clientY-drag.y;if(Math.hypot(dx,dy)>5)drag.moved=true;cam.x=drag.cx-dx/cam.zoom;cam.y=drag.cy-dy/cam.zoom;clampCam();drawMap()});
+canvas.addEventListener('pointerup',e=>{if(!drag||drag.id!==e.pointerId)return;let moved=drag.moved;drag=null;if(!moved)mapTap(e.clientX,e.clientY)});
+$('zoomIn').onclick=()=>{cam.zoom=Math.min(1.8,cam.zoom+.15);clampCam();drawMap()};$('zoomOut').onclick=()=>{cam.zoom=Math.max(.65,cam.zoom-.15);clampCam();drawMap()};
+$('endDay').addEventListener('click',nextDay);$('endDay').addEventListener('touchend',e=>{e.preventDefault();nextDay()},{passive:false});
+$('switchHero').onclick=()=>{s.activeHero=s.activeHero==='arden'?'lyra':'arden';render();centerOnHero(false);toast('Активный герой: '+h().name)};$('save').onclick=()=>{save();toast('Игра сохранена')};
+$('soundToggle').onclick=()=>{s.settings.sound=!s.settings.sound;renderSettings();save()};$('centerHero').onclick=()=>centerOnHero();$('manualSave').onclick=()=>{save();toast('Сохранено')};$('newGame').onclick=()=>{if(confirm('Начать новую игру?')){localStorage.removeItem('ash-v6-canvas');fresh();switchScreen('map')}};
+$('waitBtn').onclick=()=>{if(s.battle?.selected?.side==='p')battleTurn()};$('defBtn').onclick=()=>{let a=s.battle?.selected;if(a?.side==='p'){a.hp+=Math.ceil(bdef(a).hp*.12);battleTurn()}};$('spellBtn').onclick=()=>{let b=s.battle,a=b?.selected,hr=s.heroes[b?.hero];if(!a||a.side!=='p'||hr.mana<4)return;let en=b.stacks.filter(z=>z.side==='e'&&z.qty>0);if(!en.length)return;let t=en.sort((u,v)=>u.qty-v.qty)[0];hr.mana-=4;t.hp-=30+hr.magic*14;t.qty=Math.max(0,Math.ceil(t.hp/bdef(t).hp));log('Заклинание поражает '+bdef(t).n+'.');battleTurn()};$('retreatBtn').onclick=()=>{if(!s.battle)return;syncArmy();let hr=s.heroes[s.battle.hero];hr.x=1;hr.y=1;let p=tileCenter(1,1);hr.px=p.x;hr.py=p.y;hr.moves=0;s.gold=Math.max(0,s.gold-350);s.battle=null;$('battleModal').classList.add('hidden');render()};$('victoryClose').onclick=()=>{$('victoryModal').classList.add('hidden');s.freePlay=true;save()};
+document.querySelectorAll('.nav button').forEach(bt=>bt.onclick=()=>switchScreen(bt.dataset.s));
+loadAssets().then(()=>{if(!load())fresh();else{revealAll();log('Сохранение 6.0 загружено.');render();centerOnHero(false)}});
+if('serviceWorker'in navigator)navigator.serviceWorker.register('./sw.js').catch(()=>{});
 })();
 </script></body></html>
