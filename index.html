@@ -8,7 +8,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Королевства Пепла">
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="icon-180.png?v=721788568925">
-<title>Королевства Пепла 8.6 — Kingdom Edition</title>
+<title>Королевства Пепла 8.6.1 — Kingdom Edition</title>
 <style>
 :root{--gold:#ddb45c;--text:#f4ecd8;--muted:#b8af9c;--line:#735b29;--panel:#101611;--panel2:#192219}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
@@ -19,7 +19,7 @@ button{font:inherit;color:inherit;touch-action:manipulation}
 .r{white-space:nowrap;border:1px solid #5f502c;background:#171d17;border-radius:6px;padding:5px 7px;font-size:12px}.grow{flex:1}
 .main{position:relative;flex:1;min-height:0;overflow:hidden}.screen{position:absolute;inset:0;display:none;overflow:auto;background:#080b08}.screen.active{display:block}
 #s-map{overflow:hidden;background:#050705}
-#mapCanvas{position:absolute;inset:0;width:100%;height:100%;touch-action:none;background:#0a0e0a}
+#mapCanvas{position:absolute;inset:0;width:100%;height:100%;touch-action:none;background:#000}
 .mapHud{position:absolute;left:8px;right:8px;bottom:8px;display:flex;gap:7px;align-items:flex-end;pointer-events:none;z-index:8}
 .heroCard{pointer-events:auto;background:rgba(8,12,9,.91);border:1px solid var(--line);border-radius:10px;padding:7px;display:grid;grid-template-columns:44px 1fr;gap:7px;min-width:205px;box-shadow:0 7px 22px #0008;backdrop-filter:blur(6px)}
 .heroCard img{width:44px;height:44px;border-radius:7px;object-fit:cover;border:1px solid #8e7130}.small{font-size:12px;color:var(--muted)}
@@ -44,7 +44,7 @@ button{font:inherit;color:inherit;touch-action:manipulation}
 
 /* 7.0 Kingdom Edition — iPhone-first visual pass */
 .top{padding:calc(4px + env(safe-area-inset-top)) 5px 5px;gap:3px;background:linear-gradient(180deg,#101811 0%,#070b08 100%);box-shadow:0 2px 12px #000a}.r{padding:5px 6px;font-size:11px;border-color:#665126;background:rgba(16,23,17,.92)}
-#s-map:after{content:"";position:absolute;inset:0;pointer-events:none;box-shadow:inset 0 0 80px rgba(0,0,0,.48);z-index:2}.zoom{top:10px;left:10px;gap:7px}.zoom button{width:38px;height:38px;border-radius:12px;background:rgba(10,16,11,.82);backdrop-filter:blur(8px);box-shadow:0 3px 12px #0008}
+#s-map:after{content:"";position:absolute;inset:0;pointer-events:none;box-shadow:inset 0 0 110px rgba(0,0,0,.72);z-index:2}.zoom{top:10px;left:10px;gap:7px}.zoom button{width:38px;height:38px;border-radius:12px;background:rgba(10,16,11,.82);backdrop-filter:blur(8px);box-shadow:0 3px 12px #0008}
 .nextDay{right:10px;bottom:78px;min-height:46px;padding:8px 13px;border-radius:13px;background:linear-gradient(180deg,#7c6026,#493612);font-size:15px;box-shadow:0 6px 24px #000b, inset 0 1px #f0cf7a55}.mapHud{left:10px;right:10px;bottom:9px}.heroCard{min-width:0;width:205px;padding:6px;border-radius:13px;background:rgba(7,12,8,.86);box-shadow:0 7px 24px #000b}.heroCard img{width:42px;height:42px}.mapBtns{grid-template-columns:repeat(2,42px);gap:7px}.roundBtn{width:42px;height:42px;border-radius:12px;background:rgba(11,18,12,.86);backdrop-filter:blur(8px)}
 .nav{background:#09100b;box-shadow:0 -3px 18px #000b}.nav button{min-height:56px;background:#0d150f;font-size:9px}.nav b{font-size:19px}.nav button.active{background:linear-gradient(#44361c,#2c2415);color:#f4cf78}
 .panel{border-radius:14px;background:linear-gradient(180deg,#18231a,#0b120d);box-shadow:0 7px 24px #0006}.btn,.unitcard,.quest{border-radius:11px}.toast{top:calc(env(safe-area-inset-top) + 54px);border-radius:12px;background:rgba(12,19,13,.94);backdrop-filter:blur(8px)}
@@ -75,11 +75,11 @@ button{font:inherit;color:inherit;touch-action:manipulation}
 <script>
 window.addEventListener('error',e=>{
  let b=document.getElementById('devVersionBadge');
- if(b){b.textContent='v8.6 · JS ERROR: '+String(e.message||'').slice(0,28);b.style.color='#ff8c7a';b.title=e.message||'JavaScript error'}
+ if(b){b.textContent='v8.6.1.1 · JS ERROR: '+String(e.message||'').slice(0,28);b.style.color='#ff8c7a';b.title=e.message||'JavaScript error'}
 });
 window.addEventListener('unhandledrejection',e=>{
  let b=document.getElementById('devVersionBadge');
- if(b){b.textContent='v8.6 · PROMISE ERROR';b.style.color='#ff8c7a'}
+ if(b){b.textContent='v8.6.1.1 · PROMISE ERROR';b.style.color='#ff8c7a'}
 });
 </script>
 <style>
@@ -91,7 +91,7 @@ window.addEventListener('unhandledrejection',e=>{
 </style>
 
 </head>
-<body><div id="devVersionBadge">v8.6</div><main class="app">
+<body><div id="devVersionBadge">v8.6.1.1</div><main class="app">
 <div class="top"><span class="r">🪙 <b id="gold"></b></span><span class="r">🪵 <b id="wood"></b></span><span class="r">🪨 <b id="ore"></b></span><span class="r">💎 <b id="gems"></b></span><span class="r">🔮 <b id="crystal"></b></span><span class="grow"></span><span class="r">☀️ День <b id="day"></b> · Нед. <b id="week"></b> · Мес. <b id="month"></b></span></div>
 <div class="main">
 <section class="screen active" id="s-map">
@@ -123,6 +123,7 @@ window.addEventListener('unhandledrejection',e=>{
 (()=> {
 const $=id=>document.getElementById(id),W=26,H=20,K=(x,y)=>x+','+y;
 const WORLD_W=2600,WORLD_H=2000,CELL_W=WORLD_W/W,CELL_H=WORLD_H/H;
+const PAN_PAD_X=420,PAN_PAD_Y=360;
 const units={pikes:{n:'Копейщики',img:'pikeman.jpg',p:1.25,hp:9,spd:3,range:1,cost:360,qty:8,req:'barracks'},bows:{n:'Стрелки',img:'archer.jpg',p:2.45,hp:7,spd:3,range:4,cost:540,qty:5,req:'range'},cavs:{n:'Рыцари',img:'cavalier.jpg',p:5.4,hp:18,spd:5,range:1,cost:980,qty:2,req:'stable'},griffins:{n:'Грифоны',img:'griffin.jpg',p:8.8,hp:28,spd:6,range:1,cost:1450,qty:1,req:'griffin'},mages:{n:'Маги',img:'mage.jpg',p:10.2,hp:20,spd:4,range:5,cost:1650,qty:1,req:'mage'}};
 const enemies={orcs:{n:'Орки',img:'orc.jpg',p:3.2,hp:14,spd:3,range:1},wolves:{n:'Волки',img:'wolf.jpg',p:4,hp:13,spd:5,range:1},skeletons:{n:'Скелеты',img:'skeleton.jpg',p:2.7,hp:10,spd:3,range:1},necros:{n:'Некроманты',img:'necromancer.jpg',p:9.5,hp:24,spd:3,range:5}};
 const builds={barracks:{n:'Казармы',cost:[800,3,0],req:null},range:{n:'Стрельбище',cost:[1000,4,0],req:'barracks'},stable:{n:'Конюшни',cost:[1500,3,3],req:'barracks'},griffin:{n:'Башня грифонов',cost:[2200,5,4],req:'stable'},mage:{n:'Гильдия магов',cost:[1800,4,3],req:'range'},market:{n:'Рынок',cost:[1200,2,2],req:null},citadel:{n:'Цитадель',cost:[2600,6,6],req:'barracks'}};
@@ -176,11 +177,11 @@ const visualHotspots=[
 ];
 
 const assetNames=['ivan-rider.png','varvara-map.png','world-v6.jpg','hero.jpg','mage.jpg','castle.jpg','mine.jpg','sawmill.jpg','chest.jpg','portal.jpg','orc.jpg','wolf.jpg','necromancer.jpg','pikeman.jpg','archer.jpg','cavalier.jpg','griffin.jpg','skeleton.jpg'];
-const assets={};const fogCanvas=document.createElement('canvas');fogCanvas.width=WORLD_W;fogCanvas.height=WORLD_H;const fogCtx=fogCanvas.getContext('2d');let selectedObject=null,safeTapTimer=null,pendingInteraction=null,animClock=0,lastAnim=0,dust=[];let s,cam={x:0,y:0,zoom:.58},drag=null,toastTimer=null,routeTimer=null,audioCtx=null,mapReady=false;
+const assets={};const fogCanvas=document.createElement('canvas');fogCanvas.width=WORLD_W;fogCanvas.height=WORLD_H;const fogCtx=fogCanvas.getContext('2d');let selectedObject=null,safeTapTimer=null,pendingInteraction=null,approachPoint=null,animClock=0,lastAnim=0,dust=[];let s,cam={x:0,y:0,zoom:.58},drag=null,toastTimer=null,routeTimer=null,audioCtx=null,mapReady=false;
 function loadAssets(){return Promise.all(assetNames.map(n=>new Promise(res=>{let im=new Image();im.onload=()=>{assets[n]=im;res()};im.onerror=res;im.src=n}))).then(()=>{mapReady=true;resizeCanvas();drawMap()})}
 function heroTemplate(name,cls,img,x,y,stats,army){return{name,cls,img,x,y,px:x*CELL_W+CELL_W/2,py:y*CELL_H+CELL_H/2,moves:12,maxMoves:12,atk:stats[0],def:stats[1],magic:stats[2],knowledge:stats[3],level:1,xp:0,mana:14,manaMax:14,skills:{},artifacts:[],army:{pikes:army[0],bows:army[1],cavs:army[2],griffins:army[3],mages:army[4]},route:[]}}
 function fresh(){s={gold:2800,wood:12,ore:10,gems:3,crystal:2,day:1,week:1,month:1,activeHero:'arden',heroes:{arden:heroTemplate('Иван','Рыцарь','hero.jpg',12,9,[2,2,1,1],[24,10,0,0,0]),lyra:heroTemplate('Варвара','Боевой маг','mage.jpg',14,10,[1,1,3,2],[10,7,0,0,2])},enemy:{x:15,y:11,power:1,alive:true},seen:[],objects:JSON.parse(JSON.stringify(baseObjects)),build:{barracks:false,range:false,stable:false,griffin:false,mage:false,market:false,citadel:false},avail:{pikes:16,bows:0,cavs:0,griffins:0,mages:0},settings:{sound:true},q:{wood:false,ore:false,gems:false,artifacts:0,boss:false,tutorialMove:false,tutorialTown:false,altar:false,obelisk:false,ivanStory:0,varvaraStory:0,villages:0,ruins:0},story:{ivan:0,varvara:0,world:0},reputation:0,logs:[],battle:null,garrison:{pikes:0,bows:0,cavs:0,griffins:0,mages:0},freePlay:false};ensureCriticalObjectsReachable();revealAll();log('Кампания началась. Морвейн укрепляет восточные земли.');render();centerOnHero(false)}
-function save(){localStorage.setItem('ash-v8-6-kingdom',JSON.stringify(s))}
+function save(){localStorage.setItem('ash-v8-6-1-kingdom',JSON.stringify(s))}
 function normalizeHero(hr, fallback){
  if(!hr)return fallback;
  hr.name??=fallback.name; hr.cls??=fallback.cls; hr.img??=fallback.img;
@@ -195,7 +196,9 @@ function normalizeHero(hr, fallback){
 }
 function load(){try{
  let raw=
- localStorage.getItem('ash-v8-6-kingdom')||localStorage.getItem('ash-v8-5-2-kingdom')||
+ localStorage.getItem('ash-v8-6-1-kingdom')||
+ localStorage.getItem('ash-v8-6-kingdom')||
+ localStorage.getItem('ash-v8-5-2-kingdom')||
  localStorage.getItem('ash-v8-5-1-kingdom')||
  localStorage.getItem('ash-v8-5-kingdom')||
  localStorage.getItem('ash-v8-4-1-kingdom')||
@@ -278,31 +281,43 @@ function adjacentCells(tx,ty){
  return [[tx+1,ty],[tx-1,ty],[tx,ty+1],[tx,ty-1]]
    .filter(([x,y])=>passable(x,y));
 }
-function interactionTarget(tx,ty){
- const direct=passable(tx,ty)?[[tx,ty]]:[];
- const around=adjacentCells(tx,ty);
- return [...direct,...around];
+function interactionTarget(tx,ty,maxRadius=4){
+ const out=[],seen=new Set();
+ for(let r=0;r<=maxRadius;r++){
+   for(let dy=-r;dy<=r;dy++){
+     for(let dx=-r;dx<=r;dx++){
+       if(Math.max(Math.abs(dx),Math.abs(dy))!==r)continue;
+       const x=tx+dx,y=ty+dy,key=K(x,y);
+       if(seen.has(key))continue;seen.add(key);
+       if(passable(x,y))out.push([x,y]);
+     }
+   }
+ }
+ return out;
 }
 function pathToInteract(sx,sy,tx,ty){
  let best=null;
- for(const [x,y] of interactionTarget(tx,ty)){
+ const candidates=interactionTarget(tx,ty,5);
+ for(const [x,y] of candidates){
    let p=pathfind(sx,sy,x,y);
    if(x===sx&&y===sy)p=[];
    if((x===sx&&y===sy)||p.length){
-     if(!best||p.length<best.path.length)best={path:p,x,y};
+     const geo=Math.abs(x-tx)+Math.abs(y-ty);
+     const score=p.length+geo*.35;
+     if(!best||score<best.score)best={path:p,x,y,score};
    }
  }
  return best;
 }
 function isAdjacentTo(hr,tx,ty){
- return Math.abs(hr.x-tx)+Math.abs(hr.y-ty)<=1;
+ return Math.abs(hr.x-tx)+Math.abs(hr.y-ty)<=2;
 }
 function resolveInteraction(){
  if(!pendingInteraction)return;
  const {key,tx,ty}=pendingInteraction,hr=h(),o=s.objects[key];
  if(!o){pendingInteraction=null;return}
  if((hr.x===tx&&hr.y===ty)||isAdjacentTo(hr,tx,ty)){
-   pendingInteraction=null;
+   pendingInteraction=null;approachPoint=null;
    eventObject(o,key);
  }
 }
@@ -355,8 +370,8 @@ function interactHotspot(hs){
  if(hs.key && s.objects[hs.key]){
    const [tx,ty]=hs.key.split(',').map(Number),hr=h();
    const target=pathToInteract(hr.x,hr.y,tx,ty);
-   if(!target){toast('К объекту нет доступного подхода');return}
-   pendingInteraction={key:hs.key,tx,ty};
+   if(!target){toast('Не удалось найти путь к объекту даже через ближайшие клетки');return}
+   pendingInteraction={key:hs.key,tx,ty};approachPoint={x:target.x,y:target.y};
    if(target.path.length===0){resolveInteraction();render();return}
    hr.route=target.path;toast(`Иду к объекту: ${target.path.length} клеток`);startRoute();
  }
@@ -458,9 +473,19 @@ function drawLandmarkLabels(ctx){
 function drawMap(){
  if(!mapReady||!s)return;let c=$('mapCanvas'),ctx=c.getContext('2d'),dpr=c._dpr||1,r=c.getBoundingClientRect();ctx.setTransform(dpr,0,0,dpr,0,0);ctx.clearRect(0,0,r.width,r.height);
  ctx.save();ctx.scale(cam.zoom,cam.zoom);ctx.translate(-cam.x,-cam.y);
+ ctx.fillStyle='#000';ctx.fillRect(-PAN_PAD_X,-PAN_PAD_Y,WORLD_W+PAN_PAD_X*2,WORLD_H+PAN_PAD_Y*2);
  if(assets['world-v6.jpg']){ctx.filter='brightness(1.10) saturate(1.10) contrast(1.05)';ctx.drawImage(assets['world-v6.jpg'],0,0,WORLD_W,WORLD_H);ctx.filter='none'}
  // planned route — understated, readable on mobile
  Object.values(s.heroes).forEach(hr=>{if(hr.route?.length){ctx.beginPath();ctx.moveTo(hr.px,hr.py);hr.route.forEach(([x,y])=>{let p=tileCenter(x,y);ctx.lineTo(p.x,p.y)});ctx.strokeStyle='rgba(129,239,131,.78)';ctx.lineWidth=4/cam.zoom;ctx.setLineDash([10/cam.zoom,9/cam.zoom]);ctx.stroke();ctx.setLineDash([])}});
+ 
+ if(approachPoint){
+   const ap=tileCenter(approachPoint.x,approachPoint.y);
+   const pulse=10+Math.sin(animClock*.008)*4;
+   ctx.beginPath();ctx.arc(ap.x,ap.y,pulse,0,Math.PI*2);
+   ctx.fillStyle='rgba(116,238,130,.35)';ctx.fill();
+   ctx.strokeStyle='rgba(151,255,160,.92)';ctx.lineWidth=3/cam.zoom;ctx.stroke();
+ }
+
  // world objects: no square card frames
  for(let key in s.objects){let o=s.objects[key],[x,y]=key.split(',').map(Number);if(!s.seen.includes(key))continue;let p=tileCenter(x,y),img=assets[o.img];
   const backgroundBound=['1,1','3,3','6,2','11,2','12,11','7,6'].includes(key);
@@ -495,8 +520,17 @@ function drawMap(){
  ctx.fillStyle=glow;ctx.beginPath();ctx.arc(ah.px,ah.py,310,0,Math.PI*2);ctx.fill();
  ctx.restore();
 }
-function clampCam(){let c=$('mapCanvas').getBoundingClientRect(),vw=c.width/cam.zoom,vh=c.height/cam.zoom;cam.x=Math.max(0,Math.min(WORLD_W-vw,cam.x));cam.y=Math.max(0,Math.min(WORLD_H-vh,cam.y))}
-function centerOnHero(animated=true){let hr=h(),c=$('mapCanvas').getBoundingClientRect();cam.x=hr.px-c.width/(2*cam.zoom);cam.y=hr.py-c.height/(2*cam.zoom);clampCam();drawMap()}
+function clampCam(){
+ let c=$('mapCanvas').getBoundingClientRect(),vw=c.width/cam.zoom,vh=c.height/cam.zoom;
+ cam.x=Math.max(-PAN_PAD_X,Math.min(WORLD_W-vw+PAN_PAD_X,cam.x));
+ cam.y=Math.max(-PAN_PAD_Y,Math.min(WORLD_H-vh+PAN_PAD_Y,cam.y));
+}
+function centerOnHero(animated=true){
+ let hr=h(),c=$('mapCanvas').getBoundingClientRect();
+ cam.x=hr.px-c.width/(2*cam.zoom);
+ cam.y=hr.py-c.height/(2*cam.zoom)-90/cam.zoom;
+ clampCam();drawMap()
+}
 function mapTap(clientX,clientY){
  let c=$('mapCanvas').getBoundingClientRect(),w=screenToWorld(clientX-c.left,clientY-c.top),
  tx=Math.floor(w.x/CELL_W),ty=Math.floor(w.y/CELL_H),hr=h();
@@ -513,12 +547,12 @@ function mapTap(clientX,clientY){
  if(o && selectedObject!==key){selectedObject=key;showObjectInfo(o);drawMap();return}
  if(o){
    const target=pathToInteract(hr.x,hr.y,tx,ty);
-   if(!target){toast('К объекту нет доступного подхода');return}
-   selectedObject=null;showObjectInfo(null);pendingInteraction={key,tx,ty};
+   if(!target){toast('Не удалось найти путь к объекту даже через ближайшие клетки');return}
+   selectedObject=null;showObjectInfo(null);pendingInteraction={key,tx,ty};approachPoint={x:target.x,y:target.y};
    if(target.path.length===0){resolveInteraction();render();return}
    hr.route=target.path;drawMap();toast(`Иду к объекту: ${target.path.length} клеток`);startRoute();return;
  }
- selectedObject=null;showObjectInfo(null);pendingInteraction=null;
+ selectedObject=null;showObjectInfo(null);pendingInteraction=null;approachPoint=null;
  let path=pathfind(hr.x,hr.y,tx,ty);
  if(!path.length){toast('Нет доступного пути');return}
  hr.route=path;drawMap();toast(`Маршрут: ${path.length} клеток`);startRoute()
@@ -780,7 +814,7 @@ const canvas=$('mapCanvas');
 canvas.addEventListener('pointerdown',e=>{drag={id:e.pointerId,x:e.clientX,y:e.clientY,cx:cam.x,cy:cam.y,moved:false};canvas.setPointerCapture(e.pointerId)});
 canvas.addEventListener('pointermove',e=>{if(!drag||drag.id!==e.pointerId)return;let dx=e.clientX-drag.x,dy=e.clientY-drag.y;if(Math.hypot(dx,dy)>5)drag.moved=true;cam.x=drag.cx-dx/cam.zoom;cam.y=drag.cy-dy/cam.zoom;clampCam();drawMap()});
 canvas.addEventListener('pointerup',e=>{if(!drag||drag.id!==e.pointerId)return;let moved=drag.moved;drag=null;if(!moved)mapTap(e.clientX,e.clientY)});
-$('zoomIn').onclick=()=>{cam.zoom=Math.min(1.8,cam.zoom+.15);clampCam();drawMap()};$('zoomOut').onclick=()=>{cam.zoom=Math.max(.42,cam.zoom-.15);clampCam();drawMap()};
+$('zoomIn').onclick=()=>{cam.zoom=Math.min(1.8,cam.zoom+.15);clampCam();drawMap()};$('zoomOut').onclick=()=>{cam.zoom=Math.max(.38,cam.zoom-.15);clampCam();drawMap()};
 
 function castSpell(kind){
  let b=s.battle,hr=b?s.heroes[b.hero]:null;if(!b||!hr)return;
@@ -806,7 +840,7 @@ function openSpellBook(){
 }
 $('endDay').addEventListener('click',nextDay);$('endDay').addEventListener('touchend',e=>{e.preventDefault();nextDay()},{passive:false});
 $('switchHero').onclick=()=>{s.activeHero=s.activeHero==='arden'?'lyra':'arden';render();centerOnHero(false);toast('Активный герой: '+h().name)};$('save').onclick=()=>{save();toast('Игра сохранена')};
-$('soundToggle').onclick=()=>{s.settings.sound=!s.settings.sound;renderSettings();save()};$('centerHero').onclick=()=>centerOnHero();$('manualSave').onclick=()=>{save();toast('Сохранено')};$('newGame').onclick=()=>{if(confirm('Начать новую игру?')){localStorage.removeItem('ash-v8-6-kingdom');localStorage.removeItem('ash-v8-5-2-kingdom');localStorage.removeItem('ash-v8-5-1-kingdom');localStorage.removeItem('ash-v8-5-kingdom');localStorage.removeItem('ash-v8-4-1-kingdom');localStorage.removeItem('ash-v8-4-kingdom');localStorage.removeItem('ash-v6-canvas');fresh();switchScreen('map')}};
+$('soundToggle').onclick=()=>{s.settings.sound=!s.settings.sound;renderSettings();save()};$('centerHero').onclick=()=>centerOnHero();$('manualSave').onclick=()=>{save();toast('Сохранено')};$('newGame').onclick=()=>{if(confirm('Начать новую игру?')){localStorage.removeItem('ash-v8-6-1-kingdom');localStorage.removeItem('ash-v8-6-kingdom');localStorage.removeItem('ash-v8-5-2-kingdom');localStorage.removeItem('ash-v8-5-1-kingdom');localStorage.removeItem('ash-v8-5-kingdom');localStorage.removeItem('ash-v8-4-1-kingdom');localStorage.removeItem('ash-v8-4-kingdom');localStorage.removeItem('ash-v6-canvas');fresh();switchScreen('map')}};
 $('waitBtn').onclick=()=>{if(s.battle?.selected?.side==='p')battleTurn()};$('defBtn').onclick=()=>{let a=s.battle?.selected;if(a?.side==='p'){a.hp+=Math.ceil(bdef(a).hp*.12);battleTurn()}};$('spellBtn').onclick=openSpellBook;$('spellCancel').onclick=()=>$('spellModal').classList.add('hidden');$('retreatBtn').onclick=()=>{if(!s.battle)return;syncArmy();let hr=s.heroes[s.battle.hero];hr.x=1;hr.y=1;let p=tileCenter(1,1);hr.px=p.x;hr.py=p.y;hr.moves=0;s.gold=Math.max(0,s.gold-350);s.battle=null;$('battleModal').classList.add('hidden');render()};$('victoryClose').onclick=()=>{$('victoryModal').classList.add('hidden');s.freePlay=true;save()};
 document.querySelectorAll('.nav button').forEach(bt=>bt.onclick=()=>switchScreen(bt.dataset.s));
 try{
@@ -826,7 +860,7 @@ function heroAnimationLoop(t){
  requestAnimationFrame(heroAnimationLoop);
 }
 requestAnimationFrame(heroAnimationLoop);
-loadAssets().then(()=>{if(!load())fresh();else{revealAll();log('Сохранение загружено в 8.6 · Живой мир.');render();centerOnHero(false)}});
+loadAssets().then(()=>{if(!load())fresh();else{revealAll();log('Сохранение загружено в 8.6.1.');render();centerOnHero(false)}});
 })();
 </script>
 <script id="dev-cache-cleanup">
@@ -840,7 +874,7 @@ loadAssets().then(()=>{if(!load())fresh();else{revealAll();log('Сохранен
       const keys=await caches.keys();
       await Promise.all(keys.map(k=>caches.delete(k)));
     }
-    console.log('v8.6: service workers unregistered and Cache Storage cleared');
+    console.log('v8.6.1.1: service workers unregistered and Cache Storage cleared');
   }catch(e){ console.warn('DEV cache cleanup',e); }
 })();
 
