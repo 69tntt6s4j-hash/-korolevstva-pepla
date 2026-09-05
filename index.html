@@ -8,7 +8,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Королевства Пепла">
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="icon-180.png?v=721788568925">
-<title>Королевства Пепла 8.6.4 — Kingdom Edition</title>
+<title>Королевства Пепла 8.6.5 — Kingdom Edition</title>
 <style>
 :root{--gold:#ddb45c;--text:#f4ecd8;--muted:#b8af9c;--line:#735b29;--panel:#101611;--panel2:#192219}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
@@ -75,11 +75,11 @@ button{font:inherit;color:inherit;touch-action:manipulation}
 <script>
 window.addEventListener('error',e=>{
  let b=document.getElementById('devVersionBadge');
- if(b){b.textContent='v8.6.4 · JS ERROR: '+String(e.message||'').slice(0,28);b.style.color='#ff8c7a';b.title=e.message||'JavaScript error'}
+ if(b){b.textContent='v8.6.5 · JS ERROR: '+String(e.message||'').slice(0,28);b.style.color='#ff8c7a';b.title=e.message||'JavaScript error'}
 });
 window.addEventListener('unhandledrejection',e=>{
  let b=document.getElementById('devVersionBadge');
- if(b){b.textContent='v8.6.4 · PROMISE ERROR';b.style.color='#ff8c7a'}
+ if(b){b.textContent='v8.6.5 · PROMISE ERROR';b.style.color='#ff8c7a'}
 });
 </script>
 <style>
@@ -91,7 +91,7 @@ window.addEventListener('unhandledrejection',e=>{
 </style>
 
 </head>
-<body><div id="devVersionBadge">v8.6.4</div><main class="app">
+<body><div id="devVersionBadge">v8.6.5</div><main class="app">
 <div class="top"><span class="r">🪙 <b id="gold"></b></span><span class="r">🪵 <b id="wood"></b></span><span class="r">🪨 <b id="ore"></b></span><span class="r">💎 <b id="gems"></b></span><span class="r">🔮 <b id="crystal"></b></span><span class="grow"></span><span class="r">☀️ День <b id="day"></b> · Нед. <b id="week"></b> · Мес. <b id="month"></b></span></div>
 <div class="main">
 <section class="screen active" id="s-map">
@@ -141,7 +141,7 @@ const enemies={orcs:{n:'Орки',img:'orc.jpg',p:3.2,hp:14,spd:3,range:1},wolve
 const builds={barracks:{n:'Казармы',cost:[800,3,0],req:null},range:{n:'Стрельбище',cost:[1000,4,0],req:'barracks'},stable:{n:'Конюшни',cost:[1500,3,3],req:'barracks'},griffin:{n:'Башня грифонов',cost:[2200,5,4],req:'stable'},mage:{n:'Гильдия магов',cost:[1800,4,3],req:'range'},market:{n:'Рынок',cost:[1200,2,2],req:null},citadel:{n:'Цитадель',cost:[2600,6,6],req:'barracks'}};
 const skillDefs={logistics:['Логистика','+2 движения'],leadership:['Лидерство','+10% силы армии'],archery:['Стрельба','+15% урона стрелков'],wisdom:['Мудрость','+5 маны'],estates:['Поместья','+150 золота/день'],resistance:['Сопротивление','-10% входящего урона']};
 const artifactDefs={sword:{n:'Меч Стража',icon:'🗡️',stat:'atk',v:2},shield:{n:'Щит Серого Льва',icon:'🛡️',stat:'def',v:2},crown:{n:'Корона Мудрых',icon:'👑',stat:'magic',v:2}};
-const baseObjects={'1,1':{t:'castle',img:'castle.jpg',owner:'player',label:'Стальной Холм'},'3,3':{t:'sawmill',img:'sawmill.jpg',owner:null,label:'Лесопилка'},'6,2':{t:'mine',img:'mine.jpg',kind:'ore',owner:null,label:'Железная шахта'},'8,3':{t:'enemy',img:'orc.jpg',name:'Орочий дозор',stacks:[['orcs',12],['wolves',5]],reward:700,xp:65},'11,2':{t:'chest',img:'chest.jpg'},'4,6':{t:'portal',img:'portal.jpg'},'22,11':{t:'enemy',img:'necromancer.jpg',name:'Армия мертвецов',stacks:[['skeletons',30],['necros',8]],reward:1850,xp:175,undead:true},'10,7':{t:'artifact',img:'chest.jpg',artifact:'sword'},'13,6':{t:'mine',img:'mine.jpg',kind:'gems',owner:null,label:'Шахта самоцветов'},'15,9':{t:'artifact',img:'chest.jpg',artifact:'shield'},'12,11':{t:'enemy',img:'necromancer.jpg',name:'Легион Морвейна',stacks:[['necros',6],['skeletons',22],['orcs',10]],reward:2400,xp:220,boss:true},'16,11':{t:'artifact',img:'chest.jpg',artifact:'crown'},
+const baseObjects={'12,7':{t:'castle',img:'castle.jpg',owner:'player',label:'Стальной Холм'},'3,8':{t:'sawmill',img:'sawmill.jpg',owner:null,label:'Лесопилка'},'20,6':{t:'mine',img:'mine.jpg',kind:'ore',owner:null,label:'Железная шахта'},'8,3':{t:'enemy',img:'orc.jpg',name:'Орочий дозор',stacks:[['orcs',12],['wolves',5]],reward:700,xp:65},'12,14':{t:'chest',img:'chest.jpg'},'4,6':{t:'portal',img:'portal.jpg'},'22,11':{t:'enemy',img:'necromancer.jpg',name:'Армия мертвецов',stacks:[['skeletons',30],['necros',8]],reward:1850,xp:175,undead:true},'10,7':{t:'artifact',img:'chest.jpg',artifact:'sword'},'13,6':{t:'mine',img:'mine.jpg',kind:'gems',owner:null,label:'Шахта самоцветов'},'15,9':{t:'artifact',img:'chest.jpg',artifact:'shield'},'23,3':{t:'enemy',img:'necromancer.jpg',name:'Легион Морвейна',stacks:[['necros',6],['skeletons',22],['orcs',10]],reward:2400,xp:220,boss:true},'16,11':{t:'artifact',img:'chest.jpg',artifact:'crown'},
 '18,3':{t:'enemy',img:'orc.jpg',name:'Разбойничий лагерь',stacks:[['orcs',18],['wolves',8]],reward:1200,xp:110},
 '21,5':{t:'chest',img:'chest.jpg'},
 '23,8':{t:'artifact',img:'chest.jpg',artifact:'crown'},
@@ -177,23 +177,26 @@ const baseObjects={'1,1':{t:'castle',img:'castle.jpg',owner:'player',label:'Ст
 '6,18':{t:'village',img:'castle.jpg',label:'Портовый хутор'},
 '13,17':{t:'ruins',img:'castle.jpg',label:'Храм Затонувших'},
 '20,17':{t:'event',img:'portal.jpg',event:'world2',label:'Разлом Пепла'}};
-const visualHotspots=[
- {id:'castle',name:'Стальной Холм',wx:.49*WORLD_W,wy:.35*WORLD_H,r:135,kind:'town',key:'1,1'},
- {id:'sawmill',name:'Лесопилка',wx:.14*WORLD_W,wy:.41*WORLD_H,r:105,kind:'object',key:'3,3'},
- {id:'ironmine',name:'Железная шахта',wx:.79*WORLD_W,wy:.34*WORLD_H,r:105,kind:'object',key:'6,2'},
- {id:'altar',name:'Алтарь магии',wx:.29*WORLD_W,wy:.60*WORLD_H,r:100,kind:'altar'},
- {id:'treasure',name:'Сокровище',wx:.48*WORLD_W,wy:.72*WORLD_H,r:90,kind:'object',key:'11,2'},
- {id:'necropolis',name:'Некрополь',wx:.90*WORLD_W,wy:.16*WORLD_H,r:145,kind:'boss',key:'12,11'},
- {id:'deadarmy',name:'Армия мертвецов',wx:.86*WORLD_W,wy:.56*WORLD_H,r:115,kind:'enemy',key:'22,11'},
- {id:'obelisk',name:'Заброшенная башня',wx:.18*WORLD_W,wy:.32*WORLD_H,r:90,kind:'obelisk'}
-];
+
+const landmarkObjects={
+ castle:{key:'12,7',id:'castle',name:'Стальной Холм',kind:'town',wx:.49*WORLD_W,wy:.35*WORLD_H,r:135},
+ sawmill:{key:'3,8',id:'sawmill',name:'Лесопилка',kind:'object',wx:.14*WORLD_W,wy:.41*WORLD_H,r:105},
+ ironmine:{key:'20,6',id:'ironmine',name:'Железная шахта',kind:'object',wx:.79*WORLD_W,wy:.34*WORLD_H,r:105},
+ altar:{key:null,id:'altar',name:'Алтарь магии',kind:'altar',wx:.29*WORLD_W,wy:.60*WORLD_H,r:100},
+ treasure:{key:'12,14',id:'treasure',name:'Сокровище',kind:'object',wx:.48*WORLD_W,wy:.72*WORLD_H,r:90},
+ necropolis:{key:'23,3',id:'necropolis',name:'Некрополь',kind:'boss',wx:.90*WORLD_W,wy:.16*WORLD_H,r:145},
+ deadarmy:{key:'22,11',id:'deadarmy',name:'Армия мертвецов',kind:'enemy',wx:.86*WORLD_W,wy:.56*WORLD_H,r:115},
+ obelisk:{key:null,id:'obelisk',name:'Заброшенная башня',kind:'obelisk',wx:.18*WORLD_W,wy:.32*WORLD_H,r:90}
+};
+const visualHotspots=Object.values(landmarkObjects);
+
 
 const assetNames=['ivan-rider.png','varvara-map.png','world-v6.jpg','hero.jpg','mage.jpg','castle.jpg','mine.jpg','sawmill.jpg','chest.jpg','portal.jpg','orc.jpg','wolf.jpg','necromancer.jpg','pikeman.jpg','archer.jpg','cavalier.jpg','griffin.jpg','skeleton.jpg'];
 const assets={};const fogCanvas=document.createElement('canvas');fogCanvas.width=WORLD_W;fogCanvas.height=WORLD_H;const fogCtx=fogCanvas.getContext('2d');let selectedObject=null,safeTapTimer=null,pendingInteraction=null,approachPoint=null,enemyBriefKey=null,animClock=0,lastAnim=0,dust=[];let s,cam={x:0,y:0,zoom:.58},drag=null,toastTimer=null,routeTimer=null,audioCtx=null,mapReady=false;
 function loadAssets(){return Promise.all(assetNames.map(n=>new Promise(res=>{let im=new Image();im.onload=()=>{assets[n]=im;res()};im.onerror=res;im.src=n}))).then(()=>{mapReady=true;resizeCanvas();drawMap()})}
 function heroTemplate(name,cls,img,x,y,stats,army){return{name,cls,img,x,y,px:x*CELL_W+CELL_W/2,py:y*CELL_H+CELL_H/2,moves:12,maxMoves:12,atk:stats[0],def:stats[1],magic:stats[2],knowledge:stats[3],level:1,xp:0,mana:14,manaMax:14,skills:{},artifacts:[],army:{pikes:army[0],bows:army[1],cavs:army[2],griffins:army[3],mages:army[4]},route:[]}}
-function fresh(){s={gold:2800,wood:12,ore:10,gems:3,crystal:2,day:1,week:1,month:1,activeHero:'arden',heroes:{arden:heroTemplate('Иван','Рыцарь','hero.jpg',12,9,[2,2,1,1],[24,10,0,0,0]),lyra:heroTemplate('Варвара','Боевой маг','mage.jpg',14,10,[1,1,3,2],[10,7,0,0,2])},enemy:{x:15,y:11,power:1,alive:true},seen:[],objects:JSON.parse(JSON.stringify(baseObjects)),build:{barracks:false,range:false,stable:false,griffin:false,mage:false,market:false,citadel:false},avail:{pikes:16,bows:0,cavs:0,griffins:0,mages:0},settings:{sound:true},q:{wood:false,ore:false,gems:false,artifacts:0,boss:false,tutorialMove:false,tutorialTown:false,altar:false,obelisk:false,ivanStory:0,varvaraStory:0,villages:0,ruins:0},story:{ivan:0,varvara:0,world:0},reputation:0,logs:[],battle:null,garrison:{pikes:0,bows:0,cavs:0,griffins:0,mages:0},freePlay:false};ensureCriticalObjectsReachable();validateWorldReachability();revealAll();log('Кампания началась. Морвейн укрепляет восточные земли.');render();centerOnHero(false)}
-function save(){localStorage.setItem('ash-v8-6-4-kingdom',JSON.stringify(s))}
+function fresh(){s={gold:2800,wood:12,ore:10,gems:3,crystal:2,day:1,week:1,month:1,activeHero:'arden',heroes:{arden:heroTemplate('Иван','Рыцарь','hero.jpg',12,9,[2,2,1,1],[24,10,0,0,0]),lyra:heroTemplate('Варвара','Боевой маг','mage.jpg',14,10,[1,1,3,2],[10,7,0,0,2])},enemy:{x:15,y:11,power:1,alive:true},seen:[],objects:JSON.parse(JSON.stringify(baseObjects)),build:{barracks:false,range:false,stable:false,griffin:false,mage:false,market:false,citadel:false},avail:{pikes:16,bows:0,cavs:0,griffins:0,mages:0},settings:{sound:true},q:{wood:false,ore:false,gems:false,artifacts:0,boss:false,tutorialMove:false,tutorialTown:false,altar:false,obelisk:false,ivanStory:0,varvaraStory:0,villages:0,ruins:0},story:{ivan:0,varvara:0,world:0},reputation:0,logs:[],battle:null,garrison:{pikes:0,bows:0,cavs:0,griffins:0,mages:0},freePlay:false};s.objects=unifyLandmarkObjects(s.objects);ensureCriticalObjectsReachable();validateWorldReachability();revealAll();log('Кампания началась. Морвейн укрепляет восточные земли.');render();centerOnHero(false)}
+function save(){localStorage.setItem('ash-v8-6-5-kingdom',JSON.stringify(s))}
 function normalizeHero(hr, fallback){
  if(!hr)return fallback;
  hr.name??=fallback.name; hr.cls??=fallback.cls; hr.img??=fallback.img;
@@ -206,8 +209,29 @@ function normalizeHero(hr, fallback){
  for(const k of Object.keys(units)) hr.army[k]??=0;
  return hr;
 }
+
+function unifyLandmarkObjects(obj){
+ if(!obj)return obj;
+ const moves=[
+  ['1,1','12,7'],['3,3','3,8'],['6,2','20,6'],
+  ['11,2','12,14'],['12,11','23,3'],['7,6','22,11']
+ ];
+ for(const [oldKey,newKey] of moves){
+   if(obj[oldKey]){
+     if(!obj[newKey])obj[newKey]=obj[oldKey];
+     delete obj[oldKey];
+   }
+ }
+ // Core definitions: overwrite only if the destination object is absent/wrong type.
+ if(!obj['12,7']||obj['12,7'].t!=='castle')obj['12,7']={t:'castle',img:'castle.jpg',owner:'player',label:'Стальной Холм'};
+ if(!obj['3,8']||obj['3,8'].t!=='sawmill')obj['3,8']={t:'sawmill',img:'sawmill.jpg',owner:null,label:'Лесопилка'};
+ if(!obj['20,6']||obj['20,6'].t!=='mine')obj['20,6']={t:'mine',img:'mine.jpg',kind:'ore',owner:null,label:'Железная шахта'};
+ if(!obj['22,11']||obj['22,11'].name!=='Армия мертвецов')obj['22,11']={t:'enemy',img:'necromancer.jpg',name:'Армия мертвецов',stacks:[['skeletons',30],['necros',8]],reward:1850,xp:175,undead:true};
+ return obj;
+}
 function load(){try{
  let raw=
+ localStorage.getItem('ash-v8-6-5-kingdom')||
  localStorage.getItem('ash-v8-6-4-kingdom')||
  localStorage.getItem('ash-v8-6-3-kingdom')||
  localStorage.getItem('ash-v8-6-2-kingdom')||
@@ -233,18 +257,13 @@ function load(){try{
  q.heroes.lyra=normalizeHero(q.heroes.lyra,fl);q.heroes.lyra.name='Варвара';
  q.gold??=2800;q.wood??=12;q.ore??=10;q.gems??=3;q.crystal??=2;q.day??=1;q.week??=1;q.month??=1;
  q.activeHero=(q.activeHero&&q.heroes[q.activeHero])?q.activeHero:'arden';
- q.seen??=[];q.logs??=[];q.settings??={sound:true};q.settings.sound??=true;
+ q.objects=unifyLandmarkObjects(q.objects);q.seen??=[];q.logs??=[];q.settings??={sound:true};q.settings.sound??=true;
  q.q??={};q.q.wood??=false;q.q.ore??=false;q.q.gems??=false;q.q.artifacts??=0;q.q.boss??=false;q.q.tutorialMove??=false;q.q.tutorialTown??=false;q.q.altar??=false;q.q.obelisk??=false;q.q.ivanStory??=0;q.q.varvaraStory??=0;q.q.villages??=0;q.q.ruins??=0;q.story??={ivan:0,varvara:0,world:0};q.story.ivan??=0;q.story.varvara??=0;q.story.world??=0;q.reputation??=0;
  q.build??={}; for(const k of Object.keys(builds)) q.build[k]??=false;
  q.avail??={}; for(const k of Object.keys(units)) q.avail[k]??=0;
  q.enemy??={x:15,y:11,power:1,alive:true};q.battle??=null;q.garrison??={pikes:0,bows:0,cavs:0,griffins:0,mages:0};for(const k of Object.keys(units))q.garrison[k]??=0;q.freePlay??=false;
  s=q;
- if(s.objects){
-   if(s.objects['7,6']){
-     delete s.objects['7,6'];
-     if(!s.objects['22,11'])s.objects['22,11']={t:'enemy',img:'necromancer.jpg',name:'Армия мертвецов',stacks:[['skeletons',30],['necros',8]],reward:1850,xp:175,undead:true};
-   }
- }
+ if(s.objects)s.objects=unifyLandmarkObjects(s.objects);
 
  const expansionEvents={
   '18,3':{t:'enemy',img:'orc.jpg',name:'Разбойничий лагерь',stacks:[['orcs',18],['wolves',8]],reward:1200,xp:110},
@@ -263,7 +282,7 @@ function load(){try{
  }catch(e){console.warn('Save load failed',e);return false}}
 function h(){return s.heroes[s.activeHero]}function log(t){s.logs.unshift('• '+t);s.logs=s.logs.slice(0,80)}function toast(t){let el=$('toast');el.textContent=t;el.classList.add('show');clearTimeout(toastTimer);toastTimer=setTimeout(()=>el.classList.remove('show'),1900)}
 function sound(f=440,d=.07){if(!s.settings.sound)return;try{audioCtx=audioCtx||new(window.AudioContext||window.webkitAudioContext)();let o=audioCtx.createOscillator(),g=audioCtx.createGain();o.frequency.value=f;g.gain.value=.025;o.connect(g);g.connect(audioCtx.destination);o.start();o.stop(audioCtx.currentTime+d)}catch(e){}}
-// 8.6.4: collision map rebuilt for the current 26×20 continent.
+// 8.6.5: collision map rebuilt for the current 26×20 continent.
 // Only genuinely impassable mountain/water belts are blocked.
 // The south-eastern desert and its ruins are intentionally fully traversable.
 const blockedTiles=new Set([
@@ -576,8 +595,8 @@ function drawMap(){
 
  // world objects: no square card frames
  for(let key in s.objects){let o=s.objects[key],[x,y]=key.split(',').map(Number);if(!s.seen.includes(key))continue;let p=tileCenter(x,y),img=assets[o.img];
-  const backgroundBound=['1,1','3,3','6,2','11,2','12,11','7,6'].includes(key);
-  if(img&&!backgroundBound){let sz=o.t==='castle'?104:o.t==='enemy'?68:72,border=o.owner==='player'?'#72b8ff':o.owner==='enemy'?'#e66b5d':'#d7b35d';ctx.save();ctx.shadowColor='rgba(0,0,0,.72)';ctx.shadowBlur=12/cam.zoom;ctx.shadowOffsetY=5/cam.zoom;roundedImage(ctx,img,p.x,p.y,sz,sz,14/cam.zoom,border);ctx.restore()}if(o.label){ctx.font=`600 ${15/cam.zoom}px -apple-system`;ctx.textAlign='center';let yy=p.y+47,tw=ctx.measureText(o.label).width+14/cam.zoom;ctx.fillStyle='rgba(5,9,6,.78)';ctx.beginPath();ctx.roundRect(p.x-tw/2,yy-16/cam.zoom,tw,22/cam.zoom,7/cam.zoom);ctx.fill();ctx.fillStyle='#f5e8c6';ctx.fillText(o.label,p.x,yy)}}
+  const backgroundBound=['12,7','3,8','20,6','12,14','23,3','22,11'].includes(key);
+  if(img&&!backgroundBound){let sz=o.t==='castle'?104:o.t==='enemy'?68:72,border=o.owner==='player'?'#72b8ff':o.owner==='enemy'?'#e66b5d':'#d7b35d';ctx.save();ctx.shadowColor='rgba(0,0,0,.72)';ctx.shadowBlur=12/cam.zoom;ctx.shadowOffsetY=5/cam.zoom;roundedImage(ctx,img,p.x,p.y,sz,sz,14/cam.zoom,border);ctx.restore()}if(o.label&&!backgroundBound){ctx.font=`600 ${15/cam.zoom}px -apple-system`;ctx.textAlign='center';let yy=p.y+47,tw=ctx.measureText(o.label).width+14/cam.zoom;ctx.fillStyle='rgba(5,9,6,.78)';ctx.beginPath();ctx.roundRect(p.x-tw/2,yy-16/cam.zoom,tw,22/cam.zoom,7/cam.zoom);ctx.fill();ctx.fillStyle='#f5e8c6';ctx.fillText(o.label,p.x,yy)}}
  drawLandmarkLabels(ctx);
  // enemy roaming hero
  if(s.enemy.alive&&s.seen.includes(K(s.enemy.x,s.enemy.y))){let p=tileCenter(s.enemy.x,s.enemy.y);ctx.save();ctx.shadowColor='#9e251d';ctx.shadowBlur=18/cam.zoom;drawImageCircle(ctx,assets['necromancer.jpg'],p.x,p.y,64,'#d35b4d');ctx.restore()}
@@ -759,8 +778,8 @@ function validateWorldReachability(){
 function ensureCriticalObjectsReachable(){
  const fixes={
    gems:['13,6','12,6','14,6','13,5','13,7'],
-   ore:['6,2','5,2','6,3','5,3'],
-   saw:['3,3','3,4','4,3']
+   ore:['20,6','19,6','20,7','19,7'],
+   saw:['3,8','3,9','4,8']
  };
  const entries=Object.entries(s.objects);
  for(const [key,o] of entries){
@@ -797,7 +816,7 @@ function incomeBreakdown(){
 function heroesCanTransfer(){
  const a=s.heroes.arden,l=s.heroes.lyra;
  const adjacent=Math.abs(a.x-l.x)+Math.abs(a.y-l.y)<=1;
- const bothTown=a.x===1&&a.y===1&&l.x===1&&l.y===1;
+ const bothTown=a.x===12&&a.y===7&&l.x===12&&l.y===7;
  return adjacent||bothTown;
 }
 function moveTroop(from,to,type,amount){
@@ -924,7 +943,7 @@ function strike(a,t){
  }
 }function enemyBattleAI(){let b=s.battle,a=b.selected;if(!a||a.side!=='e')return;let targets=b.stacks.filter(z=>z.side==='p'&&z.qty>0).sort((u,v)=>(Math.abs(u.x-a.x)+Math.abs(u.y-a.y))-(Math.abs(v.x-a.x)+Math.abs(v.y-a.y)));let t=targets[0];if(!t){battleTurn();return}let d=Math.abs(t.x-a.x)+Math.abs(t.y-a.y),ad=bdef(a);if(d<=ad.range){strike(a,t);battleTurn();return}let dx=Math.sign(t.x-a.x),dy=Math.sign(t.y-a.y);for(let step=0;step<ad.spd;step++){let nx=a.x+(Math.abs(t.x-a.x)>=Math.abs(t.y-a.y)?dx:0),ny=a.y+(Math.abs(t.x-a.x)<Math.abs(t.y-a.y)?dy:0);if(nx<0||nx>7||ny<0||ny>4||b.stacks.some(z=>z!==a&&z.x===nx&&z.y===ny&&z.qty>0))break;a.x=nx;a.y=ny}battleTurn()}
 function syncArmy(){let hr=s.heroes[s.battle.hero];for(let k in units)hr.army[k]=0;s.battle.stacks.filter(z=>z.side==='p').forEach(z=>hr.army[z.type]=z.qty)}
-function finishBattle(win){let b=s.battle,hr=s.heroes[b.hero];if(win){syncArmy();s.gold+=b.o.reward;hr.xp+=b.o.xp;if(b.k)delete s.objects[b.k];if(b.o.boss){s.q.boss=true;s.enemy.alive=false;$('victoryModal').classList.remove('hidden')}log(`Победа! +${b.o.reward} золота, +${b.o.xp} опыта.`);checkLevel(hr)}else{syncArmy();hr.x=1;hr.y=1;let p=tileCenter(1,1);hr.px=p.x;hr.py=p.y;hr.moves=0;log('Поражение. Герой вернулся в столицу.')}s.battle=null;$('battleModal').classList.add('hidden');render()}
+function finishBattle(win){let b=s.battle,hr=s.heroes[b.hero];if(win){syncArmy();s.gold+=b.o.reward;hr.xp+=b.o.xp;if(b.k)delete s.objects[b.k];if(b.o.boss){s.q.boss=true;s.enemy.alive=false;$('victoryModal').classList.remove('hidden')}log(`Победа! +${b.o.reward} золота, +${b.o.xp} опыта.`);checkLevel(hr)}else{syncArmy();hr.x=12;hr.y=7;let p=tileCenter(12,7);hr.px=p.x;hr.py=p.y;hr.moves=0;log('Поражение. Герой вернулся в столицу.')}s.battle=null;$('battleModal').classList.add('hidden');render()}
 function switchScreen(name){document.querySelectorAll('.screen').forEach(x=>x.classList.remove('active'));$('s-'+name).classList.add('active');document.querySelectorAll('.nav button').forEach(x=>x.classList.toggle('active',x.dataset.s===name));if(name==='map'){resizeCanvas();drawMap()}}
 const canvas=$('mapCanvas');
 canvas.addEventListener('pointerdown',e=>{drag={id:e.pointerId,x:e.clientX,y:e.clientY,cx:cam.x,cy:cam.y,moved:false};canvas.setPointerCapture(e.pointerId)});
@@ -959,8 +978,8 @@ $('enemyCancelBtn').onclick=closeEnemyBrief;
 $('enemyAttackBtn').onclick=attackEnemyFromBrief;
 $('endDay').addEventListener('click',nextDay);$('endDay').addEventListener('touchend',e=>{e.preventDefault();nextDay()},{passive:false});
 $('switchHero').onclick=()=>{s.activeHero=s.activeHero==='arden'?'lyra':'arden';render();centerOnHero(false);toast('Активный герой: '+h().name)};$('save').onclick=()=>{save();toast('Игра сохранена')};
-$('soundToggle').onclick=()=>{s.settings.sound=!s.settings.sound;renderSettings();save()};$('centerHero').onclick=()=>centerOnHero();$('manualSave').onclick=()=>{save();toast('Сохранено')};$('newGame').onclick=()=>{if(confirm('Начать новую игру?')){localStorage.removeItem('ash-v8-6-4-kingdom');localStorage.removeItem('ash-v8-6-3-kingdom');localStorage.removeItem('ash-v8-6-2-kingdom');localStorage.removeItem('ash-v8-6-1-kingdom');localStorage.removeItem('ash-v8-6-kingdom');localStorage.removeItem('ash-v8-5-2-kingdom');localStorage.removeItem('ash-v8-5-1-kingdom');localStorage.removeItem('ash-v8-5-kingdom');localStorage.removeItem('ash-v8-4-1-kingdom');localStorage.removeItem('ash-v8-4-kingdom');localStorage.removeItem('ash-v6-canvas');fresh();switchScreen('map')}};
-$('waitBtn').onclick=()=>{if(s.battle?.selected?.side==='p')battleTurn()};$('defBtn').onclick=()=>{let a=s.battle?.selected;if(a?.side==='p'){a.hp+=Math.ceil(bdef(a).hp*.12);battleTurn()}};$('spellBtn').onclick=openSpellBook;$('spellCancel').onclick=()=>$('spellModal').classList.add('hidden');$('retreatBtn').onclick=()=>{if(!s.battle)return;syncArmy();let hr=s.heroes[s.battle.hero];hr.x=1;hr.y=1;let p=tileCenter(1,1);hr.px=p.x;hr.py=p.y;hr.moves=0;s.gold=Math.max(0,s.gold-350);s.battle=null;$('battleModal').classList.add('hidden');render()};$('victoryClose').onclick=()=>{$('victoryModal').classList.add('hidden');s.freePlay=true;save()};
+$('soundToggle').onclick=()=>{s.settings.sound=!s.settings.sound;renderSettings();save()};$('centerHero').onclick=()=>centerOnHero();$('manualSave').onclick=()=>{save();toast('Сохранено')};$('newGame').onclick=()=>{if(confirm('Начать новую игру?')){localStorage.removeItem('ash-v8-6-5-kingdom');localStorage.removeItem('ash-v8-6-4-kingdom');localStorage.removeItem('ash-v8-6-3-kingdom');localStorage.removeItem('ash-v8-6-2-kingdom');localStorage.removeItem('ash-v8-6-1-kingdom');localStorage.removeItem('ash-v8-6-kingdom');localStorage.removeItem('ash-v8-5-2-kingdom');localStorage.removeItem('ash-v8-5-1-kingdom');localStorage.removeItem('ash-v8-5-kingdom');localStorage.removeItem('ash-v8-4-1-kingdom');localStorage.removeItem('ash-v8-4-kingdom');localStorage.removeItem('ash-v6-canvas');fresh();switchScreen('map')}};
+$('waitBtn').onclick=()=>{if(s.battle?.selected?.side==='p')battleTurn()};$('defBtn').onclick=()=>{let a=s.battle?.selected;if(a?.side==='p'){a.hp+=Math.ceil(bdef(a).hp*.12);battleTurn()}};$('spellBtn').onclick=openSpellBook;$('spellCancel').onclick=()=>$('spellModal').classList.add('hidden');$('retreatBtn').onclick=()=>{if(!s.battle)return;syncArmy();let hr=s.heroes[s.battle.hero];hr.x=12;hr.y=7;let p=tileCenter(12,7);hr.px=p.x;hr.py=p.y;hr.moves=0;s.gold=Math.max(0,s.gold-350);s.battle=null;$('battleModal').classList.add('hidden');render()};$('victoryClose').onclick=()=>{$('victoryModal').classList.add('hidden');s.freePlay=true;save()};
 document.querySelectorAll('.nav button').forEach(bt=>bt.onclick=()=>switchScreen(bt.dataset.s));
 try{
  localStorage.removeItem('ash-v7-4-dev-kingdom');
@@ -979,7 +998,7 @@ function heroAnimationLoop(t){
  requestAnimationFrame(heroAnimationLoop);
 }
 requestAnimationFrame(heroAnimationLoop);
-loadAssets().then(()=>{if(!load())fresh();else{revealAll();log('Сохранение загружено в 8.6.4.');render();centerOnHero(false)}});
+loadAssets().then(()=>{if(!load())fresh();else{revealAll();log('Сохранение загружено в 8.6.5.');render();centerOnHero(false)}});
 })();
 </script>
 <script id="dev-cache-cleanup">
@@ -993,7 +1012,7 @@ loadAssets().then(()=>{if(!load())fresh();else{revealAll();log('Сохранен
       const keys=await caches.keys();
       await Promise.all(keys.map(k=>caches.delete(k)));
     }
-    console.log('v8.6.4: service workers unregistered and Cache Storage cleared');
+    console.log('v8.6.5: service workers unregistered and Cache Storage cleared');
   }catch(e){ console.warn('DEV cache cleanup',e); }
 })();
 
