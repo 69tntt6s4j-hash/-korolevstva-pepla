@@ -8,7 +8,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Королевства Пепла">
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="icon-180.png?v=721788568925">
-<title>Королевства Пепла 8.3 — Kingdom Edition</title>
+<title>Королевства Пепла 8.3.1 — Kingdom Edition</title>
 <style>
 :root{--gold:#ddb45c;--text:#f4ecd8;--muted:#b8af9c;--line:#735b29;--panel:#101611;--panel2:#192219}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
@@ -71,14 +71,23 @@ button{font:inherit;color:inherit;touch-action:manipulation}
 <script>
 window.addEventListener('error',e=>{
  let b=document.getElementById('devVersionBadge');
- if(b){b.textContent='v8.3 · JS ERROR: '+String(e.message||'').slice(0,28);b.style.color='#ff8c7a';b.title=e.message||'JavaScript error'}
+ if(b){b.textContent='v8.3.1.1 · JS ERROR: '+String(e.message||'').slice(0,28);b.style.color='#ff8c7a';b.title=e.message||'JavaScript error'}
 });
 window.addEventListener('unhandledrejection',e=>{
  let b=document.getElementById('devVersionBadge');
- if(b){b.textContent='v8.3 · PROMISE ERROR';b.style.color='#ff8c7a'}
+ if(b){b.textContent='v8.3.1.1 · PROMISE ERROR';b.style.color='#ff8c7a'}
 });
-</script></head>
-<body><div id="devVersionBadge">v8.3</div><main class="app">
+</script>
+<style>
+.skillChoices{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:16px}
+.skillChoice{min-height:88px;border:1px solid #9b7428;border-radius:16px;background:#152319;color:#f6efd9;padding:14px;text-align:left;font:inherit}
+.skillChoice b{display:block;font-size:18px;margin-bottom:7px;color:#f0c65c}
+.skillChoice span{display:block;font-size:14px;opacity:.78;line-height:1.25}
+@media(max-width:520px){.skillChoices{grid-template-columns:1fr}.skillChoice{min-height:72px}}
+</style>
+
+</head>
+<body><div id="devVersionBadge">v8.3.1.1</div><main class="app">
 <div class="top"><span class="r">🪙 <b id="gold"></b></span><span class="r">🪵 <b id="wood"></b></span><span class="r">🪨 <b id="ore"></b></span><span class="r">💎 <b id="gems"></b></span><span class="r">🔮 <b id="crystal"></b></span><span class="grow"></span><span class="r">☀️ День <b id="day"></b> · Нед. <b id="week"></b> · Мес. <b id="month"></b></span></div>
 <div class="main">
 <section class="screen active" id="s-map">
@@ -132,7 +141,7 @@ const assets={};const fogCanvas=document.createElement('canvas');fogCanvas.width
 function loadAssets(){return Promise.all(assetNames.map(n=>new Promise(res=>{let im=new Image();im.onload=()=>{assets[n]=im;res()};im.onerror=res;im.src=n}))).then(()=>{mapReady=true;resizeCanvas();drawMap()})}
 function heroTemplate(name,cls,img,x,y,stats,army){return{name,cls,img,x,y,px:x*CELL_W+CELL_W/2,py:y*CELL_H+CELL_H/2,moves:12,maxMoves:12,atk:stats[0],def:stats[1],magic:stats[2],knowledge:stats[3],level:1,xp:0,mana:14,manaMax:14,skills:{},artifacts:[],army:{pikes:army[0],bows:army[1],cavs:army[2],griffins:army[3],mages:army[4]},route:[]}}
 function fresh(){s={gold:2800,wood:12,ore:10,gems:3,crystal:2,day:1,week:1,month:1,activeHero:'arden',heroes:{arden:heroTemplate('Арден','Рыцарь','hero.jpg',1,1,[2,2,1,1],[24,10,0,0,0]),lyra:heroTemplate('Лира','Боевой маг','mage.jpg',2,1,[1,1,3,2],[10,7,0,0,2])},enemy:{x:15,y:11,power:1,alive:true},seen:[],objects:JSON.parse(JSON.stringify(baseObjects)),build:{barracks:false,range:false,stable:false,griffin:false,mage:false,market:false,citadel:false},avail:{pikes:16,bows:0,cavs:0,griffins:0,mages:0},settings:{sound:true},q:{wood:false,ore:false,gems:false,artifacts:0,boss:false,tutorialMove:false,tutorialTown:false,altar:false,obelisk:false},logs:[],battle:null,garrison:{pikes:0,bows:0,cavs:0,griffins:0,mages:0},freePlay:false};ensureCriticalObjectsReachable();revealAll();log('Кампания началась. Морвейн укрепляет восточные земли.');render();centerOnHero(false)}
-function save(){localStorage.setItem('ash-v8-3-kingdom',JSON.stringify(s))}
+function save(){localStorage.setItem('ash-v8-3-1-kingdom',JSON.stringify(s))}
 function normalizeHero(hr, fallback){
  if(!hr)return fallback;
  hr.name??=fallback.name; hr.cls??=fallback.cls; hr.img??=fallback.img;
@@ -146,7 +155,7 @@ function normalizeHero(hr, fallback){
  return hr;
 }
 function load(){try{
- let raw=localStorage.getItem('ash-v8-3-kingdom')||localStorage.getItem('ash-v8-2-kingdom')||localStorage.getItem('ash-v8-1-dev-kingdom')||localStorage.getItem('ash-v8-dev-kingdom')||localStorage.getItem('ash-v7-5-dev-kingdom');
+ let raw=localStorage.getItem('ash-v8-3-1-kingdom')||localStorage.getItem('ash-v8-3-kingdom')||localStorage.getItem('ash-v8-2-kingdom')||localStorage.getItem('ash-v8-1-dev-kingdom')||localStorage.getItem('ash-v8-dev-kingdom')||localStorage.getItem('ash-v7-5-dev-kingdom');
  if(!raw)return false;
  let q=JSON.parse(raw);
  if(!q||!q.heroes||!q.heroes.arden||!q.objects)return false;
@@ -497,7 +506,7 @@ function openSpellBook(){
 }
 $('endDay').addEventListener('click',nextDay);$('endDay').addEventListener('touchend',e=>{e.preventDefault();nextDay()},{passive:false});
 $('switchHero').onclick=()=>{s.activeHero=s.activeHero==='arden'?'lyra':'arden';render();centerOnHero(false);toast('Активный герой: '+h().name)};$('save').onclick=()=>{save();toast('Игра сохранена')};
-$('soundToggle').onclick=()=>{s.settings.sound=!s.settings.sound;renderSettings();save()};$('centerHero').onclick=()=>centerOnHero();$('manualSave').onclick=()=>{save();toast('Сохранено')};$('newGame').onclick=()=>{if(confirm('Начать новую игру?')){localStorage.removeItem('ash-v8-3-kingdom');localStorage.removeItem('ash-v6-canvas');fresh();switchScreen('map')}};
+$('soundToggle').onclick=()=>{s.settings.sound=!s.settings.sound;renderSettings();save()};$('centerHero').onclick=()=>centerOnHero();$('manualSave').onclick=()=>{save();toast('Сохранено')};$('newGame').onclick=()=>{if(confirm('Начать новую игру?')){localStorage.removeItem('ash-v8-3-1-kingdom');localStorage.removeItem('ash-v6-canvas');fresh();switchScreen('map')}};
 $('waitBtn').onclick=()=>{if(s.battle?.selected?.side==='p')battleTurn()};$('defBtn').onclick=()=>{let a=s.battle?.selected;if(a?.side==='p'){a.hp+=Math.ceil(bdef(a).hp*.12);battleTurn()}};$('spellBtn').onclick=openSpellBook;$('spellCancel').onclick=()=>$('spellModal').classList.add('hidden');$('retreatBtn').onclick=()=>{if(!s.battle)return;syncArmy();let hr=s.heroes[s.battle.hero];hr.x=1;hr.y=1;let p=tileCenter(1,1);hr.px=p.x;hr.py=p.y;hr.moves=0;s.gold=Math.max(0,s.gold-350);s.battle=null;$('battleModal').classList.add('hidden');render()};$('victoryClose').onclick=()=>{$('victoryModal').classList.add('hidden');s.freePlay=true;save()};
 document.querySelectorAll('.nav button').forEach(bt=>bt.onclick=()=>switchScreen(bt.dataset.s));
 try{
@@ -520,8 +529,68 @@ loadAssets().then(()=>{if(!load())fresh();else{revealAll();log('Сохранен
       const keys=await caches.keys();
       await Promise.all(keys.map(k=>caches.delete(k)));
     }
-    console.log('v8.3: service workers unregistered and Cache Storage cleared');
+    console.log('v8.3.1.1: service workers unregistered and Cache Storage cleared');
   }catch(e){ console.warn('DEV cache cleanup',e); }
 })();
+
+// --- 8.3.1 LEVEL-UP HOTFIX ---
+function levelSkillPool(hero){
+  const pool=[
+    {id:'attack',name:'⚔️ Атака',desc:'+1 к атаке героя',apply:x=>x.attack=(x.attack||0)+1},
+    {id:'defense',name:'🛡️ Защита',desc:'+1 к защите героя',apply:x=>x.defense=(x.defense||0)+1},
+    {id:'magic',name:'🔮 Магия',desc:'+1 к силе магии',apply:x=>x.magic=(x.magic||0)+1},
+    {id:'knowledge',name:'📘 Знания',desc:'+1 к знаниям и +2 к максимуму маны',apply:x=>{x.knowledge=(x.knowledge||0)+1;x.manaMax=(x.manaMax||10)+2;x.mana=Math.min(x.manaMax,(x.mana||0)+2)}},
+    {id:'leadership',name:'👑 Лидерство',desc:'+5% к силе армии',apply:x=>x.leadership=(x.leadership||0)+1},
+    {id:'logistics',name:'🐎 Логистика',desc:'+1 очко передвижения в день',apply:x=>x.logistics=(x.logistics||0)+1}
+  ];
+  // Deterministic choices prevent an empty set at high levels.
+  const lv=Math.max(1,hero.level||1);
+  return [pool[(lv*2)%pool.length],pool[(lv*2+3)%pool.length]];
+}
+function closeLevelModalSafe(){
+  const modal=$('levelModal')||document.querySelector('.levelModal')||document.querySelector('[data-level-modal]');
+  if(modal){modal.classList.add('hidden');modal.style.display='none'}
+}
+function renderLevelChoicesSafe(hero){
+  const modal=$('levelModal')||document.querySelector('.levelModal')||document.querySelector('[data-level-modal]');
+  if(!modal)return false;
+  let box=$('skillChoices')||modal.querySelector('.skillChoices')||modal.querySelector('[data-skill-choices]');
+  if(!box){
+    box=document.createElement('div');box.id='skillChoices';box.className='skillChoices';
+    modal.appendChild(box);
+  }
+  box.innerHTML='';
+  const choices=levelSkillPool(hero);
+  choices.forEach(sk=>{
+    const b=document.createElement('button');
+    b.className='skillChoice';
+    b.innerHTML=`<b>${sk.name}</b><span>${sk.desc}</span>`;
+    b.onclick=()=>{
+      sk.apply(hero);
+      hero.pendingLevelUps=Math.max(0,(hero.pendingLevelUps||1)-1);
+      log(`${hero.name} получает навык: ${sk.name.replace(/^[^ ]+ /,'')}.`);
+      if(hero.pendingLevelUps>0){renderLevelChoicesSafe(hero)}
+      else{closeLevelModalSafe();render();save()}
+    };
+    box.appendChild(b);
+  });
+  modal.classList.remove('hidden');modal.style.display='';
+  return true;
+}
+function repairEmptyLevelModal(){
+  const modal=$('levelModal')||document.querySelector('.levelModal')||document.querySelector('[data-level-modal]');
+  if(!modal)return;
+  const visible=!modal.classList.contains('hidden') && getComputedStyle(modal).display!=='none';
+  if(!visible)return;
+  const box=$('skillChoices')||modal.querySelector('.skillChoices')||modal.querySelector('[data-skill-choices]');
+  if(!box || !box.querySelector('button')){
+    const hero=h();
+    hero.pendingLevelUps=Math.max(1,hero.pendingLevelUps||1);
+    renderLevelChoicesSafe(hero);
+  }
+}
+setTimeout(repairEmptyLevelModal,100);
+document.addEventListener('click',()=>setTimeout(repairEmptyLevelModal,0),true);
+
 </script>
 </body></html>
