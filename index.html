@@ -8,7 +8,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Королевства Пепла">
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="icon-180.png?v=721788568925">
-<title>Королевства Пепла 8.0 DEV — Kingdom Edition</title>
+<title>Королевства Пепла 8.1 DEV — Kingdom Edition</title>
 <style>
 :root{--gold:#ddb45c;--text:#f4ecd8;--muted:#b8af9c;--line:#735b29;--panel:#101611;--panel2:#192219}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
@@ -52,6 +52,12 @@ button{font:inherit;color:inherit;touch-action:manipulation}
 
 .objectInfo{position:absolute;left:50%;top:66px;transform:translateX(-50%);z-index:12;min-width:210px;max-width:86%;padding:8px 11px;border:1px solid var(--line);border-radius:9px;background:rgba(7,11,8,.92);box-shadow:0 6px 18px #0008;text-align:center;pointer-events:none}
 .objectInfo.hidden{display:none}.objectInfo b{display:block;color:#f3d27a}.objectInfo .small{line-height:1.25}
+
+.econGrid{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}.econCard{border:1px solid #3c473a;border-radius:8px;background:#121912;padding:8px;text-align:center}.econCard b{display:block;font-size:17px}
+.transferGrid{display:grid;grid-template-columns:1fr auto 1fr;gap:7px;align-items:center}.transferHero{border:1px solid #3c473a;border-radius:8px;padding:7px;background:#131a14}.transferHero img{width:48px;height:58px;object-fit:cover;border-radius:6px;vertical-align:middle;margin-right:6px}.transferRow{display:grid;grid-template-columns:1fr auto auto;gap:6px;align-items:center;padding:6px 0;border-top:1px solid #293129}.miniBtn{min-width:40px;min-height:36px;border:1px solid var(--line);border-radius:7px;background:#1b241b}
+.garrisonRow{display:grid;grid-template-columns:1fr auto auto;gap:6px;align-items:center;padding:7px 0;border-bottom:1px solid #293129}
+.spellChoice{display:grid;grid-template-columns:repeat(2,1fr);gap:6px;margin-top:8px}.spellChoice button{min-height:54px}
+.battleStatus{margin-top:6px;padding:7px;border:1px solid #3c473a;border-radius:7px;background:#111711}
 </style>
 <style id="dev-version-style">
 #devVersionBadge{
@@ -65,14 +71,14 @@ button{font:inherit;color:inherit;touch-action:manipulation}
 <script>
 window.addEventListener('error',e=>{
  let b=document.getElementById('devVersionBadge');
- if(b){b.textContent='v8.0 DEV · JS ERROR: '+String(e.message||'').slice(0,28);b.style.color='#ff8c7a';b.title=e.message||'JavaScript error'}
+ if(b){b.textContent='v8.1 DEV · JS ERROR: '+String(e.message||'').slice(0,28);b.style.color='#ff8c7a';b.title=e.message||'JavaScript error'}
 });
 window.addEventListener('unhandledrejection',e=>{
  let b=document.getElementById('devVersionBadge');
- if(b){b.textContent='v8.0 DEV · PROMISE ERROR';b.style.color='#ff8c7a'}
+ if(b){b.textContent='v8.1 DEV · PROMISE ERROR';b.style.color='#ff8c7a'}
 });
 </script></head>
-<body><div id="devVersionBadge">v8.0 DEV · STABLE CORE</div><main class="app">
+<body><div id="devVersionBadge">v8.1 DEV · WAR COUNCIL</div><main class="app">
 <div class="top"><span class="r">🪙 <b id="gold"></b></span><span class="r">🪵 <b id="wood"></b></span><span class="r">🪨 <b id="ore"></b></span><span class="r">💎 <b id="gems"></b></span><span class="r">🔮 <b id="crystal"></b></span><span class="grow"></span><span class="r">☀️ День <b id="day"></b> · Нед. <b id="week"></b> · Мес. <b id="month"></b></span></div>
 <div class="main">
 <section class="screen active" id="s-map">
@@ -82,9 +88,9 @@ window.addEventListener('unhandledrejection',e=>{
 <div class="mapHud"><div class="heroCard"><img id="hudPortrait"><div><b id="hudName"></b><div class="small">Ур. <span id="lvlm"></span> · воинов <span id="pow"></span></div><div class="progress"><i id="mvbar"></i></div></div></div><div class="mapBtns"><button class="roundBtn" id="switchHero">👥</button><button class="roundBtn" id="save">💾</button></div></div>
 </section>
 
-<section class="screen" id="s-hero"><div class="panel"><div class="title">Герои</div><div class="heroSelect" id="heroSelect"></div></div><div class="panel heroPane"><img id="heroPortrait"><div><div class="title" id="heroName"></div><div class="small" id="heroClass"></div><div class="row"><span>Атака</span><b id="atk"></b></div><div class="row"><span>Защита</span><b id="def"></b></div><div class="row"><span>Магия</span><b id="magic"></b></div><div class="row"><span>Знания</span><b id="knowledge"></b></div><div class="small">Ур. <b id="level"></b> · Опыт <b id="xp"></b></div></div></div><div class="panel"><div class="title">Армия</div><div class="grid g3" id="army"></div></div><div class="panel"><div class="title">Навыки</div><div id="skills"></div></div><div class="panel"><div class="title">Артефакты</div><div id="artifacts"></div></div></section>
+<section class="screen" id="s-hero"><div class="panel"><div class="title">Герои</div><div class="heroSelect" id="heroSelect"></div></div><div class="panel heroPane"><img id="heroPortrait"><div><div class="title" id="heroName"></div><div class="small" id="heroClass"></div><div class="row"><span>Атака</span><b id="atk"></b></div><div class="row"><span>Защита</span><b id="def"></b></div><div class="row"><span>Магия</span><b id="magic"></b></div><div class="row"><span>Знания</span><b id="knowledge"></b></div><div class="small">Ур. <b id="level"></b> · Опыт <b id="xp"></b></div></div></div><div class="panel"><div class="title">Армия</div><div class="grid g3" id="army"></div></div><div class="panel"><div class="title">Навыки</div><div id="skills"></div></div><div class="panel"><div class="title">Артефакты</div><div id="artifacts"></div></div><div class="panel"><div class="title">Военный совет</div><div class="small" style="margin-bottom:7px">Передача войск между Арденом и Лирой доступна, когда они стоят рядом или оба находятся в Стальном Холме.</div><div id="transferPanel"></div></div></section>
 
-<section class="screen" id="s-town"><div class="panel"><div class="cityArt"></div><div class="title" style="margin-top:8px">Стальной Холм</div><div class="small">Столица северного королевства</div></div><div class="panel"><div class="title">Строительство</div><div class="grid g2" id="buildings"></div></div><div class="panel"><div class="title">Найм</div><div class="grid g3" id="recruits"></div></div></section>
+<section class="screen" id="s-town"><div class="panel"><div class="cityArt"></div><div class="title" style="margin-top:8px">Стальной Холм</div><div class="small">Столица северного королевства</div></div><div class="panel"><div class="title">Экономика города</div><div class="econGrid" id="econGrid"></div><div class="small" id="econHint" style="margin-top:7px"></div></div><div class="panel"><div class="title">Гарнизон</div><div id="garrison"></div></div><div class="panel"><div class="title">Строительство</div><div class="grid g2" id="buildings"></div></div><div class="panel"><div class="title">Найм</div><div class="grid g3" id="recruits"></div></div></section>
 
 <section class="screen" id="s-magic"><div class="panel"><div class="title">Книга магии</div><div>Мана: <b id="mana"></b>/<b id="manaMax"></b></div></div><div class="panel grid" id="spells"></div></section>
 
@@ -96,9 +102,9 @@ window.addEventListener('unhandledrejection',e=>{
 </main>
 <div class="toast" id="toast"></div>
 
-<div class="modal hidden" id="battleModal"><div class="dialog"><div class="row"><div class="title">Битва: <span id="battleName"></span></div><div class="small" id="battleRound"></div></div><div class="turnbar" id="turnbar"></div><div class="battleArt"><div class="bgrid" id="bgrid"></div></div><div class="small" id="battleHint" style="margin-top:6px"></div><div class="grid g2" style="margin-top:8px"><button class="btn gold" id="waitBtn">⏳ Ждать</button><button class="btn" id="defBtn">🛡️ Оборона</button><button class="btn blue" id="spellBtn">🔥 Заклинание</button><button class="btn red" id="retreatBtn">Отступить</button></div></div></div>
+<div class="modal hidden" id="battleModal"><div class="dialog"><div class="row"><div class="title">Битва: <span id="battleName"></span></div><div class="small" id="battleRound"></div></div><div class="turnbar" id="turnbar"></div><div class="battleArt"><div class="bgrid" id="bgrid"></div></div><div class="small" id="battleHint" style="margin-top:6px"></div><div class="battleStatus" id="battleStatus"></div><div class="grid g2" style="margin-top:8px"><button class="btn gold" id="waitBtn">⏳ Ждать</button><button class="btn" id="defBtn">🛡️ Оборона</button><button class="btn blue" id="spellBtn">📖 Магия</button><button class="btn red" id="retreatBtn">Отступить</button></div></div></div>
 <div class="modal hidden" id="levelModal"><div class="dialog"><div class="title">Новый уровень</div><div class="small">Выбери навык</div><div class="grid" id="levelChoices" style="margin-top:8px"></div></div></div>
-<div class="modal hidden" id="victoryModal"><div class="dialog"><div class="title">🏆 Победа</div><div>Морвейн повержен. Северные земли освобождены.</div><button class="btn gold" id="victoryClose" style="margin-top:10px">Продолжить</button></div></div>
+<div class="modal hidden" id="spellModal"><div class="dialog"><div class="title">Книга боя</div><div class="small">Выбери заклинание для текущего хода героя.</div><div class="spellChoice" id="spellChoices"></div><button class="btn" id="spellCancel" style="margin-top:8px">Отмена</button></div></div><div class="modal hidden" id="victoryModal"><div class="dialog"><div class="title">🏆 Победа</div><div>Морвейн повержен. Северные земли освобождены.</div><button class="btn gold" id="victoryClose" style="margin-top:10px">Продолжить</button></div></div>
 
 <script>
 (()=> {
@@ -114,8 +120,8 @@ const assetNames=['world-v6.jpg','hero.jpg','mage.jpg','castle.jpg','mine.jpg','
 const assets={};const fogCanvas=document.createElement('canvas');fogCanvas.width=WORLD_W;fogCanvas.height=WORLD_H;const fogCtx=fogCanvas.getContext('2d');let selectedObject=null,safeTapTimer=null;let s,cam={x:0,y:0,zoom:.78},drag=null,toastTimer=null,routeTimer=null,audioCtx=null,mapReady=false;
 function loadAssets(){return Promise.all(assetNames.map(n=>new Promise(res=>{let im=new Image();im.onload=()=>{assets[n]=im;res()};im.onerror=res;im.src=n}))).then(()=>{mapReady=true;resizeCanvas();drawMap()})}
 function heroTemplate(name,cls,img,x,y,stats,army){return{name,cls,img,x,y,px:x*CELL_W+CELL_W/2,py:y*CELL_H+CELL_H/2,moves:12,maxMoves:12,atk:stats[0],def:stats[1],magic:stats[2],knowledge:stats[3],level:1,xp:0,mana:14,manaMax:14,skills:{},artifacts:[],army:{pikes:army[0],bows:army[1],cavs:army[2],griffins:army[3],mages:army[4]},route:[]}}
-function fresh(){s={gold:2800,wood:12,ore:10,gems:3,crystal:2,day:1,week:1,month:1,activeHero:'arden',heroes:{arden:heroTemplate('Арден','Рыцарь','hero.jpg',1,1,[2,2,1,1],[24,10,0,0,0]),lyra:heroTemplate('Лира','Боевой маг','mage.jpg',2,1,[1,1,3,2],[10,7,0,0,2])},enemy:{x:15,y:11,power:1,alive:true},seen:[],objects:JSON.parse(JSON.stringify(baseObjects)),build:{barracks:false,range:false,stable:false,griffin:false,mage:false,market:false,citadel:false},avail:{pikes:16,bows:0,cavs:0,griffins:0,mages:0},settings:{sound:true},q:{wood:false,ore:false,gems:false,artifacts:0,boss:false,tutorialMove:false,tutorialTown:false},logs:[],battle:null,freePlay:false};revealAll();log('Кампания началась. Морвейн укрепляет восточные земли.');render();centerOnHero(false)}
-function save(){localStorage.setItem('ash-v8-dev-kingdom',JSON.stringify(s))}
+function fresh(){s={gold:2800,wood:12,ore:10,gems:3,crystal:2,day:1,week:1,month:1,activeHero:'arden',heroes:{arden:heroTemplate('Арден','Рыцарь','hero.jpg',1,1,[2,2,1,1],[24,10,0,0,0]),lyra:heroTemplate('Лира','Боевой маг','mage.jpg',2,1,[1,1,3,2],[10,7,0,0,2])},enemy:{x:15,y:11,power:1,alive:true},seen:[],objects:JSON.parse(JSON.stringify(baseObjects)),build:{barracks:false,range:false,stable:false,griffin:false,mage:false,market:false,citadel:false},avail:{pikes:16,bows:0,cavs:0,griffins:0,mages:0},settings:{sound:true},q:{wood:false,ore:false,gems:false,artifacts:0,boss:false,tutorialMove:false,tutorialTown:false},logs:[],battle:null,garrison:{pikes:0,bows:0,cavs:0,griffins:0,mages:0},freePlay:false};revealAll();log('Кампания началась. Морвейн укрепляет восточные земли.');render();centerOnHero(false)}
+function save(){localStorage.setItem('ash-v8-1-dev-kingdom',JSON.stringify(s))}
 function normalizeHero(hr, fallback){
  if(!hr)return fallback;
  hr.name??=fallback.name; hr.cls??=fallback.cls; hr.img??=fallback.img;
@@ -129,7 +135,7 @@ function normalizeHero(hr, fallback){
  return hr;
 }
 function load(){try{
- let raw=localStorage.getItem('ash-v8-dev-kingdom')||localStorage.getItem('ash-v7-5-dev-kingdom');
+ let raw=localStorage.getItem('ash-v8-1-dev-kingdom')||localStorage.getItem('ash-v8-dev-kingdom')||localStorage.getItem('ash-v7-5-dev-kingdom');
  if(!raw)return false;
  let q=JSON.parse(raw);
  if(!q||!q.heroes||!q.heroes.arden||!q.objects)return false;
@@ -143,7 +149,7 @@ function load(){try{
  q.q??={};q.q.wood??=false;q.q.ore??=false;q.q.gems??=false;q.q.artifacts??=0;q.q.boss??=false;q.q.tutorialMove??=false;q.q.tutorialTown??=false;
  q.build??={}; for(const k of Object.keys(builds)) q.build[k]??=false;
  q.avail??={}; for(const k of Object.keys(units)) q.avail[k]??=0;
- q.enemy??={x:15,y:11,power:1,alive:true};q.battle??=null;q.freePlay??=false;
+ q.enemy??={x:15,y:11,power:1,alive:true};q.battle??=null;q.garrison??={pikes:0,bows:0,cavs:0,griffins:0,mages:0};for(const k of Object.keys(units))q.garrison[k]??=0;q.freePlay??=false;
  s=q; return true;
  }catch(e){console.warn('Save load failed',e);return false}}
 function h(){return s.heroes[s.activeHero]}function log(t){s.logs.unshift('• '+t);s.logs=s.logs.slice(0,80)}function toast(t){let el=$('toast');el.textContent=t;el.classList.add('show');clearTimeout(toastTimer);toastTimer=setTimeout(()=>el.classList.remove('show'),1900)}
@@ -235,25 +241,90 @@ function mapTap(clientX,clientY){
 function startRoute(){clearInterval(routeTimer);routeTimer=setInterval(()=>{let hr=h();if(!hr.route.length||hr.moves<=0){clearInterval(routeTimer);render();return}let [tx,ty]=hr.route.shift(),startX=hr.px,startY=hr.py,end=tileCenter(tx,ty),t0=performance.now(),dur=180;function anim(now){let t=Math.min(1,(now-t0)/dur),e=1-(1-t)*(1-t);hr.px=startX+(end.x-startX)*e;hr.py=startY+(end.y-startY)*e;drawMap();if(t<1)requestAnimationFrame(anim);else{hr.x=tx;hr.y=ty;hr.moves--;s.q.tutorialMove=true;revealAll();let o=s.objects[K(tx,ty)];if(o)eventObject(o,K(tx,ty));checkEnemyContact();sound(300,.03);render();if(!s.battle&&hr.route.length&&hr.moves>0){}else if(s.battle)clearInterval(routeTimer)}}requestAnimationFrame(anim)},210)}
 function eventObject(o,k){if(o.t==='sawmill'||o.t==='mine'){o.owner='player';if(o.t==='sawmill')s.q.wood=true;if(o.kind==='ore')s.q.ore=true;if(o.kind==='gems')s.q.gems=true;log(`${o.t==='sawmill'?'Лесопилка':'Шахта'} захвачена.`);toast('Объект захвачен')}else if(o.t==='chest'){delete s.objects[k];if(Math.random()<.5){s.gold+=1000;log('Сундук: +1000 золота.')}else{h().xp+=85;log('Сундук знаний: +85 опыта.');checkLevel(h())}}else if(o.t==='portal'){h().mana=Math.min(h().manaMax,h().mana+6);delete s.objects[k];log('Источник маны восстановил 6 маны.')}else if(o.t==='artifact'){let a=artifactDefs[o.artifact];h()[a.stat]+=a.v;h().artifacts.push(o.artifact);s.q.artifacts++;delete s.objects[k];log(`Найден артефакт: ${a.n}.`);toast(a.n)}else if(o.t==='enemy')startBattle(o,k)}
 function checkEnemyContact(){let hr=h();if(s.enemy.alive&&hr.x===s.enemy.x&&hr.y===s.enemy.y)startBattle({name:'Морвейн',stacks:[['necros',5+s.enemy.power],['skeletons',16+s.enemy.power*3]],reward:1500,xp:140,boss:false},null)}
-function nextDay(){if(s.battle){toast('Сначала завершите битву');return}let btn=$('endDay');if(btn.dataset.busy==='1')return;btn.dataset.busy='1';btn.disabled=true;s.day++;s.week=Math.floor((s.day-1)/7)+1;s.month=Math.floor((s.day-1)/28)+1;let newWeek=s.day>1&&(s.day-1)%7===0;if(newWeek){for(let k in units)if(s.build[units[k].req])s.avail[k]+=({pikes:16,bows:10,cavs:4,griffins:2,mages:2})[k];s.enemy.power++;log('Новая неделя: прирост войск и усиление Морвейна.')}let gi=300+(Object.values(s.heroes).some(x=>x.skills.estates)?150:0),wi=0,oi=0,gem=0;Object.values(s.objects).forEach(o=>{if(o.owner==='player'){if(o.t==='sawmill')wi+=2;if(o.kind==='ore')oi+=2;if(o.kind==='gems')gem+=1}});s.gold+=gi;s.wood+=wi;s.ore+=oi;s.gems+=gem;Object.values(s.heroes).forEach(hr=>{hr.maxMoves=12+(hr.skills.logistics?2:0);hr.moves=hr.maxMoves;hr.mana=Math.min(hr.manaMax,hr.mana+3+hr.knowledge);hr.route=[]});enemyAI();log(`День ${s.day}. Доход: ${gi} золота.`);toast(`День ${s.day} · +${gi} золота`);sound(520,.09);render();setTimeout(()=>{btn.disabled=false;btn.dataset.busy='0'},300)}
+function nextDay(){if(s.battle){toast('Сначала завершите битву');return}let btn=$('endDay');if(btn.dataset.busy==='1')return;btn.dataset.busy='1';btn.disabled=true;s.day++;s.week=Math.floor((s.day-1)/7)+1;s.month=Math.floor((s.day-1)/28)+1;let newWeek=s.day>1&&(s.day-1)%7===0;if(newWeek){for(let k in units)if(s.build[units[k].req])s.avail[k]+=({pikes:16,bows:10,cavs:4,griffins:2,mages:2})[k];s.enemy.power++;log('Новая неделя: прирост войск и усиление Морвейна.')}let inc=incomeBreakdown(),gi=inc.gold,wi=inc.wood,oi=inc.ore,gem=inc.gems;s.gold+=gi;s.wood+=wi;s.ore+=oi;s.gems+=gem;Object.values(s.heroes).forEach(hr=>{hr.maxMoves=12+(hr.skills.logistics?2:0);hr.moves=hr.maxMoves;hr.mana=Math.min(hr.manaMax,hr.mana+3+hr.knowledge);hr.route=[]});enemyAI();log(`День ${s.day}. Доход: ${gi} золота.`);toast(`День ${s.day} · +${gi} золота`);sound(520,.09);render();setTimeout(()=>{btn.disabled=false;btn.dataset.busy='0'},300)}
 function enemyAI(){if(!s.enemy.alive)return;let targets=Object.values(s.heroes).map(hr=>[hr.x,hr.y]);targets.sort((a,b)=>(Math.abs(a[0]-s.enemy.x)+Math.abs(a[1]-s.enemy.y))-(Math.abs(b[0]-s.enemy.x)+Math.abs(b[1]-s.enemy.y)));let t=targets[0],p=pathfind(s.enemy.x,s.enemy.y,t[0],t[1]);if(p.length)[s.enemy.x,s.enemy.y]=p[0];Object.values(s.heroes).forEach(hr=>{if(hr.x===s.enemy.x&&hr.y===s.enemy.y){s.activeHero=Object.keys(s.heroes).find(k=>s.heroes[k]===hr);checkEnemyContact()}})}
-function render(){['gold','wood','ore','gems','crystal','day','week','month'].forEach(k=>$(k).textContent=s[k]);let hr=h();$('lvlm').textContent=hr.level;$('pow').textContent=Object.values(hr.army).reduce((a,b)=>a+(Number(b)||0),0);$('mvbar').style.width=Math.max(0,Math.min(100,hr.moves/hr.maxMoves*100))+'%';$('hudName').textContent=hr.name;$('hudPortrait').src=hr.img;renderHero();renderTown();renderMagic();renderQuests();renderSettings();drawMap();save()}
+function render(){['gold','wood','ore','gems','crystal','day','week','month'].forEach(k=>$(k).textContent=s[k]);let hr=h();$('lvlm').textContent=hr.level;$('pow').textContent=Object.values(hr.army).reduce((a,b)=>a+(Number(b)||0),0);$('mvbar').style.width=Math.max(0,Math.min(100,hr.moves/hr.maxMoves*100))+'%';$('hudName').textContent=hr.name;$('hudPortrait').src=hr.img;renderHero();renderTransfer();renderTown();renderMagic();renderQuests();renderSettings();drawMap();save()}
 function selectHero(k){s.activeHero=k;render();centerOnHero(false);switchScreen('map')}
 function renderHero(){let hs=$('heroSelect');hs.innerHTML='';for(let k in s.heroes){let hr=s.heroes[k],b=document.createElement('button');b.className='btn heroBtn'+(k===s.activeHero?' active':'');b.innerHTML=`<img src="${hr.img}"><div><b>${hr.name}</b><div class=small>${hr.cls}<br>Ур. ${hr.level}</div></div>`;b.onclick=()=>selectHero(k);hs.appendChild(b)}let hr=h();$('heroPortrait').src=hr.img;$('heroName').textContent=hr.name;$('heroClass').textContent=hr.cls;['atk','def','magic','knowledge','level','xp'].forEach(k=>$(k).textContent=hr[k]);let a=$('army');a.innerHTML='';for(let k in units){let u=units[k],c=document.createElement('div');c.className='unitcard';c.innerHTML=`<img src="${u.img}"><div class=txt><b>${hr.army[k]}</b><span class=small>${u.n}</span></div>`;a.appendChild(c)}$('skills').innerHTML=Object.keys(hr.skills).length?Object.keys(hr.skills).map(k=>`<div class=skill><b>${skillDefs[k][0]}</b><div class=small>${skillDefs[k][1]}</div></div>`).join(''):'<div class=small>Навыки появятся при повышении уровня.</div>';$('artifacts').innerHTML=hr.artifacts.length?hr.artifacts.map(k=>`<div class=quest>${artifactDefs[k].icon} <b>${artifactDefs[k].n}</b></div>`).join(''):'<div class=small>Артефактов пока нет.</div>'}
-function renderTown(){s.q.tutorialTown=true;let b=$('buildings');b.innerHTML='';for(let k in builds){let d=builds[k],x=document.createElement('button'),locked=d.req&&!s.build[d.req];x.className='btn building'+(s.build[k]?' built':'');x.innerHTML=`<b>${d.n}</b><br><span class=small>${s.build[k]?'Построено':`${d.cost[0]}🪙 ${d.cost[1]}🪵 ${d.cost[2]}🪨`}</span>${locked?'<span class=lock>🔒</span>':''}`;x.disabled=s.build[k]||locked;x.onclick=()=>build(k);b.appendChild(x)}let r=$('recruits');r.innerHTML='';for(let k in units){let u=units[k],x=document.createElement('button'),on=s.build[u.req];x.className='unitcard';x.innerHTML=`<img src="${u.img}"><div class=txt><b>${u.n}</b><span class=small>${on?`Доступно ${s.avail[k]} · ${u.qty} за ${u.cost}🪙`:'Нужно здание'}</span></div>`;x.disabled=!on||s.avail[k]<u.qty;x.onclick=()=>recruit(k);r.appendChild(x)}}
+
+function incomeBreakdown(){
+ let gold=300+(Object.values(s.heroes).some(x=>x.skills.estates)?150:0),wood=0,ore=0,gems=0;
+ Object.values(s.objects).forEach(o=>{
+   if(o.owner==='player'){
+     if(o.t==='sawmill')wood+=2;
+     if(o.kind==='ore')ore+=2;
+     if(o.kind==='gems')gems+=1;
+   }
+ });
+ if(s.build.market)gold+=100;
+ return {gold,wood,ore,gems};
+}
+function heroesCanTransfer(){
+ const a=s.heroes.arden,l=s.heroes.lyra;
+ const adjacent=Math.abs(a.x-l.x)+Math.abs(a.y-l.y)<=1;
+ const bothTown=a.x===1&&a.y===1&&l.x===1&&l.y===1;
+ return adjacent||bothTown;
+}
+function moveTroop(from,to,type,amount){
+ amount=Math.min(amount,from.army[type]||0);
+ if(amount<=0)return;
+ from.army[type]-=amount;to.army[type]=(to.army[type]||0)+amount;
+ log(`Передано: ${units[type].n} ×${amount}.`);render();
+}
+function moveGarrison(hero,type,dir,amount){
+ if(dir==='toGarrison'){
+   amount=Math.min(amount,hero.army[type]||0);if(amount<=0)return;
+   hero.army[type]-=amount;s.garrison[type]=(s.garrison[type]||0)+amount;
+ }else{
+   amount=Math.min(amount,s.garrison[type]||0);if(amount<=0)return;
+   s.garrison[type]-=amount;hero.army[type]=(hero.army[type]||0)+amount;
+ }
+ render();
+}
+function renderTransfer(){
+ const box=$('transferPanel');if(!box)return;
+ const a=s.heroes.arden,l=s.heroes.lyra,can=heroesCanTransfer();
+ let html=`<div class="transferGrid"><div class="transferHero"><img src="${a.img}"><b>${a.name}</b><div class="small">${armyCount(a)} воинов</div></div><div>⇄</div><div class="transferHero"><img src="${l.img}"><b>${l.name}</b><div class="small">${armyCount(l)} воинов</div></div></div>`;
+ if(!can){box.innerHTML=html+'<div class="small" style="margin-top:8px">Герои должны стоять рядом.</div>';return}
+ html+='<div style="margin-top:8px">';
+ for(const k of Object.keys(units)){
+   html+=`<div class="transferRow"><span>${units[k].n}: ${a.army[k]} / ${l.army[k]}</span><button class="miniBtn" data-tr="${k}:a">→</button><button class="miniBtn" data-tr="${k}:l">←</button></div>`;
+ }
+ html+='</div>';box.innerHTML=html;
+ box.querySelectorAll('[data-tr]').forEach(btn=>btn.onclick=()=>{
+   const [k,d]=btn.dataset.tr.split(':'); if(d==='a')moveTroop(a,l,k,1);else moveTroop(l,a,k,1);
+ });
+}
+function renderTown(){s.q.tutorialTown=true;
+ let inc=incomeBreakdown();if($('econGrid'))$('econGrid').innerHTML=`<div class=econCard>🪙<b>${inc.gold}</b><span class=small>/день</span></div><div class=econCard>🪵<b>${inc.wood}</b><span class=small>/день</span></div><div class=econCard>🪨<b>${inc.ore}</b><span class=small>/день</span></div><div class=econCard>💎<b>${inc.gems}</b><span class=small>/день</span></div>`;if($('econHint'))$('econHint').textContent=s.build.market?'Рынок даёт +100 золота ежедневно.':'Построй Рынок для +100 золота ежедневно.';
+ let gar=$('garrison');if(gar){gar.innerHTML='';for(const k of Object.keys(units)){let row=document.createElement('div');row.className='garrisonRow';row.innerHTML=`<span>${units[k].n}: <b>${s.garrison[k]||0}</b></span><button class=miniBtn data-g="${k}:in">+1</button><button class=miniBtn data-g="${k}:out">−1</button>`;gar.appendChild(row)}gar.querySelectorAll('[data-g]').forEach(btn=>btn.onclick=()=>{let[k,d]=btn.dataset.g.split(':');moveGarrison(h(),k,d==='in'?'toGarrison':'fromGarrison',1)})}let b=$('buildings');b.innerHTML='';for(let k in builds){let d=builds[k],x=document.createElement('button'),locked=d.req&&!s.build[d.req];x.className='btn building'+(s.build[k]?' built':'');x.innerHTML=`<b>${d.n}</b><br><span class=small>${s.build[k]?'Построено':`${d.cost[0]}🪙 ${d.cost[1]}🪵 ${d.cost[2]}🪨`}</span>${locked?'<span class=lock>🔒</span>':''}`;x.disabled=s.build[k]||locked;x.onclick=()=>build(k);b.appendChild(x)}let r=$('recruits');r.innerHTML='';for(let k in units){let u=units[k],x=document.createElement('button'),on=s.build[u.req];x.className='unitcard';x.innerHTML=`<img src="${u.img}"><div class=txt><b>${u.n}</b><span class=small>${on?`Доступно ${s.avail[k]} · ${u.qty} за ${u.cost}🪙`:'Нужно здание'}</span></div>`;x.disabled=!on||s.avail[k]<u.qty;x.onclick=()=>recruit(k);r.appendChild(x)}}
 function build(k){let d=builds[k];if(s.gold<d.cost[0]||s.wood<d.cost[1]||s.ore<d.cost[2]){toast('Не хватает ресурсов');return}s.gold-=d.cost[0];s.wood-=d.cost[1];s.ore-=d.cost[2];s.build[k]=true;for(let u in units)if(units[u].req===k)s.avail[u]+=({pikes:16,bows:10,cavs:4,griffins:2,mages:2})[u];if(k==='mage')Object.values(s.heroes).forEach(hr=>{hr.magic++;hr.manaMax+=5;hr.mana=hr.manaMax});log('Построено: '+d.n);render()}
 function recruit(k){let u=units[k],hr=h();if(s.gold<u.cost||s.avail[k]<u.qty)return;s.gold-=u.cost;hr.army[k]+=u.qty;s.avail[k]-=u.qty;log(`${hr.name}: ${u.n} +${u.qty}`);render()}
 function renderMagic(){let hr=h();$('mana').textContent=hr.mana;$('manaMax').textContent=hr.manaMax;$('spells').innerHTML=`<div class=quest><b>🔥 Огненный шар</b><div class=small>4 маны · прямой урон</div></div><div class=quest><b>⚡ Молния</b><div class=small>6 маны · высокий одиночный урон</div></div><div class=quest><b>🛡️ Каменная кожа</b><div class=small>4 маны · оборона</div></div><div class=quest><b>💚 Исцеление</b><div class=small>5 маны · восстановление</div></div>`}
 function renderQuests(){$('quests').innerHTML=[['Сделать первый ход героем',s.q.tutorialMove],['Открыть экран города',s.q.tutorialTown],['Захватить лесопилку',s.q.wood],['Захватить железную шахту',s.q.ore],['Захватить шахту самоцветов',s.q.gems],['Найти 2 артефакта',s.q.artifacts>=2],['Победить Морвейна',s.q.boss]].map(([n,d])=>`<div class="quest ${d?'done':''}">${d?'✅':'⬜'} <b>${n}</b></div>`).join('');$('log').innerHTML=s.logs.map(x=>`<div>${x}</div>`).join('')}
 function renderSettings(){$('soundToggle').textContent='🔊 Звук: '+(s.settings.sound?'вкл':'выкл')}
 function checkLevel(hr){if(hr.xp>=hr.level*100){hr.level++;hr.atk++;hr.def++;let keys=Object.keys(skillDefs).filter(k=>!hr.skills[k]).sort(()=>Math.random()-.5).slice(0,2),box=$('levelChoices');box.innerHTML='';keys.forEach(k=>{let bt=document.createElement('button');bt.className='btn';bt.innerHTML=`<b>${skillDefs[k][0]}</b><br><span class=small>${skillDefs[k][1]}</span>`;bt.onclick=()=>{hr.skills[k]=1;if(k==='logistics'){hr.maxMoves+=2;hr.moves+=2}if(k==='wisdom'){hr.manaMax+=5;hr.mana+=5}$('levelModal').classList.add('hidden');render()};box.appendChild(bt)});$('levelModal').classList.remove('hidden')}}
-function startBattle(o,k){clearInterval(routeTimer);let hr=h(),ps=[];for(let u in units){let q=hr.army[u];if(q)ps.push({side:'p',type:u,qty:q,hp:q*units[u].hp,x:0,y:ps.length})}let es=o.stacks.map((v,i)=>({side:'e',type:v[0],qty:v[1],hp:v[1]*enemies[v[0]].hp,x:7,y:i+1}));let stacks=[...ps,...es],order=stacks.slice().sort((a,b)=>bdef(b).spd-bdef(a).spd).map(a=>({side:a.side,type:a.type}));s.battle={o,k,hero:s.activeHero,stacks,order,turn:0,round:1,selected:null};$('battleModal').classList.remove('hidden');battleTurn()}
+function startBattle(o,k){clearInterval(routeTimer);let hr=h(),ps=[];for(let u in units){let q=hr.army[u];if(q)ps.push({side:'p',type:u,qty:q,hp:q*units[u].hp,x:0,y:ps.length})}let es=o.stacks.map((v,i)=>({side:'e',type:v[0],qty:v[1],hp:v[1]*enemies[v[0]].hp,x:7,y:i+1}));let stacks=[...ps,...es],order=stacks.slice().sort((a,b)=>bdef(b).spd-bdef(a).spd).map(a=>({side:a.side,type:a.type}));s.battle={o,k,hero:s.activeHero,stacks,order,turn:0,round:1,selected:null,countered:{},stoneSkin:null};$('battleModal').classList.remove('hidden');battleTurn()}
 function bdef(st){return st.side==='p'?units[st.type]:enemies[st.type]}function findStack(key){let[side,type]=key.split(':');return s.battle.stacks.find(z=>z.side===side&&z.type===type&&z.qty>0)}
 function battleTurn(){let b=s.battle;if(!b)return;b.stacks=b.stacks.filter(z=>z.qty>0&&z.hp>0);let p=b.stacks.some(z=>z.side==='p'),e=b.stacks.some(z=>z.side==='e');if(!p||!e){finishBattle(p);return}let guard=0;while(guard++<40){if(b.turn>=b.order.length){b.turn=0;b.round++;b.order=b.stacks.slice().sort((a,c)=>bdef(c).spd-bdef(a).spd).map(a=>({side:a.side,type:a.type}))}let key=b.order[b.turn++],st=findStack(key.side+':'+key.type);if(st){b.selected=st;break}}renderBattle();if(b.selected&&b.selected.side==='e')setTimeout(enemyBattleAI,300)}
-function renderBattle(){let b=s.battle;if(!b)return;$('battleName').textContent=b.o.name;$('battleRound').textContent='Раунд '+b.round;$('battleHint').textContent=b.selected?.side==='p'?'Выберите клетку или цель.':'Ход противника…';let tb=$('turnbar');tb.innerHTML='';b.order.forEach(k=>{let st=findStack(k.side+':'+k.type);if(!st)return;let c=document.createElement('div');c.className='turnchip'+(st===b.selected?' active':'');c.textContent=(st.side==='p'?'🟦 ':'🟥 ')+bdef(st).n;tb.appendChild(c)});let g=$('bgrid');g.innerHTML='';for(let y=0;y<5;y++)for(let x=0;x<8;x++){let c=document.createElement('button');c.className='cell';let a=b.selected,dist=a?Math.abs(x-a.x)+Math.abs(y-a.y):99,occ=b.stacks.find(z=>z.x===x&&z.y===y&&z.qty>0);if(a?.side==='p'&&!occ&&dist<=bdef(a).spd)c.classList.add('move');if(a?.side==='p'&&occ?.side==='e'&&dist<=bdef(a).range)c.classList.add('attack');if(occ===a)c.classList.add('sel');if(occ){let st=document.createElement('span');st.className='stack '+(occ.side==='p'?'player':'enemy');st.style.backgroundImage=`url('${bdef(occ).img}')`;let q=document.createElement('span');q.className='qty';q.textContent=occ.qty;st.appendChild(q);c.appendChild(st)}c.onclick=()=>battleCell(x,y,occ);g.appendChild(c)}}
+function renderBattle(){let b=s.battle;if(!b)return;$('battleName').textContent=b.o.name;$('battleRound').textContent='Раунд '+b.round;$('battleHint').textContent=b.selected?.side==='p'?'Выберите клетку или цель.':'Ход противника…';let tb=$('turnbar');tb.innerHTML='';b.order.forEach(k=>{let st=findStack(k.side+':'+k.type);if(!st)return;let c=document.createElement('div');c.className='turnchip'+(st===b.selected?' active':'');c.textContent=(st.side==='p'?'🟦 ':'🟥 ')+bdef(st).n;tb.appendChild(c)});if($('battleStatus'))$('battleStatus').textContent=`Мана ${s.heroes[b.hero].mana}/${s.heroes[b.hero].manaMax} · Активный отряд: ${b.selected?bdef(b.selected).n:'—'}`;let g=$('bgrid');g.innerHTML='';for(let y=0;y<5;y++)for(let x=0;x<8;x++){let c=document.createElement('button');c.className='cell';let a=b.selected,dist=a?Math.abs(x-a.x)+Math.abs(y-a.y):99,occ=b.stacks.find(z=>z.x===x&&z.y===y&&z.qty>0);if(a?.side==='p'&&!occ&&dist<=bdef(a).spd)c.classList.add('move');if(a?.side==='p'&&occ?.side==='e'&&dist<=bdef(a).range)c.classList.add('attack');if(occ===a)c.classList.add('sel');if(occ){let st=document.createElement('span');st.className='stack '+(occ.side==='p'?'player':'enemy');st.style.backgroundImage=`url('${bdef(occ).img}')`;let q=document.createElement('span');q.className='qty';q.textContent=occ.qty;st.appendChild(q);c.appendChild(st)}c.onclick=()=>battleCell(x,y,occ);g.appendChild(c)}}
 function battleCell(x,y,occ){let b=s.battle,a=b.selected;if(!a||a.side!=='p')return;let d=Math.abs(x-a.x)+Math.abs(y-a.y),def=bdef(a);if(occ&&occ.side==='e'&&d<=def.range){strike(a,occ);battleTurn()}else if(!occ&&d<=def.spd){a.x=x;a.y=y;renderBattle();setTimeout(battleTurn,100)}}
-function strike(a,t){let hr=s.heroes[s.battle.hero],ad=bdef(a),td=bdef(t),base=a.qty*ad.p*(1+hr.atk*.04);if(a.side==='p'&&a.type==='bows'&&hr.skills.archery)base*=1.15;let dmg=Math.max(1,Math.round(base*(.78+Math.random()*.35)));t.hp-=dmg;t.qty=Math.max(0,Math.ceil(t.hp/td.hp));log(`${ad.n} наносят ${dmg} урона.`)}
-function enemyBattleAI(){let b=s.battle,a=b.selected;if(!a||a.side!=='e')return;let targets=b.stacks.filter(z=>z.side==='p'&&z.qty>0).sort((u,v)=>(Math.abs(u.x-a.x)+Math.abs(u.y-a.y))-(Math.abs(v.x-a.x)+Math.abs(v.y-a.y)));let t=targets[0];if(!t){battleTurn();return}let d=Math.abs(t.x-a.x)+Math.abs(t.y-a.y),ad=bdef(a);if(d<=ad.range){strike(a,t);battleTurn();return}let dx=Math.sign(t.x-a.x),dy=Math.sign(t.y-a.y);for(let step=0;step<ad.spd;step++){let nx=a.x+(Math.abs(t.x-a.x)>=Math.abs(t.y-a.y)?dx:0),ny=a.y+(Math.abs(t.x-a.x)<Math.abs(t.y-a.y)?dy:0);if(nx<0||nx>7||ny<0||ny>4||b.stacks.some(z=>z!==a&&z.x===nx&&z.y===ny&&z.qty>0))break;a.x=nx;a.y=ny}battleTurn()}
+function strike(a,t){
+ let hr=s.heroes[s.battle.hero],ad=bdef(a),td=bdef(t),base=a.qty*ad.p*(1+(a.side==='p'?hr.atk:0)*.04);
+ if(a.side==='p'&&a.type==='bows'&&hr.skills.archery)base*=1.15;
+ let dmg=Math.max(1,Math.round(base*(.78+Math.random()*.35)));
+ if(t.side==='p'&&hr.skills.resistance)dmg=Math.round(dmg*.9);
+ if(t.side==='p'&&s.battle.stoneSkin===t.type)dmg=Math.round(dmg*.72);
+ t.hp-=dmg;t.qty=Math.max(0,Math.ceil(t.hp/td.hp));log(`${ad.n} наносят ${dmg} урона.`);
+ // One melee counterattack per stack per round.
+ let dist=Math.abs(a.x-t.x)+Math.abs(a.y-t.y),key=t.side+':'+t.type+':'+s.battle.round;
+ if(t.qty>0&&dist<=1&&td.range===1&&!s.battle.countered[key]){
+   s.battle.countered[key]=true;
+   let counter=Math.max(1,Math.round(t.qty*td.p*.55*(.85+Math.random()*.25)));
+   a.hp-=counter;a.qty=Math.max(0,Math.ceil(a.hp/ad.hp));
+   log(`${td.n} контратакуют: ${counter} урона.`);
+ }
+}function enemyBattleAI(){let b=s.battle,a=b.selected;if(!a||a.side!=='e')return;let targets=b.stacks.filter(z=>z.side==='p'&&z.qty>0).sort((u,v)=>(Math.abs(u.x-a.x)+Math.abs(u.y-a.y))-(Math.abs(v.x-a.x)+Math.abs(v.y-a.y)));let t=targets[0];if(!t){battleTurn();return}let d=Math.abs(t.x-a.x)+Math.abs(t.y-a.y),ad=bdef(a);if(d<=ad.range){strike(a,t);battleTurn();return}let dx=Math.sign(t.x-a.x),dy=Math.sign(t.y-a.y);for(let step=0;step<ad.spd;step++){let nx=a.x+(Math.abs(t.x-a.x)>=Math.abs(t.y-a.y)?dx:0),ny=a.y+(Math.abs(t.x-a.x)<Math.abs(t.y-a.y)?dy:0);if(nx<0||nx>7||ny<0||ny>4||b.stacks.some(z=>z!==a&&z.x===nx&&z.y===ny&&z.qty>0))break;a.x=nx;a.y=ny}battleTurn()}
 function syncArmy(){let hr=s.heroes[s.battle.hero];for(let k in units)hr.army[k]=0;s.battle.stacks.filter(z=>z.side==='p').forEach(z=>hr.army[z.type]=z.qty)}
 function finishBattle(win){let b=s.battle,hr=s.heroes[b.hero];if(win){syncArmy();s.gold+=b.o.reward;hr.xp+=b.o.xp;if(b.k)delete s.objects[b.k];if(b.o.boss){s.q.boss=true;s.enemy.alive=false;$('victoryModal').classList.remove('hidden')}log(`Победа! +${b.o.reward} золота, +${b.o.xp} опыта.`);checkLevel(hr)}else{syncArmy();hr.x=1;hr.y=1;let p=tileCenter(1,1);hr.px=p.x;hr.py=p.y;hr.moves=0;log('Поражение. Герой вернулся в столицу.')}s.battle=null;$('battleModal').classList.add('hidden');render()}
 function switchScreen(name){document.querySelectorAll('.screen').forEach(x=>x.classList.remove('active'));$('s-'+name).classList.add('active');document.querySelectorAll('.nav button').forEach(x=>x.classList.toggle('active',x.dataset.s===name));if(name==='map'){resizeCanvas();drawMap()}}
@@ -262,10 +333,33 @@ canvas.addEventListener('pointerdown',e=>{drag={id:e.pointerId,x:e.clientX,y:e.c
 canvas.addEventListener('pointermove',e=>{if(!drag||drag.id!==e.pointerId)return;let dx=e.clientX-drag.x,dy=e.clientY-drag.y;if(Math.hypot(dx,dy)>5)drag.moved=true;cam.x=drag.cx-dx/cam.zoom;cam.y=drag.cy-dy/cam.zoom;clampCam();drawMap()});
 canvas.addEventListener('pointerup',e=>{if(!drag||drag.id!==e.pointerId)return;let moved=drag.moved;drag=null;if(!moved)mapTap(e.clientX,e.clientY)});
 $('zoomIn').onclick=()=>{cam.zoom=Math.min(1.8,cam.zoom+.15);clampCam();drawMap()};$('zoomOut').onclick=()=>{cam.zoom=Math.max(.65,cam.zoom-.15);clampCam();drawMap()};
+
+function castSpell(kind){
+ let b=s.battle,hr=b?s.heroes[b.hero]:null;if(!b||!hr)return;
+ let enemiesNow=b.stacks.filter(z=>z.side==='e'&&z.qty>0),friends=b.stacks.filter(z=>z.side==='p'&&z.qty>0);
+ if(kind==='fire'){
+   if(hr.mana<4||!enemiesNow.length)return;hr.mana-=4;
+   let t=enemiesNow.sort((a,c)=>a.qty-c.qty)[0],d=30+hr.magic*14;t.hp-=d;t.qty=Math.max(0,Math.ceil(t.hp/bdef(t).hp));log(`Огненный шар: ${d} урона.`);
+ }else if(kind==='lightning'){
+   if(hr.mana<6||!enemiesNow.length)return;hr.mana-=6;
+   let t=enemiesNow.sort((a,c)=>bdef(c).p-bdef(a).p)[0],d=48+hr.magic*18;t.hp-=d;t.qty=Math.max(0,Math.ceil(t.hp/bdef(t).hp));log(`Молния: ${d} урона.`);
+ }else if(kind==='stone'){
+   if(hr.mana<4||!friends.length)return;hr.mana-=4;s.battle.stoneSkin=b.selected?.side==='p'?b.selected.type:friends[0].type;log('Каменная кожа: -28% входящего урона до конца боя.');
+ }else if(kind==='heal'){
+   if(hr.mana<5||!friends.length)return;hr.mana-=5;let t=b.selected?.side==='p'?b.selected:friends[0],u=bdef(t),heal=22+hr.magic*10;t.hp+=heal;t.qty=Math.max(1,Math.ceil(t.hp/u.hp));log(`Исцеление: восстановлено ${heal} HP.`);
+ }
+ $('spellModal').classList.add('hidden');battleTurn()
+}
+function openSpellBook(){
+ let b=s.battle;if(!b||b.selected?.side!=='p')return;let hr=s.heroes[b.hero],box=$('spellChoices');
+ const spells=[['fire','🔥 Огненный шар','4 маны'],['lightning','⚡ Молния','6 маны'],['stone','🛡️ Каменная кожа','4 маны'],['heal','💚 Исцеление','5 маны']];
+ box.innerHTML='';spells.forEach(([k,n,c])=>{let bt=document.createElement('button');bt.className='btn blue';bt.innerHTML=`<b>${n}</b><br><span class=small>${c}</span>`;bt.onclick=()=>castSpell(k);box.appendChild(bt)});
+ $('spellModal').classList.remove('hidden')
+}
 $('endDay').addEventListener('click',nextDay);$('endDay').addEventListener('touchend',e=>{e.preventDefault();nextDay()},{passive:false});
 $('switchHero').onclick=()=>{s.activeHero=s.activeHero==='arden'?'lyra':'arden';render();centerOnHero(false);toast('Активный герой: '+h().name)};$('save').onclick=()=>{save();toast('Игра сохранена')};
-$('soundToggle').onclick=()=>{s.settings.sound=!s.settings.sound;renderSettings();save()};$('centerHero').onclick=()=>centerOnHero();$('manualSave').onclick=()=>{save();toast('Сохранено')};$('newGame').onclick=()=>{if(confirm('Начать новую игру?')){localStorage.removeItem('ash-v8-dev-kingdom');localStorage.removeItem('ash-v6-canvas');fresh();switchScreen('map')}};
-$('waitBtn').onclick=()=>{if(s.battle?.selected?.side==='p')battleTurn()};$('defBtn').onclick=()=>{let a=s.battle?.selected;if(a?.side==='p'){a.hp+=Math.ceil(bdef(a).hp*.12);battleTurn()}};$('spellBtn').onclick=()=>{let b=s.battle,a=b?.selected,hr=s.heroes[b?.hero];if(!a||a.side!=='p'||hr.mana<4)return;let en=b.stacks.filter(z=>z.side==='e'&&z.qty>0);if(!en.length)return;let t=en.sort((u,v)=>u.qty-v.qty)[0];hr.mana-=4;t.hp-=30+hr.magic*14;t.qty=Math.max(0,Math.ceil(t.hp/bdef(t).hp));log('Заклинание поражает '+bdef(t).n+'.');battleTurn()};$('retreatBtn').onclick=()=>{if(!s.battle)return;syncArmy();let hr=s.heroes[s.battle.hero];hr.x=1;hr.y=1;let p=tileCenter(1,1);hr.px=p.x;hr.py=p.y;hr.moves=0;s.gold=Math.max(0,s.gold-350);s.battle=null;$('battleModal').classList.add('hidden');render()};$('victoryClose').onclick=()=>{$('victoryModal').classList.add('hidden');s.freePlay=true;save()};
+$('soundToggle').onclick=()=>{s.settings.sound=!s.settings.sound;renderSettings();save()};$('centerHero').onclick=()=>centerOnHero();$('manualSave').onclick=()=>{save();toast('Сохранено')};$('newGame').onclick=()=>{if(confirm('Начать новую игру?')){localStorage.removeItem('ash-v8-1-dev-kingdom');localStorage.removeItem('ash-v6-canvas');fresh();switchScreen('map')}};
+$('waitBtn').onclick=()=>{if(s.battle?.selected?.side==='p')battleTurn()};$('defBtn').onclick=()=>{let a=s.battle?.selected;if(a?.side==='p'){a.hp+=Math.ceil(bdef(a).hp*.12);battleTurn()}};$('spellBtn').onclick=openSpellBook;$('spellCancel').onclick=()=>$('spellModal').classList.add('hidden');$('retreatBtn').onclick=()=>{if(!s.battle)return;syncArmy();let hr=s.heroes[s.battle.hero];hr.x=1;hr.y=1;let p=tileCenter(1,1);hr.px=p.x;hr.py=p.y;hr.moves=0;s.gold=Math.max(0,s.gold-350);s.battle=null;$('battleModal').classList.add('hidden');render()};$('victoryClose').onclick=()=>{$('victoryModal').classList.add('hidden');s.freePlay=true;save()};
 document.querySelectorAll('.nav button').forEach(bt=>bt.onclick=()=>switchScreen(bt.dataset.s));
 try{
  localStorage.removeItem('ash-v7-4-dev-kingdom');
@@ -287,7 +381,7 @@ loadAssets().then(()=>{if(!load())fresh();else{revealAll();log('Сохранен
       const keys=await caches.keys();
       await Promise.all(keys.map(k=>caches.delete(k)));
     }
-    console.log('v8.0 DEV: service workers unregistered and Cache Storage cleared');
+    console.log('v8.1 DEV: service workers unregistered and Cache Storage cleared');
   }catch(e){ console.warn('DEV cache cleanup',e); }
 })();
 </script>
