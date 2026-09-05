@@ -8,7 +8,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Королевства Пепла">
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="icon-180.png?v=721788568925">
-<title>Королевства Пепла 8.6.2 — Kingdom Edition</title>
+<title>Королевства Пепла 8.6.3 — Kingdom Edition</title>
 <style>
 :root{--gold:#ddb45c;--text:#f4ecd8;--muted:#b8af9c;--line:#735b29;--panel:#101611;--panel2:#192219}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
@@ -75,11 +75,11 @@ button{font:inherit;color:inherit;touch-action:manipulation}
 <script>
 window.addEventListener('error',e=>{
  let b=document.getElementById('devVersionBadge');
- if(b){b.textContent='v8.6.2 · JS ERROR: '+String(e.message||'').slice(0,28);b.style.color='#ff8c7a';b.title=e.message||'JavaScript error'}
+ if(b){b.textContent='v8.6.3 · JS ERROR: '+String(e.message||'').slice(0,28);b.style.color='#ff8c7a';b.title=e.message||'JavaScript error'}
 });
 window.addEventListener('unhandledrejection',e=>{
  let b=document.getElementById('devVersionBadge');
- if(b){b.textContent='v8.6.2 · PROMISE ERROR';b.style.color='#ff8c7a'}
+ if(b){b.textContent='v8.6.3 · PROMISE ERROR';b.style.color='#ff8c7a'}
 });
 </script>
 <style>
@@ -91,7 +91,7 @@ window.addEventListener('unhandledrejection',e=>{
 </style>
 
 </head>
-<body><div id="devVersionBadge">v8.6.2</div><main class="app">
+<body><div id="devVersionBadge">v8.6.3</div><main class="app">
 <div class="top"><span class="r">🪙 <b id="gold"></b></span><span class="r">🪵 <b id="wood"></b></span><span class="r">🪨 <b id="ore"></b></span><span class="r">💎 <b id="gems"></b></span><span class="r">🔮 <b id="crystal"></b></span><span class="grow"></span><span class="r">☀️ День <b id="day"></b> · Нед. <b id="week"></b> · Мес. <b id="month"></b></span></div>
 <div class="main">
 <section class="screen active" id="s-map">
@@ -115,6 +115,18 @@ window.addEventListener('unhandledrejection',e=>{
 </main>
 <div class="toast" id="toast"></div>
 
+<div class="modal hidden" id="enemyModal"><div class="dialog">
+<div class="row"><div class="title">⚔️ <span id="enemyInfoName">Противник</span></div><button class="miniBtn" id="enemyInfoClose">✕</button></div>
+<div style="display:grid;grid-template-columns:92px 1fr;gap:10px;align-items:start">
+<img id="enemyInfoImg" src="necromancer.jpg" style="width:92px;height:108px;object-fit:cover;border:1px solid var(--line);border-radius:10px">
+<div><div class="small" id="enemyInfoDanger"></div><div id="enemyInfoDesc" style="margin-top:6px;line-height:1.35"></div></div>
+</div>
+<div class="panel" style="margin:10px 0 0"><div class="small">Состав</div><div id="enemyInfoStacks" style="margin-top:5px"></div></div>
+<div class="panel" style="margin:8px 0 0"><div class="small">Награда за победу</div><div id="enemyInfoReward" style="margin-top:5px;color:#f1cf79"></div></div>
+<div class="grid g2" style="margin-top:10px">
+<button class="btn red" id="enemyAttackBtn">⚔️ Напасть</button>
+<button class="btn" id="enemyCancelBtn">Отмена</button>
+</div></div></div>
 <div class="modal hidden" id="battleModal"><div class="dialog"><div class="row"><div class="title">Битва: <span id="battleName"></span></div><div class="small" id="battleRound"></div></div><div class="turnbar" id="turnbar"></div><div class="battleArt"><div class="bgrid" id="bgrid"></div></div><div class="small" id="battleHint" style="margin-top:6px"></div><div class="battleStatus" id="battleStatus"></div><div class="grid g2" style="margin-top:8px"><button class="btn gold" id="waitBtn">⏳ Ждать</button><button class="btn" id="defBtn">🛡️ Оборона</button><button class="btn blue" id="spellBtn">📖 Магия</button><button class="btn red" id="retreatBtn">Отступить</button></div></div></div>
 <div class="modal hidden" id="levelModal"><div class="dialog"><div class="title">Новый уровень</div><div class="small">Выбери навык</div><div class="grid" id="levelChoices" style="margin-top:8px"></div></div></div>
 <div class="modal hidden" id="spellModal"><div class="dialog"><div class="title">Книга боя</div><div class="small">Выбери заклинание для текущего хода героя.</div><div class="spellChoice" id="spellChoices"></div><button class="btn" id="spellCancel" style="margin-top:8px">Отмена</button></div></div><div class="modal hidden" id="victoryModal"><div class="dialog"><div class="title">🏆 Победа</div><div>Морвейн повержен. Северные земли освобождены.</div><button class="btn gold" id="victoryClose" style="margin-top:10px">Продолжить</button></div></div>
@@ -129,7 +141,7 @@ const enemies={orcs:{n:'Орки',img:'orc.jpg',p:3.2,hp:14,spd:3,range:1},wolve
 const builds={barracks:{n:'Казармы',cost:[800,3,0],req:null},range:{n:'Стрельбище',cost:[1000,4,0],req:'barracks'},stable:{n:'Конюшни',cost:[1500,3,3],req:'barracks'},griffin:{n:'Башня грифонов',cost:[2200,5,4],req:'stable'},mage:{n:'Гильдия магов',cost:[1800,4,3],req:'range'},market:{n:'Рынок',cost:[1200,2,2],req:null},citadel:{n:'Цитадель',cost:[2600,6,6],req:'barracks'}};
 const skillDefs={logistics:['Логистика','+2 движения'],leadership:['Лидерство','+10% силы армии'],archery:['Стрельба','+15% урона стрелков'],wisdom:['Мудрость','+5 маны'],estates:['Поместья','+150 золота/день'],resistance:['Сопротивление','-10% входящего урона']};
 const artifactDefs={sword:{n:'Меч Стража',icon:'🗡️',stat:'atk',v:2},shield:{n:'Щит Серого Льва',icon:'🛡️',stat:'def',v:2},crown:{n:'Корона Мудрых',icon:'👑',stat:'magic',v:2}};
-const baseObjects={'1,1':{t:'castle',img:'castle.jpg',owner:'player',label:'Стальной Холм'},'3,3':{t:'sawmill',img:'sawmill.jpg',owner:null,label:'Лесопилка'},'6,2':{t:'mine',img:'mine.jpg',kind:'ore',owner:null,label:'Железная шахта'},'8,3':{t:'enemy',img:'orc.jpg',name:'Орочий дозор',stacks:[['orcs',12],['wolves',5]],reward:700,xp:65},'11,2':{t:'chest',img:'chest.jpg'},'4,6':{t:'portal',img:'portal.jpg'},'7,6':{t:'enemy',img:'wolf.jpg',name:'Стая кровавых волков',stacks:[['wolves',12],['orcs',7]],reward:950,xp:90},'10,7':{t:'artifact',img:'chest.jpg',artifact:'sword'},'13,6':{t:'mine',img:'mine.jpg',kind:'gems',owner:null,label:'Шахта самоцветов'},'15,9':{t:'artifact',img:'chest.jpg',artifact:'shield'},'12,11':{t:'enemy',img:'necromancer.jpg',name:'Легион Морвейна',stacks:[['necros',6],['skeletons',22],['orcs',10]],reward:2400,xp:220,boss:true},'16,11':{t:'artifact',img:'chest.jpg',artifact:'crown'},
+const baseObjects={'1,1':{t:'castle',img:'castle.jpg',owner:'player',label:'Стальной Холм'},'3,3':{t:'sawmill',img:'sawmill.jpg',owner:null,label:'Лесопилка'},'6,2':{t:'mine',img:'mine.jpg',kind:'ore',owner:null,label:'Железная шахта'},'8,3':{t:'enemy',img:'orc.jpg',name:'Орочий дозор',stacks:[['orcs',12],['wolves',5]],reward:700,xp:65},'11,2':{t:'chest',img:'chest.jpg'},'4,6':{t:'portal',img:'portal.jpg'},'7,6':{t:'enemy',img:'necromancer.jpg',name:'Армия мертвецов',stacks:[['skeletons',30],['necros',8]],reward:1850,xp:175,undead:true},'10,7':{t:'artifact',img:'chest.jpg',artifact:'sword'},'13,6':{t:'mine',img:'mine.jpg',kind:'gems',owner:null,label:'Шахта самоцветов'},'15,9':{t:'artifact',img:'chest.jpg',artifact:'shield'},'12,11':{t:'enemy',img:'necromancer.jpg',name:'Легион Морвейна',stacks:[['necros',6],['skeletons',22],['orcs',10]],reward:2400,xp:220,boss:true},'16,11':{t:'artifact',img:'chest.jpg',artifact:'crown'},
 '18,3':{t:'enemy',img:'orc.jpg',name:'Разбойничий лагерь',stacks:[['orcs',18],['wolves',8]],reward:1200,xp:110},
 '21,5':{t:'chest',img:'chest.jpg'},
 '23,8':{t:'artifact',img:'chest.jpg',artifact:'crown'},
@@ -177,11 +189,11 @@ const visualHotspots=[
 ];
 
 const assetNames=['ivan-rider.png','varvara-map.png','world-v6.jpg','hero.jpg','mage.jpg','castle.jpg','mine.jpg','sawmill.jpg','chest.jpg','portal.jpg','orc.jpg','wolf.jpg','necromancer.jpg','pikeman.jpg','archer.jpg','cavalier.jpg','griffin.jpg','skeleton.jpg'];
-const assets={};const fogCanvas=document.createElement('canvas');fogCanvas.width=WORLD_W;fogCanvas.height=WORLD_H;const fogCtx=fogCanvas.getContext('2d');let selectedObject=null,safeTapTimer=null,pendingInteraction=null,approachPoint=null,animClock=0,lastAnim=0,dust=[];let s,cam={x:0,y:0,zoom:.58},drag=null,toastTimer=null,routeTimer=null,audioCtx=null,mapReady=false;
+const assets={};const fogCanvas=document.createElement('canvas');fogCanvas.width=WORLD_W;fogCanvas.height=WORLD_H;const fogCtx=fogCanvas.getContext('2d');let selectedObject=null,safeTapTimer=null,pendingInteraction=null,approachPoint=null,enemyBriefKey=null,animClock=0,lastAnim=0,dust=[];let s,cam={x:0,y:0,zoom:.58},drag=null,toastTimer=null,routeTimer=null,audioCtx=null,mapReady=false;
 function loadAssets(){return Promise.all(assetNames.map(n=>new Promise(res=>{let im=new Image();im.onload=()=>{assets[n]=im;res()};im.onerror=res;im.src=n}))).then(()=>{mapReady=true;resizeCanvas();drawMap()})}
 function heroTemplate(name,cls,img,x,y,stats,army){return{name,cls,img,x,y,px:x*CELL_W+CELL_W/2,py:y*CELL_H+CELL_H/2,moves:12,maxMoves:12,atk:stats[0],def:stats[1],magic:stats[2],knowledge:stats[3],level:1,xp:0,mana:14,manaMax:14,skills:{},artifacts:[],army:{pikes:army[0],bows:army[1],cavs:army[2],griffins:army[3],mages:army[4]},route:[]}}
 function fresh(){s={gold:2800,wood:12,ore:10,gems:3,crystal:2,day:1,week:1,month:1,activeHero:'arden',heroes:{arden:heroTemplate('Иван','Рыцарь','hero.jpg',12,9,[2,2,1,1],[24,10,0,0,0]),lyra:heroTemplate('Варвара','Боевой маг','mage.jpg',14,10,[1,1,3,2],[10,7,0,0,2])},enemy:{x:15,y:11,power:1,alive:true},seen:[],objects:JSON.parse(JSON.stringify(baseObjects)),build:{barracks:false,range:false,stable:false,griffin:false,mage:false,market:false,citadel:false},avail:{pikes:16,bows:0,cavs:0,griffins:0,mages:0},settings:{sound:true},q:{wood:false,ore:false,gems:false,artifacts:0,boss:false,tutorialMove:false,tutorialTown:false,altar:false,obelisk:false,ivanStory:0,varvaraStory:0,villages:0,ruins:0},story:{ivan:0,varvara:0,world:0},reputation:0,logs:[],battle:null,garrison:{pikes:0,bows:0,cavs:0,griffins:0,mages:0},freePlay:false};ensureCriticalObjectsReachable();validateWorldReachability();revealAll();log('Кампания началась. Морвейн укрепляет восточные земли.');render();centerOnHero(false)}
-function save(){localStorage.setItem('ash-v8-6-2-kingdom',JSON.stringify(s))}
+function save(){localStorage.setItem('ash-v8-6-3-kingdom',JSON.stringify(s))}
 function normalizeHero(hr, fallback){
  if(!hr)return fallback;
  hr.name??=fallback.name; hr.cls??=fallback.cls; hr.img??=fallback.img;
@@ -196,6 +208,7 @@ function normalizeHero(hr, fallback){
 }
 function load(){try{
  let raw=
+ localStorage.getItem('ash-v8-6-3-kingdom')||
  localStorage.getItem('ash-v8-6-2-kingdom')||
  localStorage.getItem('ash-v8-6-1-kingdom')||
  localStorage.getItem('ash-v8-6-kingdom')||
@@ -225,6 +238,10 @@ function load(){try{
  q.avail??={}; for(const k of Object.keys(units)) q.avail[k]??=0;
  q.enemy??={x:15,y:11,power:1,alive:true};q.battle??=null;q.garrison??={pikes:0,bows:0,cavs:0,griffins:0,mages:0};for(const k of Object.keys(units))q.garrison[k]??=0;q.freePlay??=false;
  s=q;
+ if(s.objects&&s.objects['7,6']){
+   s.objects['7,6']={t:'enemy',img:'necromancer.jpg',name:'Армия мертвецов',stacks:[['skeletons',30],['necros',8]],reward:1850,xp:175,undead:true};
+ }
+
  const expansionEvents={
   '18,3':{t:'enemy',img:'orc.jpg',name:'Разбойничий лагерь',stacks:[['orcs',18],['wolves',8]],reward:1200,xp:110},
   '21,5':{t:'chest',img:'chest.jpg'},
@@ -242,7 +259,7 @@ function load(){try{
  }catch(e){console.warn('Save load failed',e);return false}}
 function h(){return s.heroes[s.activeHero]}function log(t){s.logs.unshift('• '+t);s.logs=s.logs.slice(0,80)}function toast(t){let el=$('toast');el.textContent=t;el.classList.add('show');clearTimeout(toastTimer);toastTimer=setTimeout(()=>el.classList.remove('show'),1900)}
 function sound(f=440,d=.07){if(!s.settings.sound)return;try{audioCtx=audioCtx||new(window.AudioContext||window.webkitAudioContext)();let o=audioCtx.createOscillator(),g=audioCtx.createGain();o.frequency.value=f;g.gain.value=.025;o.connect(g);g.connect(audioCtx.destination);o.start();o.stop(audioCtx.currentTime+d)}catch(e){}}
-// 8.6.2: collision map rebuilt for the current 26×20 continent.
+// 8.6.3: collision map rebuilt for the current 26×20 continent.
 // Only genuinely impassable mountain/water belts are blocked.
 // The south-eastern desert and its ruins are intentionally fully traversable.
 const blockedTiles=new Set([
@@ -372,7 +389,48 @@ function showHotspotInfo(hs){
  el.classList.remove('hidden');
  clearTimeout(safeTapTimer);safeTapTimer=setTimeout(()=>el.classList.add('hidden'),2600);
 }
+
+function enemyDanger(o){
+ const power=(o.stacks||[]).reduce((sum,[type,q])=>sum+q*(enemies[type]?.p||1),0);
+ const hp=heroPower(h());
+ const ratio=power/Math.max(1,hp);
+ if(ratio<.55)return'Опасность: низкая';
+ if(ratio<.9)return'Опасность: средняя';
+ if(ratio<1.25)return'Опасность: высокая';
+ return'Опасность: смертельная';
+}
+function openEnemyBrief(key){
+ const o=s.objects[key];if(!o||o.t!=='enemy')return;
+ enemyBriefKey=key;
+ $('enemyInfoName').textContent=o.name||'Вражеский отряд';
+ $('enemyInfoImg').src=o.img||'necromancer.jpg';
+ $('enemyInfoDanger').textContent=enemyDanger(o);
+ $('enemyInfoDesc').textContent=o.undead?'Нежить охраняет древние руины. Победа откроет путь и принесёт ценные трофеи.':'Нейтральный вражеский отряд преграждает путь.';
+ $('enemyInfoStacks').innerHTML=(o.stacks||[]).map(([type,q])=>`<div class="row"><span>${enemies[type]?.n||type}</span><b>${q}</b></div>`).join('');
+ $('enemyInfoReward').textContent=`🪙 ${o.reward||0} золота · ⭐ ${o.xp||0} опыта`;
+ $('enemyModal').classList.remove('hidden');
+}
+function closeEnemyBrief(){
+ enemyBriefKey=null;$('enemyModal').classList.add('hidden');
+}
+function attackEnemyFromBrief(){
+ if(!enemyBriefKey)return;
+ const key=enemyBriefKey,o=s.objects[key];closeEnemyBrief();
+ if(!o){toast('Отряд уже уничтожен');return}
+ const [tx,ty]=key.split(',').map(Number),hr=h();
+ const target=pathToInteract(hr.x,hr.y,tx,ty);
+ if(!target){toast('Не удалось найти путь к отряду');return}
+ pendingInteraction={key,tx,ty};approachPoint={x:target.x,y:target.y};
+ if(target.path.length===0){
+   // Interaction immediately starts the battle if already in range.
+   resolveInteraction();render();return;
+ }
+ hr.route=target.path;
+ toast(`⚔️ Иду в атаку: ${target.path.length} клеток`);
+ startRoute();
+}
 function interactHotspot(hs){
+ if(hs.kind==='enemy'&&hs.key&&s.objects[hs.key]){openEnemyBrief(hs.key);return}
  if(hs.kind==='town'){switchScreen('town');toast('Стальной Холм');return}
  if(hs.kind==='altar'){
    let hr=h();hr.magic+=1;hr.mana=hr.manaMax;s.q.altar=true;
@@ -568,6 +626,7 @@ function mapTap(clientX,clientY){
  const key=K(tx,ty),o=s.objects[key];
  if(o && selectedObject!==key){selectedObject=key;showObjectInfo(o);drawMap();return}
  if(o){
+   if(o.t==='enemy'){selectedObject=null;showObjectInfo(null);openEnemyBrief(key);return}
    const target=pathToInteract(hr.x,hr.y,tx,ty);
    if(!target){toast('Не удалось найти путь к объекту даже через ближайшие клетки');return}
    selectedObject=null;showObjectInfo(null);pendingInteraction={key,tx,ty};approachPoint={x:target.x,y:target.y};
@@ -887,9 +946,12 @@ function openSpellBook(){
  box.innerHTML='';spells.forEach(([k,n,c])=>{let bt=document.createElement('button');bt.className='btn blue';bt.innerHTML=`<b>${n}</b><br><span class=small>${c}</span>`;bt.onclick=()=>castSpell(k);box.appendChild(bt)});
  $('spellModal').classList.remove('hidden')
 }
+$('enemyInfoClose').onclick=closeEnemyBrief;
+$('enemyCancelBtn').onclick=closeEnemyBrief;
+$('enemyAttackBtn').onclick=attackEnemyFromBrief;
 $('endDay').addEventListener('click',nextDay);$('endDay').addEventListener('touchend',e=>{e.preventDefault();nextDay()},{passive:false});
 $('switchHero').onclick=()=>{s.activeHero=s.activeHero==='arden'?'lyra':'arden';render();centerOnHero(false);toast('Активный герой: '+h().name)};$('save').onclick=()=>{save();toast('Игра сохранена')};
-$('soundToggle').onclick=()=>{s.settings.sound=!s.settings.sound;renderSettings();save()};$('centerHero').onclick=()=>centerOnHero();$('manualSave').onclick=()=>{save();toast('Сохранено')};$('newGame').onclick=()=>{if(confirm('Начать новую игру?')){localStorage.removeItem('ash-v8-6-2-kingdom');localStorage.removeItem('ash-v8-6-1-kingdom');localStorage.removeItem('ash-v8-6-kingdom');localStorage.removeItem('ash-v8-5-2-kingdom');localStorage.removeItem('ash-v8-5-1-kingdom');localStorage.removeItem('ash-v8-5-kingdom');localStorage.removeItem('ash-v8-4-1-kingdom');localStorage.removeItem('ash-v8-4-kingdom');localStorage.removeItem('ash-v6-canvas');fresh();switchScreen('map')}};
+$('soundToggle').onclick=()=>{s.settings.sound=!s.settings.sound;renderSettings();save()};$('centerHero').onclick=()=>centerOnHero();$('manualSave').onclick=()=>{save();toast('Сохранено')};$('newGame').onclick=()=>{if(confirm('Начать новую игру?')){localStorage.removeItem('ash-v8-6-3-kingdom');localStorage.removeItem('ash-v8-6-2-kingdom');localStorage.removeItem('ash-v8-6-1-kingdom');localStorage.removeItem('ash-v8-6-kingdom');localStorage.removeItem('ash-v8-5-2-kingdom');localStorage.removeItem('ash-v8-5-1-kingdom');localStorage.removeItem('ash-v8-5-kingdom');localStorage.removeItem('ash-v8-4-1-kingdom');localStorage.removeItem('ash-v8-4-kingdom');localStorage.removeItem('ash-v6-canvas');fresh();switchScreen('map')}};
 $('waitBtn').onclick=()=>{if(s.battle?.selected?.side==='p')battleTurn()};$('defBtn').onclick=()=>{let a=s.battle?.selected;if(a?.side==='p'){a.hp+=Math.ceil(bdef(a).hp*.12);battleTurn()}};$('spellBtn').onclick=openSpellBook;$('spellCancel').onclick=()=>$('spellModal').classList.add('hidden');$('retreatBtn').onclick=()=>{if(!s.battle)return;syncArmy();let hr=s.heroes[s.battle.hero];hr.x=1;hr.y=1;let p=tileCenter(1,1);hr.px=p.x;hr.py=p.y;hr.moves=0;s.gold=Math.max(0,s.gold-350);s.battle=null;$('battleModal').classList.add('hidden');render()};$('victoryClose').onclick=()=>{$('victoryModal').classList.add('hidden');s.freePlay=true;save()};
 document.querySelectorAll('.nav button').forEach(bt=>bt.onclick=()=>switchScreen(bt.dataset.s));
 try{
@@ -909,7 +971,7 @@ function heroAnimationLoop(t){
  requestAnimationFrame(heroAnimationLoop);
 }
 requestAnimationFrame(heroAnimationLoop);
-loadAssets().then(()=>{if(!load())fresh();else{revealAll();log('Сохранение загружено в 8.6.2.');render();centerOnHero(false)}});
+loadAssets().then(()=>{if(!load())fresh();else{revealAll();log('Сохранение загружено в 8.6.3.');render();centerOnHero(false)}});
 })();
 </script>
 <script id="dev-cache-cleanup">
@@ -923,7 +985,7 @@ loadAssets().then(()=>{if(!load())fresh();else{revealAll();log('Сохранен
       const keys=await caches.keys();
       await Promise.all(keys.map(k=>caches.delete(k)));
     }
-    console.log('v8.6.2: service workers unregistered and Cache Storage cleared');
+    console.log('v8.6.3: service workers unregistered and Cache Storage cleared');
   }catch(e){ console.warn('DEV cache cleanup',e); }
 })();
 
