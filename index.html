@@ -8,7 +8,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Королевства Пепла">
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="icon-180.png?v=721788568925">
-<title>Королевства Пепла 7.2 DEV — Kingdom Edition</title>
+<title>Королевства Пепла 7.3 DEV — Kingdom Edition</title>
 <style>
 :root{--gold:#ddb45c;--text:#f4ecd8;--muted:#b8af9c;--line:#735b29;--panel:#101611;--panel2:#192219}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
@@ -59,8 +59,17 @@ button{font:inherit;color:inherit;touch-action:manipulation}
  letter-spacing:.5px; pointer-events:none; box-shadow:0 2px 8px rgba(0,0,0,.35)
 }
 </style>
-</head>
-<body><div id="devVersionBadge">v7.2 DEV · NO CACHE</div><main class="app">
+<script>
+window.addEventListener('error',e=>{
+ let b=document.getElementById('devVersionBadge');
+ if(b){b.textContent='v7.3 DEV · JS ERROR';b.style.color='#ff8c7a';b.title=e.message||'JavaScript error'}
+});
+window.addEventListener('unhandledrejection',e=>{
+ let b=document.getElementById('devVersionBadge');
+ if(b){b.textContent='v7.3 DEV · PROMISE ERROR';b.style.color='#ff8c7a'}
+});
+</script></head>
+<body><div id="devVersionBadge">v7.3 DEV · NO CACHE</div><main class="app">
 <div class="top"><span class="r">🪙 <b id="gold"></b></span><span class="r">🪵 <b id="wood"></b></span><span class="r">🪨 <b id="ore"></b></span><span class="r">💎 <b id="gems"></b></span><span class="r">🔮 <b id="crystal"></b></span><span class="grow"></span><span class="r">☀️ День <b id="day"></b> · Нед. <b id="week"></b> · Мес. <b id="month"></b></span></div>
 <div class="main">
 <section class="screen active" id="s-map">
@@ -103,8 +112,19 @@ const assets={};const fogCanvas=document.createElement('canvas');fogCanvas.width
 function loadAssets(){return Promise.all(assetNames.map(n=>new Promise(res=>{let im=new Image();im.onload=()=>{assets[n]=im;res()};im.onerror=res;im.src=n}))).then(()=>{mapReady=true;resizeCanvas();drawMap()})}
 function heroTemplate(name,cls,img,x,y,stats,army){return{name,cls,img,x,y,px:x*CELL_W+CELL_W/2,py:y*CELL_H+CELL_H/2,moves:12,maxMoves:12,atk:stats[0],def:stats[1],magic:stats[2],knowledge:stats[3],level:1,xp:0,mana:14,manaMax:14,skills:{},artifacts:[],army:{pikes:army[0],bows:army[1],cavs:army[2],griffins:army[3],mages:army[4]},route:[]}}
 function fresh(){s={gold:2800,wood:12,ore:10,gems:3,crystal:2,day:1,week:1,month:1,activeHero:'arden',heroes:{arden:heroTemplate('Арден','Рыцарь','hero.jpg',1,1,[2,2,1,1],[24,10,0,0,0]),lyra:heroTemplate('Лира','Боевой маг','mage.jpg',2,1,[1,1,3,2],[10,7,0,0,2])},enemy:{x:15,y:11,power:1,alive:true},seen:[],objects:JSON.parse(JSON.stringify(baseObjects)),build:{barracks:false,range:false,stable:false,griffin:false,mage:false,market:false,citadel:false},avail:{pikes:16,bows:0,cavs:0,griffins:0,mages:0},settings:{sound:true},q:{wood:false,ore:false,gems:false,artifacts:0,boss:false},logs:[],battle:null,freePlay:false};revealAll();log('Кампания началась. Морвейн укрепляет восточные земли.');render();centerOnHero(false)}
-function save(){localStorage.setItem('ash-v7-2-dev-kingdom',JSON.stringify(s))}
-function load(){try{let raw=localStorage.getItem('ash-v7-2-dev-kingdom')||localStorage.getItem('ash-v6-canvas');if(raw){s=JSON.parse(raw);Object.values(s.heroes).forEach(hr=>{if(hr.px==null){hr.px=hr.x*CELL_W+CELL_W/2;hr.py=hr.y*CELL_H+CELL_H/2}});return true}}catch(e){}return false}
+function save(){localStorage.setItem('ash-v7-3-dev-kingdom',JSON.stringify(s))}
+function load(){try{
+ let raw=localStorage.getItem('ash-v7-3-dev-kingdom')||localStorage.getItem('ash-v7-2-dev-kingdom')||localStorage.getItem('ash-v6-canvas');
+ if(!raw)return false;
+ let q=JSON.parse(raw);
+ if(!q||!q.heroes||!q.heroes.arden||!q.objects)return false;
+ s=q;
+ s.gold??=2800;s.wood??=12;s.ore??=10;s.gems??=3;s.crystal??=2;s.day??=1;s.week??=1;s.month??=1;
+ s.activeHero=(s.activeHero&&s.heroes[s.activeHero])?s.activeHero:'arden';
+ s.seen??=[];s.logs??=[];s.settings??={sound:true};s.q??={wood:false,ore:false,gems:false,artifacts:0,boss:false};
+ Object.values(s.heroes).forEach(hr=>{if(hr.px==null||hr.py==null){hr.px=hr.x*CELL_W+CELL_W/2;hr.py=hr.y*CELL_H+CELL_H/2}});
+ return true;
+ }catch(e){console.warn('Save migration failed',e);return false}}
 function h(){return s.heroes[s.activeHero]}function log(t){s.logs.unshift('• '+t);s.logs=s.logs.slice(0,80)}function toast(t){let el=$('toast');el.textContent=t;el.classList.add('show');clearTimeout(toastTimer);toastTimer=setTimeout(()=>el.classList.remove('show'),1900)}
 function sound(f=440,d=.07){if(!s.settings.sound)return;try{audioCtx=audioCtx||new(window.AudioContext||window.webkitAudioContext)();let o=audioCtx.createOscillator(),g=audioCtx.createGain();o.frequency.value=f;g.gain.value=.025;o.connect(g);g.connect(audioCtx.destination);o.start();o.stop(audioCtx.currentTime+d)}catch(e){}}
 function terrain(x,y){if((y===4&&x>10)||(y===9&&x<4))return'water';if((x===7&&y>8)||(x===0&&y<4)||(x===13&&y<3))return'mountain';return'land'}function passable(x,y){return x>=0&&x<W&&y>=0&&y<H&&terrain(x,y)==='land'}
@@ -192,12 +212,11 @@ canvas.addEventListener('pointerup',e=>{if(!drag||drag.id!==e.pointerId)return;l
 $('zoomIn').onclick=()=>{cam.zoom=Math.min(1.8,cam.zoom+.15);clampCam();drawMap()};$('zoomOut').onclick=()=>{cam.zoom=Math.max(.65,cam.zoom-.15);clampCam();drawMap()};
 $('endDay').addEventListener('click',nextDay);$('endDay').addEventListener('touchend',e=>{e.preventDefault();nextDay()},{passive:false});
 $('switchHero').onclick=()=>{s.activeHero=s.activeHero==='arden'?'lyra':'arden';render();centerOnHero(false);toast('Активный герой: '+h().name)};$('save').onclick=()=>{save();toast('Игра сохранена')};
-$('soundToggle').onclick=()=>{s.settings.sound=!s.settings.sound;renderSettings();save()};$('centerHero').onclick=()=>centerOnHero();$('manualSave').onclick=()=>{save();toast('Сохранено')};$('newGame').onclick=()=>{if(confirm('Начать новую игру?')){localStorage.removeItem('ash-v7-2-dev-kingdom');localStorage.removeItem('ash-v6-canvas');fresh();switchScreen('map')}};
+$('soundToggle').onclick=()=>{s.settings.sound=!s.settings.sound;renderSettings();save()};$('centerHero').onclick=()=>centerOnHero();$('manualSave').onclick=()=>{save();toast('Сохранено')};$('newGame').onclick=()=>{if(confirm('Начать новую игру?')){localStorage.removeItem('ash-v7-3-dev-kingdom');localStorage.removeItem('ash-v6-canvas');fresh();switchScreen('map')}};
 $('waitBtn').onclick=()=>{if(s.battle?.selected?.side==='p')battleTurn()};$('defBtn').onclick=()=>{let a=s.battle?.selected;if(a?.side==='p'){a.hp+=Math.ceil(bdef(a).hp*.12);battleTurn()}};$('spellBtn').onclick=()=>{let b=s.battle,a=b?.selected,hr=s.heroes[b?.hero];if(!a||a.side!=='p'||hr.mana<4)return;let en=b.stacks.filter(z=>z.side==='e'&&z.qty>0);if(!en.length)return;let t=en.sort((u,v)=>u.qty-v.qty)[0];hr.mana-=4;t.hp-=30+hr.magic*14;t.qty=Math.max(0,Math.ceil(t.hp/bdef(t).hp));log('Заклинание поражает '+bdef(t).n+'.');battleTurn()};$('retreatBtn').onclick=()=>{if(!s.battle)return;syncArmy();let hr=s.heroes[s.battle.hero];hr.x=1;hr.y=1;let p=tileCenter(1,1);hr.px=p.x;hr.py=p.y;hr.moves=0;s.gold=Math.max(0,s.gold-350);s.battle=null;$('battleModal').classList.add('hidden');render()};$('victoryClose').onclick=()=>{$('victoryModal').classList.add('hidden');s.freePlay=true;save()};
 document.querySelectorAll('.nav button').forEach(bt=>bt.onclick=()=>switchScreen(bt.dataset.s));
 loadAssets().then(()=>{if(!load())fresh();else{revealAll();log('Сохранение загружено в 7.0.');render();centerOnHero(false)}});
-if('serviceWorker'in navigator)
-})();
+
 </script>
 <script id="dev-cache-cleanup">
 (async()=>{
@@ -210,7 +229,7 @@ if('serviceWorker'in navigator)
       const keys=await caches.keys();
       await Promise.all(keys.map(k=>caches.delete(k)));
     }
-    console.log('v7.2 DEV: service workers unregistered and Cache Storage cleared');
+    console.log('v7.3 DEV: service workers unregistered and Cache Storage cleared');
   }catch(e){ console.warn('DEV cache cleanup',e); }
 })();
 </script>
