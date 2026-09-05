@@ -8,7 +8,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Королевства Пепла">
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="icon-180.png?v=721788568925">
-<title>Королевства Пепла 8.3.1 — Kingdom Edition</title>
+<title>Королевства Пепла 8.4.1 — Kingdom Edition</title>
 <style>
 :root{--gold:#ddb45c;--text:#f4ecd8;--muted:#b8af9c;--line:#735b29;--panel:#101611;--panel2:#192219}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
@@ -71,11 +71,11 @@ button{font:inherit;color:inherit;touch-action:manipulation}
 <script>
 window.addEventListener('error',e=>{
  let b=document.getElementById('devVersionBadge');
- if(b){b.textContent='v8.4 · JS ERROR: '+String(e.message||'').slice(0,28);b.style.color='#ff8c7a';b.title=e.message||'JavaScript error'}
+ if(b){b.textContent='v8.4.1 · JS ERROR: '+String(e.message||'').slice(0,28);b.style.color='#ff8c7a';b.title=e.message||'JavaScript error'}
 });
 window.addEventListener('unhandledrejection',e=>{
  let b=document.getElementById('devVersionBadge');
- if(b){b.textContent='v8.4 · PROMISE ERROR';b.style.color='#ff8c7a'}
+ if(b){b.textContent='v8.4.1 · PROMISE ERROR';b.style.color='#ff8c7a'}
 });
 </script>
 <style>
@@ -87,7 +87,7 @@ window.addEventListener('unhandledrejection',e=>{
 </style>
 
 </head>
-<body><div id="devVersionBadge">v8.4</div><main class="app">
+<body><div id="devVersionBadge">v8.4.1</div><main class="app">
 <div class="top"><span class="r">🪙 <b id="gold"></b></span><span class="r">🪵 <b id="wood"></b></span><span class="r">🪨 <b id="ore"></b></span><span class="r">💎 <b id="gems"></b></span><span class="r">🔮 <b id="crystal"></b></span><span class="grow"></span><span class="r">☀️ День <b id="day"></b> · Нед. <b id="week"></b> · Мес. <b id="month"></b></span></div>
 <div class="main">
 <section class="screen active" id="s-map">
@@ -97,7 +97,7 @@ window.addEventListener('unhandledrejection',e=>{
 <div class="mapHud"><div class="heroCard"><img id="hudPortrait"><div><b id="hudName"></b><div class="small">Ур. <span id="lvlm"></span> · воинов <span id="pow"></span></div><div class="progress"><i id="mvbar"></i></div></div></div><div class="mapBtns"><button class="roundBtn" id="switchHero">👥</button><button class="roundBtn" id="save">💾</button></div></div>
 </section>
 
-<section class="screen" id="s-hero"><div class="panel"><div class="title">Герои</div><div class="heroSelect" id="heroSelect"></div></div><div class="panel heroPane"><img id="heroPortrait"><div><div class="title" id="heroName"></div><div class="small" id="heroClass"></div><div class="row"><span>Атака</span><b id="atk"></b></div><div class="row"><span>Защита</span><b id="def"></b></div><div class="row"><span>Магия</span><b id="magic"></b></div><div class="row"><span>Знания</span><b id="knowledge"></b></div><div class="small">Ур. <b id="level"></b> · Опыт <b id="xp"></b></div></div></div><div class="panel"><div class="title">Армия</div><div class="grid g3" id="army"></div></div><div class="panel"><div class="title">Навыки</div><div id="skills"></div></div><div class="panel"><div class="title">Артефакты</div><div id="artifacts"></div></div><div class="panel"><div class="title">Военный совет</div><div class="small" style="margin-bottom:7px">Передача войск между Иваном и Лирой доступна, когда они стоят рядом или оба находятся в Стальном Холме.</div><div id="transferPanel"></div></div></section>
+<section class="screen" id="s-hero"><div class="panel"><div class="title">Герои</div><div class="heroSelect" id="heroSelect"></div></div><div class="panel heroPane"><img id="heroPortrait"><div><div class="title" id="heroName"></div><div class="small" id="heroClass"></div><div class="row"><span>Атака</span><b id="atk"></b></div><div class="row"><span>Защита</span><b id="def"></b></div><div class="row"><span>Магия</span><b id="magic"></b></div><div class="row"><span>Знания</span><b id="knowledge"></b></div><div class="small">Ур. <b id="level"></b> · Опыт <b id="xp"></b></div></div></div><div class="panel"><div class="title">Армия</div><div class="grid g3" id="army"></div></div><div class="panel"><div class="title">Навыки</div><div id="skills"></div></div><div class="panel"><div class="title">Артефакты</div><div id="artifacts"></div></div><div class="panel"><div class="title">Военный совет</div><div class="small" style="margin-bottom:7px">Передача войск между Иваном и Варварой доступна, когда они стоят рядом или оба находятся в Стальном Холме.</div><div id="transferPanel"></div></div></section>
 
 <section class="screen" id="s-town"><div class="panel"><div class="cityArt"></div><div class="title" style="margin-top:8px">Стальной Холм</div><div class="small">Столица северного королевства</div></div><div class="panel"><div class="title">Экономика города</div><div class="econGrid" id="econGrid"></div><div class="small" id="econHint" style="margin-top:7px"></div></div><div class="panel"><div class="title">Гарнизон</div><div id="garrison"></div></div><div class="panel"><div class="title">Строительство</div><div class="grid g2" id="buildings"></div></div><div class="panel"><div class="title">Найм</div><div class="grid g3" id="recruits"></div></div></section>
 
@@ -141,7 +141,7 @@ const assets={};const fogCanvas=document.createElement('canvas');fogCanvas.width
 function loadAssets(){return Promise.all(assetNames.map(n=>new Promise(res=>{let im=new Image();im.onload=()=>{assets[n]=im;res()};im.onerror=res;im.src=n}))).then(()=>{mapReady=true;resizeCanvas();drawMap()})}
 function heroTemplate(name,cls,img,x,y,stats,army){return{name,cls,img,x,y,px:x*CELL_W+CELL_W/2,py:y*CELL_H+CELL_H/2,moves:12,maxMoves:12,atk:stats[0],def:stats[1],magic:stats[2],knowledge:stats[3],level:1,xp:0,mana:14,manaMax:14,skills:{},artifacts:[],army:{pikes:army[0],bows:army[1],cavs:army[2],griffins:army[3],mages:army[4]},route:[]}}
 function fresh(){s={gold:2800,wood:12,ore:10,gems:3,crystal:2,day:1,week:1,month:1,activeHero:'arden',heroes:{arden:heroTemplate('Иван','Рыцарь','hero.jpg',1,1,[2,2,1,1],[24,10,0,0,0]),lyra:heroTemplate('Варвара','Боевой маг','mage.jpg',2,1,[1,1,3,2],[10,7,0,0,2])},enemy:{x:15,y:11,power:1,alive:true},seen:[],objects:JSON.parse(JSON.stringify(baseObjects)),build:{barracks:false,range:false,stable:false,griffin:false,mage:false,market:false,citadel:false},avail:{pikes:16,bows:0,cavs:0,griffins:0,mages:0},settings:{sound:true},q:{wood:false,ore:false,gems:false,artifacts:0,boss:false,tutorialMove:false,tutorialTown:false,altar:false,obelisk:false},logs:[],battle:null,garrison:{pikes:0,bows:0,cavs:0,griffins:0,mages:0},freePlay:false};ensureCriticalObjectsReachable();revealAll();log('Кампания началась. Морвейн укрепляет восточные земли.');render();centerOnHero(false)}
-function save(){localStorage.setItem('ash-v8-4-kingdom',JSON.stringify(s))}
+function save(){localStorage.setItem('ash-v8-4-1-kingdom',JSON.stringify(s))}
 function normalizeHero(hr, fallback){
  if(!hr)return fallback;
  hr.name??=fallback.name; hr.cls??=fallback.cls; hr.img??=fallback.img;
@@ -155,7 +155,7 @@ function normalizeHero(hr, fallback){
  return hr;
 }
 function load(){try{
- let raw=localStorage.getItem('ash-v8-4-kingdom')||localStorage.getItem('ash-v8-3-2-kingdom')||localStorage.getItem('ash-v8-3-kingdom')||localStorage.getItem('ash-v8-2-kingdom')||localStorage.getItem('ash-v8-1-dev-kingdom')||localStorage.getItem('ash-v8-dev-kingdom')||localStorage.getItem('ash-v7-5-dev-kingdom');
+ let raw=localStorage.getItem('ash-v8-4-1-kingdom')||localStorage.getItem('ash-v8-4-kingdom')||localStorage.getItem('ash-v8-3-2-kingdom')||localStorage.getItem('ash-v8-3-kingdom')||localStorage.getItem('ash-v8-2-kingdom')||localStorage.getItem('ash-v8-1-dev-kingdom')||localStorage.getItem('ash-v8-dev-kingdom')||localStorage.getItem('ash-v7-5-dev-kingdom');
  if(!raw)return false;
  let q=JSON.parse(raw);
  if(!q||!q.heroes||!q.heroes.arden||!q.objects)return false;
@@ -317,8 +317,8 @@ function drawDust(ctx){
 function drawAnimatedHero(ctx,k,hr){
   const active=k===s.activeHero;
   const moving=!!(hr.route&&hr.route.length);
-  const bob=Math.sin(animClock*.010+(k==='arden'?0:1.6))*(moving?5:2);
-  const sway=Math.sin(animClock*.006+(k==='arden'?0:.8))*(moving?.045:.018);
+  const bob=Math.sin(animClock*.010+(k==='arden'?0:1.6))*(moving?3.2:1.3);
+  const sway=Math.sin(animClock*.006+(k==='arden'?0:.8))*(moving?.028:.012);
   const scale=active?1:.88;
   let facing=1;
   if(moving){
@@ -331,7 +331,7 @@ function drawAnimatedHero(ctx,k,hr){
   ctx.rotate(sway);
   if(k==='arden'){
     const img=assets['ivan-rider.png'];
-    if(img)ctx.drawImage(img,-82,-102,164,164);
+    if(img)ctx.drawImage(img,-60,-78,120,138);
     else drawImageCircle(ctx,assets[hr.img],0,0,68,active?'#f0c55e':'#6d9bc7');
   }else{
     const glow=ctx.createRadialGradient(0,0,6,0,0,54);
@@ -345,7 +345,7 @@ function drawAnimatedHero(ctx,k,hr){
 
   if(active){
     ctx.beginPath();
-    ctx.ellipse(hr.px,hr.py+38,44,14,0,0,Math.PI*2);
+    ctx.ellipse(hr.px,hr.py+35,36,11,0,0,Math.PI*2);
     ctx.strokeStyle='rgba(240,197,94,.78)';
     ctx.lineWidth=4/cam.zoom;ctx.stroke();
   }
@@ -618,7 +618,7 @@ function openSpellBook(){
 }
 $('endDay').addEventListener('click',nextDay);$('endDay').addEventListener('touchend',e=>{e.preventDefault();nextDay()},{passive:false});
 $('switchHero').onclick=()=>{s.activeHero=s.activeHero==='arden'?'lyra':'arden';render();centerOnHero(false);toast('Активный герой: '+h().name)};$('save').onclick=()=>{save();toast('Игра сохранена')};
-$('soundToggle').onclick=()=>{s.settings.sound=!s.settings.sound;renderSettings();save()};$('centerHero').onclick=()=>centerOnHero();$('manualSave').onclick=()=>{save();toast('Сохранено')};$('newGame').onclick=()=>{if(confirm('Начать новую игру?')){localStorage.removeItem('ash-v8-4-kingdom');localStorage.removeItem('ash-v6-canvas');fresh();switchScreen('map')}};
+$('soundToggle').onclick=()=>{s.settings.sound=!s.settings.sound;renderSettings();save()};$('centerHero').onclick=()=>centerOnHero();$('manualSave').onclick=()=>{save();toast('Сохранено')};$('newGame').onclick=()=>{if(confirm('Начать новую игру?')){localStorage.removeItem('ash-v8-4-1-kingdom');localStorage.removeItem('ash-v8-4-kingdom');localStorage.removeItem('ash-v6-canvas');fresh();switchScreen('map')}};
 $('waitBtn').onclick=()=>{if(s.battle?.selected?.side==='p')battleTurn()};$('defBtn').onclick=()=>{let a=s.battle?.selected;if(a?.side==='p'){a.hp+=Math.ceil(bdef(a).hp*.12);battleTurn()}};$('spellBtn').onclick=openSpellBook;$('spellCancel').onclick=()=>$('spellModal').classList.add('hidden');$('retreatBtn').onclick=()=>{if(!s.battle)return;syncArmy();let hr=s.heroes[s.battle.hero];hr.x=1;hr.y=1;let p=tileCenter(1,1);hr.px=p.x;hr.py=p.y;hr.moves=0;s.gold=Math.max(0,s.gold-350);s.battle=null;$('battleModal').classList.add('hidden');render()};$('victoryClose').onclick=()=>{$('victoryModal').classList.add('hidden');s.freePlay=true;save()};
 document.querySelectorAll('.nav button').forEach(bt=>bt.onclick=()=>switchScreen(bt.dataset.s));
 try{
@@ -638,7 +638,7 @@ function heroAnimationLoop(t){
  requestAnimationFrame(heroAnimationLoop);
 }
 requestAnimationFrame(heroAnimationLoop);
-loadAssets().then(()=>{if(!load())fresh();else{revealAll();log('Сохранение загружено в 7.4.');render();centerOnHero(false)}});
+loadAssets().then(()=>{if(!load())fresh();else{revealAll();log('Сохранение загружено в 8.4.1.');render();centerOnHero(false)}});
 })();
 </script>
 <script id="dev-cache-cleanup">
@@ -652,7 +652,7 @@ loadAssets().then(()=>{if(!load())fresh();else{revealAll();log('Сохранен
       const keys=await caches.keys();
       await Promise.all(keys.map(k=>caches.delete(k)));
     }
-    console.log('v8.4: service workers unregistered and Cache Storage cleared');
+    console.log('v8.4.1: service workers unregistered and Cache Storage cleared');
   }catch(e){ console.warn('DEV cache cleanup',e); }
 })();
 
