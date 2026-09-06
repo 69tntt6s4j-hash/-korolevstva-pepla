@@ -1,4 +1,4 @@
-/* 8.8.3: Battle 2.0 — explicit initiative and unit traits. */
+/* 8.8.4: Battle 2.0 — explicit initiative and unit traits. */
 (function(root,factory){
   const data=factory();
   if(typeof module==='object'&&module.exports)module.exports=data;
@@ -231,7 +231,7 @@
     }
   }
   ;
-  const VERSION='8.8.3', SCHEMA=1, W=26,H=20,WORLD_W=2600,WORLD_H=2000;
+  const VERSION='8.8.4', SCHEMA=1, W=26,H=20,WORLD_W=2600,WORLD_H=2000;
   const skills={
     logistics:{
       name:'Логистика',description:'+2 движения за ранг',max:3
@@ -326,7 +326,7 @@
     id:'obelisk',x:4,y:6,t:'obelisk',label:'Заброшенная башня',img:'castle.jpg',radius:90,offset:[18,-10],landmark:true,legacyKeys:[]
   }
   );
-  const imageFiles=['ivan-rider.png','varvara-map.png','world-v6.jpg','hero.jpg','mage.jpg','castle.jpg','mine.jpg','sawmill.jpg','chest.jpg','portal.jpg','orc.jpg','wolf.jpg','necromancer.jpg','pikeman.jpg','archer.jpg','cavalier.jpg','griffin.jpg','skeleton.jpg','battlefield.jpg','city.jpg'];
+  const imageFiles=['water-mask.png','foam-mask.png','ivan-rider.png','varvara-map.png','world-v6.jpg','hero.jpg','mage.jpg','castle.jpg','mine.jpg','sawmill.jpg','chest.jpg','portal.jpg','orc.jpg','wolf.jpg','necromancer.jpg','pikeman.jpg','archer.jpg','cavalier.jpg','griffin.jpg','skeleton.jpg','battlefield.jpg','city.jpg'];
   const byId=Object.fromEntries(objects.map(o=>[o.id,o]));
   const cellKey=(x,y)=>x+','+y;
   const cells=new Set();

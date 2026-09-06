@@ -84,6 +84,12 @@
       this.fog=this.doc.createElement('canvas');
       this.fog.width=D.WORLD_W;
       this.fog.height=D.WORLD_H;
+      this.waterFx=this.doc.createElement('canvas');
+      this.waterFx.width=D.WORLD_W;
+      this.waterFx.height=D.WORLD_H;
+      this.foamFx=this.doc.createElement('canvas');
+      this.foamFx.width=D.WORLD_W;
+      this.foamFx.height=D.WORLD_H;
       this.pointer=new Controls.PointerController(this.camera,{
         onTap:(x,y)=>this.mapTap(x,y),onChange:()=>this.requestFrame(),clamp:()=>this.clamp()
       }
@@ -857,81 +863,43 @@
     }
     drawAmbientWater(ctx,t=0){
       if(this.reduceMotion)return;
-      const phase=(t||performance.now())*.001,rect=this.canvas.getBoundingClientRect(),z=this.camera.zoom;
-      const visible=(x,y,pad=120)=>x>this.camera.x-pad&&y>this.camera.y-pad&&x<this.camera.x+rect.width/z+pad&&y<this.camera.y+rect.height/z+pad;
+      const world=this.assets['world-v6.jpg'],mask=this.assets['water-mask.png'],foamMask=this.assets['foam-mask.png'];
+      if(!world||!mask)return;
+      const phase=(t||performance.now())*.001;
+      const wx=Math.sin(phase*.72)*3.0,wy=Math.cos(phase*.53)*1.8;
+      const wctx=this.waterFx.getContext('2d');
+      wctx.setTransform(1,0,0,1,0,0);
+      wctx.clearRect(0,0,D.WORLD_W,D.WORLD_H);
+      wctx.globalCompositeOperation='source-over';
+      wctx.globalAlpha=1;
+      wctx.drawImage(mask,0,0,D.WORLD_W,D.WORLD_H);
+      wctx.globalCompositeOperation='source-in';
+      wctx.drawImage(world,wx,wy,D.WORLD_W,D.WORLD_H);
+      wctx.globalCompositeOperation='source-over';
       ctx.save();
-      ctx.globalCompositeOperation='screen';
-      ctx.lineCap='round';
-      ctx.lineJoin='round';
+      ctx.globalAlpha=.34;
+      ctx.drawImage(this.waterFx,0,0);
+      ctx.restore();
 
-      // Large moving highlights follow the painted rivers instead of the coarse terrain grid.
-      const rivers=[
-        [[780,245],[815,360],[730,455],[850,545],[735,625],[895,735],[790,825],[1000,930],[950,1015]],
-        [[1270,150],[1325,260],[1450,355],[1575,430],[1510,535],[1660,600]],
-        [[1510,535],[1660,600],[1780,735],[1670,850],[1810,940],[1690,1060],[1840,1180],[1720,1300],[1900,1410]],
-        [[2010,785],[1870,875],[1740,960],[1660,1080],[1790,1190],[1900,1280],[2070,1325]],
-        [[470,560],[590,640],[720,720],[650,810],[780,900],[930,980]],
-        [[2050,1310],[2160,1400],[2240,1510],[2380,1580]]
-      ];
-      for(let r=0;r<rivers.length;r++){
-        const pts=rivers[r];
-        if(!pts.some(p=>visible(p[0],p[1],220)))continue;
-        ctx.setLineDash([22,38]);
-        ctx.lineDashOffset=-(phase*52+r*17)%60;
-        ctx.strokeStyle='rgba(180,238,255,.34)';
-        ctx.lineWidth=3.2;
-        ctx.beginPath();
-        pts.forEach((p,i)=>i?ctx.lineTo(p[0],p[1]):ctx.moveTo(p[0],p[1]));
-        ctx.stroke();
-        ctx.setLineDash([7,55]);
-        ctx.lineDashOffset=-(phase*76+r*11)%62;
-        ctx.strokeStyle='rgba(255,255,255,.30)';
-        ctx.lineWidth=1.7;
-        ctx.stroke();
+      // Белая вода и пена используют саму текстуру карты и мягко смещаются вниз.
+      // Здесь нет нарисованных линий/струй: двигаются только пиксели, уже принадлежащие воде.
+      if(foamMask){
+        const flow=(phase*9)%7;
+        const fctx=this.foamFx.getContext('2d');
+        fctx.setTransform(1,0,0,1,0,0);
+        fctx.clearRect(0,0,D.WORLD_W,D.WORLD_H);
+        fctx.globalCompositeOperation='source-over';
+        fctx.globalAlpha=1;
+        fctx.drawImage(foamMask,0,0,D.WORLD_W,D.WORLD_H);
+        fctx.globalCompositeOperation='source-in';
+        fctx.drawImage(world,0,flow,D.WORLD_W,D.WORLD_H);
+        fctx.globalCompositeOperation='source-over';
+        ctx.save();
+        ctx.globalCompositeOperation='screen';
+        ctx.globalAlpha=.18;
+        ctx.drawImage(this.foamFx,0,0);
+        ctx.restore();
       }
-      ctx.setLineDash([]);
-
-      // Sea: broad travelling wavelets and a brighter moving surf line near the coast.
-      const seaBands=[
-        [[0,1480],[180,1460],[350,1510],[520,1580],[650,1660]],
-        [[0,1625],[210,1605],[390,1650],[610,1740],[820,1830]],
-        [[0,1780],[250,1760],[480,1810],[700,1910],[900,1980]]
-      ];
-      seaBands.forEach((pts,i)=>{
-        ctx.setLineDash([30,44]);
-        ctx.lineDashOffset=-(phase*(42+i*7))%74;
-        ctx.strokeStyle='rgba(170,235,255,.30)';
-        ctx.lineWidth=2.6;
-        ctx.beginPath();pts.forEach((p,j)=>j?ctx.lineTo(...p):ctx.moveTo(...p));ctx.stroke();
-      });
-      const coast=[[160,1390],[310,1430],[470,1500],[600,1600],[735,1690],[850,1775],[1030,1840],[1180,1920]];
-      ctx.setLineDash([18,24]);ctx.lineDashOffset=-(phase*34)%42;
-      ctx.strokeStyle='rgba(245,253,255,.46)';ctx.lineWidth=4;
-      ctx.beginPath();coast.forEach((p,i)=>i?ctx.lineTo(...p):ctx.moveTo(...p));ctx.stroke();
-      ctx.setLineDash([]);
-
-      // Waterfalls: falling streaks visibly travel down and the foam pulses at the base.
-      const falls=[
-        [205,430,62],[742,430,68],[1462,472,72],[1540,1028,76],[1718,965,66],[962,514,56],
-        [585,430,62],[825,585,54],[1645,535,66],[1780,1140,62]
-      ];
-      for(const [x,y,h] of falls){
-        if(!visible(x,y,100))continue;
-        const travel=(phase*70)%22;
-        for(let i=-2;i<=2;i++){
-          const xx=x+i*5+Math.sin(phase*3+i)*1.8;
-          ctx.strokeStyle=i===0?'rgba(255,255,255,.58)':'rgba(195,238,255,.38)';
-          ctx.lineWidth=i===0?2.8:2;
-          ctx.beginPath();
-          ctx.moveTo(xx,y-h/2+travel-12);
-          ctx.lineTo(xx+Math.sin(phase*4+i)*2,y+h/2+travel-12);
-          ctx.stroke();
-        }
-        const pulse=1+.16*Math.sin(phase*4+x);
-        ctx.fillStyle='rgba(235,252,255,.34)';
-        ctx.beginPath();ctx.ellipse(x,y+h/2+6,23*pulse,7*pulse,0,0,Math.PI*2);ctx.fill();
-      }
-      ctx.restore()
     }
     drawMap(t=0){
       if(!this.engine||!this.ready)return;
