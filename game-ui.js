@@ -81,6 +81,7 @@
       }
       );
       this.canvas=this.$('mapCanvas');
+      this.dungeonCanvas=this.$('dungeonCanvas');
       this.fog=this.doc.createElement('canvas');
       this.fog.width=D.WORLD_W;
       this.fog.height=D.WORLD_H;
@@ -204,7 +205,8 @@
         }
         ,onMessage:m=>this.toast(m),onEvent:event=>{
           if(event.type==='town'){this.screen='town';this.localModal=null}
-          if(event.type==='dungeon'){this.localModal='dungeonModal';this.renderDungeon()}
+          if(event.type==='dungeonMap'){this.localModal=null;this.screen='dungeon';this.renderDungeonMap()}
+          if(event.type==='surfaceMap'){this.localModal=null;this.screen='map';this.resize();this.center()}
         }
       }
       );
@@ -212,7 +214,7 @@
       this.engine.resume()
     }
     unlockAudio(){
-      if(!this.engine?.s.settings.sound)return;
+      if(!this.engine?.s.settings.sound&&!this.engine?.s.settings.music)return;
       try{
         const Audio=this.env.AudioContext||this.env.webkitAudioContext;
         if(!Audio)return;
@@ -233,12 +235,21 @@
         oscillator.stop(this.audio.currentTime+duration);
       }catch(e){ /* Audio failure must not interrupt movement or persistence. */ }
     }
-    musicMode(){if(this.engine?.s.battle)return 'battle';if(this.localModal==='dungeonModal')return 'dungeon';if((this.engine?.s.q.threat||0)>=70)return 'danger';if(this.screen==='town')return 'town';return 'world'}
+    musicMode(){if(this.engine?.s.battle)return 'battle';if(this.screen==='dungeon')return 'dungeon';if((this.engine?.s.q.threat||0)>=70)return 'danger';if(this.screen==='town')return 'town';return 'world'}
     updateMusic(){
       if(!this.audio||this.audio.state!=='running'||!this.engine?.s.settings.music){if(this.musicTimer){this.env.clearTimeout(this.musicTimer);this.musicTimer=null}return}
       const mode=this.musicMode();if(this.musicModeActive===mode&&this.musicTimer)return;this.musicModeActive=mode;if(this.musicTimer)this.env.clearTimeout(this.musicTimer);
-      const seq={world:[196,247,294,247],town:[220,277,330,277],danger:[165,196,233,196],battle:[147,196,220,247],dungeon:[110,131,147,123]}[mode];let i=0;
-      const tick=()=>{if(!this.engine?.s.settings.music||!this.audio)return;try{const o=this.audio.createOscillator(),g=this.audio.createGain();o.type=mode==='battle'?'sawtooth':'sine';o.frequency.value=seq[i++%seq.length];g.gain.setValueAtTime(.0001,this.audio.currentTime);g.gain.exponentialRampToValueAtTime(.012*(this.engine.s.settings.musicVolume||.32),this.audio.currentTime+.05);g.gain.exponentialRampToValueAtTime(.0001,this.audio.currentTime+.7);o.connect(g);g.connect(this.audio.destination);o.start();o.stop(this.audio.currentTime+.75)}catch(e){}};tick();const loop=()=>{tick();this.musicTimer=this.env.setTimeout(loop,mode==='battle'?520:900)};this.musicTimer=this.env.setTimeout(loop,mode==='battle'?520:900)
+      const scores={
+        world:{tempo:560,mel:[196,220,247,294,277,247,220,196,247,277,330,294,247,220,196,185],bass:[98,110,123,98],wave:'triangle'},
+        town:{tempo:600,mel:[220,247,277,330,294,277,247,220,277,330,370,330,294,247,220,247],bass:[110,123,138,110],wave:'sine'},
+        danger:{tempo:440,mel:[165,196,220,233,196,175,165,147,196,220,247,233,196,175,165,147],bass:[82,82,98,73],wave:'triangle'},
+        battle:{tempo:320,mel:[147,196,220,247,220,196,165,196,147,220,247,294,247,220,196,165],bass:[73,82,73,98],wave:'sawtooth'},
+        dungeon:{tempo:620,mel:[110,131,147,165,147,131,123,110,131,165,196,175,147,131,117,110,98,117,131,147],bass:[55,65,49,58],wave:'sine'}
+      };
+      const score=scores[mode],vol=()=>Math.max(.05,this.engine?.s.settings.musicVolume||.32);let i=0;
+      const note=(freq,when,dur,gain,wave)=>{try{const o=this.audio.createOscillator(),g=this.audio.createGain();o.type=wave;o.frequency.setValueAtTime(freq,when);g.gain.setValueAtTime(.0001,when);g.gain.exponentialRampToValueAtTime(gain*vol(),when+.04);g.gain.exponentialRampToValueAtTime(.0001,when+dur);o.connect(g);g.connect(this.audio.destination);o.start(when);o.stop(when+dur+.04)}catch(e){}};
+      const tick=()=>{if(!this.engine?.s.settings.music||!this.audio)return;const t=this.audio.currentTime+.02,m=score.mel[i%score.mel.length],b=score.bass[Math.floor(i/4)%score.bass.length];note(m,t,score.tempo/1000*.82,.022,score.wave);note(b,t,score.tempo/1000*1.6,.010,'sine');if(i%2===0)note(m*1.5,t+.08,score.tempo/1000*.52,.006,'sine');if(mode==='dungeon'&&i%5===0)note(m*.5,t+.16,1.2,.005,'triangle');i++};
+      tick();const loop=()=>{tick();this.musicTimer=this.env.setTimeout(loop,score.tempo)};this.musicTimer=this.env.setTimeout(loop,score.tempo)
     }
     imageSource(name,fallback='hero.jpg'){
       return this.assets[name]?name:fallback;
@@ -291,6 +302,10 @@
       );
       on('soundToggle',()=>{this.engine.setSound(!this.engine.s.settings.sound);this.unlockAudio()});
       on('musicToggle',()=>{this.engine.setMusic(!this.engine.s.settings.music);this.unlockAudio();this.updateMusic()});
+      on('dungeonLeaveMap',()=>this.engine.leaveDungeon());
+      on('dungeonEndDay',()=>this.engine.nextDay());
+      on('dungeonHint',()=>this.toast('Коснитесь пола для движения; объекта — чтобы подойти и взаимодействовать. Рудники дают ежедневный доход.'));
+      if(this.dungeonCanvas)this.dungeonCanvas.addEventListener('pointerup',e=>{if(!this.ready||this.screen!=='dungeon'||!this.engine.idle())return;this.unlockAudio();const r=this.dungeonCanvas.getBoundingClientRect(),x=(e.clientX-r.left)*this.dungeonCanvas.width/r.width,y=(e.clientY-r.top)*this.dungeonCanvas.height/r.height;this.dungeonTap(x,y)});
       on('dungeonClose',()=>this.closeLocal());on('dungeonLeave',()=>this.closeLocal());on('dungeonExplore',()=>{const r=this.engine.dungeonEncounter(this.engine.s.activeHero);if(!r.ok)this.toast(r.reason||'Путь закрыт');this.renderDungeon()});
       on('centerHero',()=>{
         this.switchScreen('map');
@@ -414,6 +429,7 @@
     }
     switchScreen(name){
       if(!this.ready)return;
+      if(name==='map'&&this.engine.s.dungeon?.inside)name='dungeon';
       if(this.engine.s.movement){
         this.engine.cancelMovement();
         this.motion.reset()
@@ -449,6 +465,7 @@
       }
       this.$('endDay').disabled=!this.engine.idle()||this.dayBusy;
       this.$('switchHero').disabled=!this.engine.idle();
+      if(this.screen==='dungeon')this.renderDungeonMap();
       if(this.screen==='hero')this.renderHero();
       if(this.screen==='town')this.renderTown();
       if(this.screen==='magic')this.renderMagic();
@@ -551,8 +568,30 @@
         ivan:'Иван — Наследие Стального Холма',varvara:'Варвара — Тайна Пепельной магии',world:'Мировые события'
       }
       )[k]+'</b><div class="small">Этап '+s.story[k]+'/2</div></div>').join('');
-      this.$('quests').innerHTML=[['Сделать первый ход героем',s.q.tutorialMove],['Открыть экран города',s.q.tutorialTown],['Захватить лесопилку',s.q.wood],['Захватить железную шахту',s.q.ore],['Захватить шахту самоцветов',s.q.gems],['Использовать Алтарь магии',s.q.altar],['Активировать сторожевую башню',s.q.obelisk],['Завершить цепочку Ивана',s.story.ivan>=2],['Завершить цепочку Варвары',s.story.varvara>=2],['Помочь 2 поселениям',s.q.villages>=2],['Исследовать 2 руины',s.q.ruins>=2],['Найти 2 артефакта',s.q.artifacts>=2],['Исследовать Пещеру Бездны',s.q.dungeonLevel>=1],['Победить Хранителя Бездны',s.q.dungeonCleared],['Отбить осаду Стального Холма',s.q.siegeWins>=1],['Победить гарнизон Морвейна в Некрополе',s.q.boss]].map(([text,done])=>'<div class="quest '+(done?'done':'')+'">'+(done?'✅ ':'⬜ ')+text+'</div>').join('');
+      this.$('quests').innerHTML=[['Сделать первый ход героем',s.q.tutorialMove],['Открыть экран города',s.q.tutorialTown],['Захватить лесопилку',s.q.wood],['Захватить железную шахту',s.q.ore],['Захватить шахту самоцветов',s.q.gems],['Использовать Алтарь магии',s.q.altar],['Активировать сторожевую башню',s.q.obelisk],['Завершить цепочку Ивана',s.story.ivan>=2],['Завершить цепочку Варвары',s.story.varvara>=2],['Помочь 2 поселениям',s.q.villages>=2],['Исследовать 2 руины',s.q.ruins>=2],['Найти 2 артефакта',s.q.artifacts>=2],['Исследовать Пещеру Бездны',s.q.dungeonLevel>=1],['Победить Хранителя Бездны',s.q.dungeonCleared],[(!s.enemy.alive&&!D.objects.some(o=>o.t==='enemy'&&s.objects[o.id]?.status==='active')?'Угроза осады Стального Холма устранена':'Отбить осаду Стального Холма'),s.q.siegeWins>=1||(!s.enemy.alive&&!D.objects.some(o=>o.t==='enemy'&&s.objects[o.id]?.status==='active'))],['Победить гарнизон Морвейна в Некрополе',s.q.boss]].map(([text,done])=>'<div class="quest '+(done?'done':'')+'">'+(done?'✅ ':'⬜ ')+text+'</div>').join('');
       this.$('log').innerHTML=s.logs.map(t=>'<div>'+escape(t)+'</div>').join('')
+    }
+    dungeonZoneName(x,y){const z=D.dungeon.zones.find(z=>x>=z.x1&&x<=z.x2&&y>=z.y1&&y<=z.y2);return z?.name||'Глубинные переходы'}
+    renderDungeonMap(){
+      const c=this.dungeonCanvas,s=this.engine?.s;if(!c||!s?.dungeon)return;c.width=D.dungeon.WORLD_W;c.height=D.dungeon.WORLD_H;const ctx=c.getContext('2d'),d=s.dungeon,h=s.heroes[s.activeHero],seen=new Set(d.seen||[]),tile=100,now=Date.now()/1000;
+      const grd=ctx.createLinearGradient(0,0,c.width,c.height);grd.addColorStop(0,'#17130f');grd.addColorStop(.55,'#080a0b');grd.addColorStop(1,'#1b0b08');ctx.fillStyle=grd;ctx.fillRect(0,0,c.width,c.height);
+      for(let y=0;y<D.dungeon.H;y++)for(let x=0;x<D.dungeon.W;x++){const k=x+','+y,t=D.dungeon.terrain[y][x],wall=t==='#';
+        ctx.fillStyle=wall?'#211e1a':t==='~'?'#07151a':t==='='?'#40362a':t==='^'?'#35100b':t==='r'?'#25231d':((x+y)%2?'#171713':'#1c1b16');ctx.fillRect(x*tile,y*tile,tile,tile);
+        if(!wall){ctx.strokeStyle='rgba(177,137,83,.12)';ctx.strokeRect(x*tile+4,y*tile+4,tile-8,tile-8)}
+        if(t==='~'){ctx.strokeStyle='rgba(72,157,183,.55)';ctx.lineWidth=3;for(let i=0;i<4;i++){const yy=y*tile+18+i*21+Math.sin(now*1.7+x+i)*4;ctx.beginPath();ctx.moveTo(x*tile+8,yy);ctx.bezierCurveTo(x*tile+34,yy-5,x*tile+66,yy+5,x*tile+92,yy);ctx.stroke()}}
+        if(t==='='){ctx.fillStyle='#6b5336';for(let i=0;i<5;i++)ctx.fillRect(x*tile+8,y*tile+8+i*19,84,12);ctx.strokeStyle='#aa8150';ctx.lineWidth=4;ctx.strokeRect(x*tile+8,y*tile+5,84,90)}
+        if(t==='^'){const pulse=.55+.25*Math.sin(now*3+x+y);ctx.fillStyle='rgba(225,70,24,'+pulse+')';for(let i=0;i<5;i++){ctx.beginPath();ctx.arc(x*tile+16+i*18,y*tile+35+Math.sin(now*2+i)*18,10+i%2*5,0,Math.PI*2);ctx.fill()}ctx.fillStyle='rgba(255,184,64,.7)';ctx.fillRect(x*tile+8,y*tile+70,84,8)}
+        if(t==='r'){ctx.strokeStyle='rgba(156,142,112,.65)';ctx.lineWidth=7;ctx.strokeRect(x*tile+20,y*tile+24,60,54);ctx.beginPath();ctx.moveTo(x*tile+18,y*tile+52);ctx.lineTo(x*tile+82,y*tile+52);ctx.stroke();ctx.fillStyle='rgba(78,123,109,.25)';ctx.fillRect(x*tile+25,y*tile+30,14,18)}
+        if(!seen.has(k)){ctx.fillStyle='rgba(0,0,0,.91)';ctx.fillRect(x*tile,y*tile,tile,tile)}
+      }
+      // Animated torches illuminate only explored passages.
+      for(const q of D.dungeon.torches||[]){if(!seen.has(q.x+','+q.y))continue;const px=q.x*tile+50,py=q.y*tile+50,fl=7+3*Math.sin(now*8+q.x*2);const glow=ctx.createRadialGradient(px,py,2,px,py,46);glow.addColorStop(0,'rgba(255,190,82,.34)');glow.addColorStop(1,'rgba(255,110,30,0)');ctx.fillStyle=glow;ctx.beginPath();ctx.arc(px,py,46,0,Math.PI*2);ctx.fill();ctx.fillStyle='#ffb347';ctx.beginPath();ctx.moveTo(px,py-fl);ctx.quadraticCurveTo(px+9,py,px,py+8);ctx.quadraticCurveTo(px-8,py,px,py-fl);ctx.fill();ctx.fillStyle='#6e4a2c';ctx.fillRect(px-2,py+7,4,16)}
+      for(const o of D.dungeon.objects){const st=d.objects[o.id];if(!st||st.status!=='active'||!seen.has(o.x+','+o.y))continue;const px=o.x*tile+50,py=o.y*tile+50,border=st.owner==='player'?'#70b7ff':o.t==='enemy'?'#d95d54':'#d8b460';ctx.save();ctx.beginPath();ctx.arc(px,py,30,0,Math.PI*2);ctx.clip();this.image(ctx,o.img,px-30,py-30,60,60);ctx.restore();ctx.strokeStyle=border;ctx.lineWidth=4;ctx.beginPath();ctx.arc(px,py,31,0,Math.PI*2);ctx.stroke();ctx.font='600 18px sans-serif';ctx.textAlign='center';ctx.fillStyle='#f5e6c6';ctx.fillText(o.label||o.name,px,py+50)}
+      const px=d.x*tile+50,py=d.y*tile+50;ctx.save();ctx.beginPath();ctx.arc(px,py,34,0,Math.PI*2);ctx.clip();this.image(ctx,this.portraitSource(h.img),px-36,py-42,72,84);ctx.restore();ctx.strokeStyle='#efc75e';ctx.lineWidth=5;ctx.beginPath();ctx.arc(px,py,35,0,Math.PI*2);ctx.stroke();
+      this.$('dungeonZone').textContent='🕯 '+this.dungeonZoneName(d.x,d.y);this.$('dungeonHud').textContent=h.name+' · движение '+h.moves+'/'+h.maxMoves+' · открыто '+seen.size+'/'+(D.dungeon.W*D.dungeon.H)+' клеток';this.updateMusic()
+    }
+    dungeonTap(px,py){
+      const x=Math.floor(px/100),y=Math.floor(py/100),s=this.engine.s,d=s.dungeon;if(x<0||y<0||x>=D.dungeon.W||y>=D.dungeon.H)return;const o=D.dungeon.objects.find(o=>o.x===x&&o.y===y&&d.objects[o.id]?.status==='active');let r;if(o)r=this.engine.commandDungeonInteract(s.activeHero,o.id);else r=this.engine.commandDungeonMove(s.activeHero,x,y);if(!r.ok)this.toast(r.reason||'Путь недоступен');this.renderDungeonMap()
     }
     renderDungeon(){const s=this.engine.s;if(!this.$('dungeonStatus'))return;const lv=s.q.dungeonLevel||0,names=['Заброшенные шахты','Древний город','Сердце Бездны'],foes=['Костяной караул · пещерные волки','Некроманты древнего города','Хранитель Бездны · элитная нежить'];const next=Math.min(2,lv);this.$('dungeonDepth').textContent='Уровень '+['I','II','III'][next]+' · '+names[next];this.$('dungeonStatus').innerHTML=s.q.dungeonCleared?'<b>🔥 Сердце Бездны очищено</b><div class="small">Сила Некрополя ослаблена. Угроза снижена.</div>':'<b>'+names[next]+'</b><div class="small">Рекомендуемая сила армии: '+[85,150,235][next]+'. Награды растут с глубиной. На III уровне ждёт Хранитель Бездны.</div><div class="small" style="margin-top:6px">Очищено уровней: '+lv+'/3 · найдено сокровищ: '+(s.q.dungeonLoot||0)+'</div>';this.$('dungeonExplore').disabled=!!s.q.dungeonCleared}
     battleSnapshot(b){

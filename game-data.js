@@ -250,7 +250,7 @@
     }
   }
   ;
-  const VERSION='9.0.0', SCHEMA=1, W=26,H=20,WORLD_W=2600,WORLD_H=2000;
+  const VERSION='9.0.2', SCHEMA=1, W=26,H=20,WORLD_W=2600,WORLD_H=2000;
   const skills={
     logistics:{
       name:'Логистика',description:'+2 движения за ранг',max:3
@@ -346,6 +346,46 @@
   }
   );
   objects.push({id:'abyss-cave',x:18,y:13,t:'cave',label:'Пещера Бездны',img:'portal.jpg',radius:92,offset:[0,-15],landmark:true,legacyKeys:[]});
+
+  // 9.0.2: Пещера Бездны — отдельная исследуемая карта 13×10 (вдвое меньше по каждой стороне основной сетки).
+  const dungeon={
+    W:13,H:10,WORLD_W:1300,WORLD_H:1000,start:{x:1,y:8},
+    // # rock, . floor, ~ underground river, = bridge, ^ lava, r ancient ruins.
+    terrain:[
+      '#############',
+      '#...#..rr...#',
+      '#...#.~=~...#',
+      '#.....~#~...#',
+      '#.###.~=~...#',
+      '#.....###^^.#',
+      '#....rr..^^.#',
+      '#..#.....r..#',
+      '#...........#',
+      '#############'
+    ],
+    torches:[{x:2,y:8},{x:5,y:7},{x:4,y:5},{x:6,y:2},{x:8,y:4},{x:10,y:7},{x:11,y:4}],
+    ruins:[{x:7,y:1},{x:8,y:1},{x:5,y:6},{x:6,y:6},{x:9,y:7}],
+    lava:[{x:9,y:5},{x:10,y:5},{x:9,y:6},{x:10,y:6}],
+    river:[{x:6,y:2},{x:8,y:2},{x:6,y:3},{x:8,y:3},{x:6,y:4},{x:8,y:4}],
+    bridges:[{x:7,y:2},{x:7,y:4}],
+    zones:[
+      {name:'Заброшенные шахты',x1:1,y1:5,x2:5,y2:8},
+      {name:'Затопленные галереи',x1:1,y1:1,x2:6,y2:4},
+      {name:'Древний город',x1:6,y1:1,x2:11,y2:8}
+    ],
+    objects:[
+      {id:'d-exit',x:1,y:8,t:'exit',label:'Выход на поверхность',img:'portal.jpg'},
+      {id:'d-guard',x:4,y:7,t:'enemy',name:'Костяной караул',img:'skeleton.jpg',stacks:[['skeletons',24],['wolves',5]],reward:850,xp:90},
+      {id:'d-ore',x:3,y:5,t:'mine',kind:'ore',label:'Подземная железная жила',img:'mine.jpg'},
+      {id:'d-lantern',x:5,y:2,t:'artifact',artifact:'shield',label:'Щит подземного стража',img:'chest.jpg'},
+      {id:'d-coven',x:7,y:4,t:'enemy',name:'Чёрный ковен',img:'necromancer.jpg',stacks:[['necros',7],['skeletons',28]],reward:1450,xp:150},
+      {id:'d-gems',x:9,y:2,t:'mine',kind:'gems',label:'Жила лунных самоцветов',img:'mine.jpg'},
+      {id:'d-sigil',x:9,y:7,t:'artifact',artifact:'sword',label:'Клинок Древнего города',img:'chest.jpg'},
+      {id:'d-ruin-cache',x:6,y:6,t:'treasure',label:'Тайник древних руин',img:'chest.jpg',gold:1200,gems:1},
+      {id:'d-boss',x:11,y:3,t:'enemy',name:'Хранитель Бездны',img:'necromancer.jpg',stacks:[['necros',10],['skeletons',42],['orcs',10]],reward:2800,xp:300,dungeonBoss:true}
+    ]
+  };
+
   const imageFiles=['water-mask.png','foam-mask.png','ivan-rider.png','varvara-map.png','varvara-map-v2.png','world-v6.jpg','hero.jpg','mage.jpg','castle.jpg','mine.jpg','sawmill.jpg','chest.jpg','portal.jpg','orc.jpg','wolf.jpg','necromancer.jpg','pikeman.jpg','archer.jpg','cavalier.jpg','griffin.jpg','skeleton.jpg','battlefield.jpg','city.jpg'];
   const byId=Object.fromEntries(objects.map(o=>[o.id,o]));
   const cellKey=(x,y)=>x+','+y;
@@ -359,7 +399,7 @@
     return Object.freeze(o)
   }
   return deepFreeze({
-    VERSION,SCHEMA,W,H,WORLD_W,WORLD_H,units,enemies,battleTraits,builds,troopUpgrades,skills,artifactDefs,objects,byId,terrain,bridges,passes,relocations,imageFiles
+    VERSION,SCHEMA,W,H,WORLD_W,WORLD_H,units,enemies,battleTraits,builds,troopUpgrades,skills,artifactDefs,objects,byId,terrain,bridges,passes,relocations,dungeon,imageFiles
   }
   );
 }

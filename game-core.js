@@ -35,7 +35,7 @@
       ,objects:Object.fromEntries(D.objects.map(o=>[o.id,{
         status:'active',owner:o.owner||null
       }
-      ])),enemy:{
+      ])),dungeon:{inside:null,x:D.dungeon.start.x,y:D.dungeon.start.y,seen:[],objects:Object.fromEntries(D.dungeon.objects.map(o=>[o.id,{status:'active',owner:null}]))},enemy:{
         id:'morvein-field',x:15,y:11,power:1,alive:true
       }
       ,build:Object.fromEntries(Object.keys(D.builds).map(k=>[k,false])),troopLevels:Object.fromEntries(troopTypes.map(k=>[k,1])),avail:{
@@ -168,6 +168,7 @@
       if(o.kind==='ore')ore+=2;
       if(o.kind==='gems')gems++
     }
+    if(s.dungeon?.objects){for(const o of D.dungeon.objects){if(s.dungeon.objects[o.id]?.owner!=='player')continue;if(o.kind==='ore')ore+=1;if(o.kind==='gems')gems+=1;}}
     return {
       gold,wood,ore,gems
     }
@@ -515,10 +516,7 @@
         return this.commit()
       }
       if(o.t==='cave'){
-        s.movement=null;
-        this.onEvent({type:'dungeon',heroId});
-        this.onMessage('Пещера Бездны');
-        return this.commit()
+        return this.enterDungeon(heroId)
       }
       if(o.t==='event'){
         const result=this.storyEvent(heroId,o);
@@ -729,6 +727,7 @@
       }
       this.log('День '+s.day+'. Доход: '+inc.gold+' золота.');
       this.enemyWorldTurn();
+      this.settleNecropolisThreat();
       if(!s.battle)this.dailyEvent();
       return this.commit();
     }
@@ -866,6 +865,55 @@
       this.log((direction==='out'?'Вся армия гарнизона передана герою ':'Вся армия героя передана в гарнизон: ')+this.s.heroes[heroId].name);
       return this.commit()
     }
+    dungeonObject(id){
+      const d=this.s.dungeon,def=D.dungeon.objects.find(o=>o.id===id),st=d?.objects?.[id];
+      return def&&st&&st.status==='active'?{...def,status:st.status,owner:st.owner}:null
+    }
+    dungeonReveal(){
+      const d=this.s.dungeon;if(!d)return;const seen=new Set(d.seen||[]);
+      for(let y=0;y<D.dungeon.H;y++)for(let x=0;x<D.dungeon.W;x++)if(Math.hypot(x-d.x,y-d.y)<=2.6)seen.add(key(x,y));
+      d.seen=[...seen]
+    }
+    dungeonPassable(x,y){if(!(Number.isInteger(x)&&Number.isInteger(y)&&x>=0&&x<D.dungeon.W&&y>=0&&y<D.dungeon.H))return false;const t=D.dungeon.terrain[y][x];return t!=='#'&&t!=='~'&&t!=='^'}
+    dungeonObjectAt(x,y){return D.dungeon.objects.find(o=>o.x===x&&o.y===y&&this.s.dungeon.objects[o.id]?.status==='active')||null}
+    dungeonPath(tx,ty,stopAdjacent=false){
+      const d=this.s.dungeon;if(!d?.inside||!this.dungeonPassable(tx,ty))return null;
+      const goal=(x,y)=>stopAdjacent?Math.abs(x-tx)+Math.abs(y-ty)<=1:(x===tx&&y===ty);
+      return search(d.x,d.y,goal,(x,y)=>this.dungeonPassable(x,y)&&(!this.dungeonObjectAt(x,y)||goal(x,y)),Infinity,D.dungeon.W,D.dungeon.H)
+    }
+    enterDungeon(heroId){
+      if(!this.idle())return this.fail('Сначала завершите текущее событие');
+      const s=this.s;if(!s.heroes[heroId])return this.fail('Неизвестный герой');
+      s.movement=null;s.activeHero=heroId;s.dungeon.inside=heroId;
+      if(!this.dungeonPassable(s.dungeon.x,s.dungeon.y)){s.dungeon.x=D.dungeon.start.x;s.dungeon.y=D.dungeon.start.y}
+      this.dungeonReveal();this.onEvent({type:'dungeonMap',heroId});this.onMessage('🕯 Пещера Бездны — новая локация');return this.commit()
+    }
+    leaveDungeon(){
+      const s=this.s;if(!s.dungeon?.inside)return {ok:true};s.dungeon.inside=null;this.onEvent({type:'surfaceMap'});this.onMessage('Возвращение на поверхность');return this.commit()
+    }
+    commandDungeonMove(heroId,tx,ty){
+      if(!this.idle())return this.fail('Сначала завершите текущее событие');const s=this.s,d=s.dungeon,h=s.heroes[heroId];
+      if(d.inside!==heroId)return this.fail('Герой не находится в подземелье');const path=this.dungeonPath(tx,ty,false);if(!path)return this.fail('Проход завален или путь перекрыт');
+      if(!path.length)return {ok:true};if(h.moves<=0)return this.fail('Движение закончилось. Начните следующий день');
+      let moved=0;for(const [x,y] of path){if(h.moves<=0)break;if(this.dungeonObjectAt(x,y))break;d.x=x;d.y=y;h.moves--;moved++;this.dungeonReveal()}
+      if(moved)this.log('🕯 '+h.name+' продвигается по подземелью: '+moved+' кл.');return this.commit()
+    }
+    commandDungeonInteract(heroId,id){
+      if(!this.idle())return this.fail('Сначала завершите текущее событие');const s=this.s,d=s.dungeon,h=s.heroes[heroId],o=this.dungeonObject(id);
+      if(d.inside!==heroId||!o)return this.fail('Объект недоступен');
+      if(Math.abs(d.x-o.x)+Math.abs(d.y-o.y)>1){const path=this.dungeonPath(o.x,o.y,true);if(!path)return this.fail('Нет доступного подхода');for(const [x,y] of path){if(h.moves<=0)break;d.x=x;d.y=y;h.moves--;this.dungeonReveal()}if(Math.abs(d.x-o.x)+Math.abs(d.y-o.y)>1)return this.commit()}
+      if(o.t==='exit')return this.leaveDungeon();
+      if(o.t==='enemy')return this.startBattle(heroId,{kind:'dungeon',id:o.id});
+      const st=d.objects[o.id];
+      if(o.t==='mine'){st.owner='player';this.log('⛏ Захвачено: '+o.label+' · ежедневный доход +1 '+(o.kind==='gems'?'самоцвет':'руда'));}
+      else if(o.t==='artifact'){const a=D.artifactDefs[o.artifact];if(!h.artifacts.includes(o.artifact)){h.artifacts.push(o.artifact);h[a.stat]+=a.v;s.q.artifacts++;}st.status='completed';s.q.dungeonLoot=(s.q.dungeonLoot||0)+1;this.log('✨ В подземелье найден артефакт: '+a.n);}
+      else if(o.t==='treasure'){s.gold+=o.gold||0;s.gems+=o.gems||0;s.crystal+=o.crystal||0;st.status='completed';s.q.dungeonLoot=(s.q.dungeonLoot||0)+1;this.log('🏺 Найден тайник древних руин: '+(o.gold||0)+' золота'+(o.gems?' · '+o.gems+' самоцвет':'')+'.');}
+      st.status=st.status==='active'&&o.t!=='mine'?'completed':st.status;this.dungeonReveal();return this.commit()
+    }
+    surfaceEnemiesRemain(){return this.s.enemy.alive||D.objects.some(o=>o.t==='enemy'&&this.s.objects[o.id]?.status==='active')}
+    settleNecropolisThreat(){
+      if(this.surfaceEnemiesRemain())return false;const changed=this.s.q.threat!==0||this.s.q.siege;this.s.q.threat=0;this.s.q.siege=false;if(changed)this.log('🏰 Все силы Некрополя на поверхности уничтожены. Угроза осады снята.');return true
+    }
     dungeonEncounter(heroId){
       if(!this.idle())return this.fail('Сначала завершите текущее событие');
       const s=this.s,h=s.heroes[heroId],level=Math.min(3,(s.q.dungeonLevel||0)+1);
@@ -908,9 +956,11 @@
       }
       else if(source.kind==='roaming'){
         if(!s.enemy.alive||distance(h,s.enemy)>1)return this.fail('Полевой отряд недоступен');
-        o={
-          name:'Полевой отряд Морвейна',stacks:[['necros',5+s.enemy.power],['skeletons',16+s.enemy.power*3]],reward:1500,xp:140,boss:false
-        }
+        o={name:'Полевой отряд Морвейна',stacks:[['necros',5+s.enemy.power],['skeletons',16+s.enemy.power*3]],reward:1500,xp:140,boss:false}
+      }
+      else if(source.kind==='dungeon'){
+        o=this.dungeonObject(source.id);if(!o||o.t!=='enemy'||s.dungeon.inside!==heroId)return this.fail('Подземный противник недоступен');
+        if(Math.abs(s.dungeon.x-o.x)+Math.abs(s.dungeon.y-o.y)>1)return this.fail('Подойдите к противнику')
       }
       else return this.fail('Неизвестный источник боя');
       if(!troopTypes.some(k=>h.army[k]>0))return this.fail('У героя нет армии');
@@ -1172,15 +1222,21 @@
         s.gold+=b.reward;
         this.addXP(b.heroId,b.xp);
         if(b.source.kind==='object')s.objects[b.source.id].status='defeated';
+        else if(b.source.kind==='dungeon'){
+          const dst=s.dungeon.objects[b.source.id];if(dst)dst.status='defeated';const def=D.dungeon.objects.find(o=>o.id===b.source.id);s.q.dungeonLevel=Math.min(3,(s.q.dungeonLevel||0)+1);s.q.threat=Math.max(0,(s.q.threat||0)-8);
+          if(def?.dungeonBoss){s.q.dungeonCleared=true;s.q.threat=Math.max(0,s.q.threat-25);if(!h.artifacts.includes('crown')){h.artifacts.push('crown');h.magic+=D.artifactDefs.crown.v;}this.log('🔥 Хранитель Бездны повержен. Сердце подземелья очищено.')}
+        }
         else s.enemy.alive=false;
-        if(b.boss){
+        if(b.boss&&b.source.kind!=='dungeon'){
           s.q.boss=true;
           s.enemy.alive=false;
           s.victoryPending=true
         }
+        this.settleNecropolisThreat();
         this.log('Победа! +'+b.reward+' золота, +'+b.xp+' опыта')
       }
       else{
+        if(b.source.kind==='dungeon'){s.dungeon.inside=null;s.dungeon.x=D.dungeon.start.x;s.dungeon.y=D.dungeon.start.y;this.onEvent({type:'surfaceMap'});}
         h.x=D.byId.castle.x;
         h.y=D.byId.castle.y;
         h.moves=0;
@@ -1223,6 +1279,11 @@
       for(const k of troopTypes)integer(h.army[k],'армия '+k,0,1000000);
       ensure(h.name===(id==='arden'?'Иван':'Варвара')&&h.img===(id==='arden'?'hero.jpg':'mage.jpg'),'личность героя')
     }
+    if(!s.dungeon||typeof s.dungeon!=='object')s.dungeon={inside:null,x:D.dungeon.start.x,y:D.dungeon.start.y,seen:[],objects:Object.fromEntries(D.dungeon.objects.map(o=>[o.id,{status:'active',owner:null}]))};
+    if(!s.dungeon.objects)s.dungeon.objects=Object.fromEntries(D.dungeon.objects.map(o=>[o.id,{status:'active',owner:null}]));
+    for(const o of D.dungeon.objects)if(!s.dungeon.objects[o.id])s.dungeon.objects[o.id]={status:'active',owner:null};
+    if(!Array.isArray(s.dungeon.seen))s.dungeon.seen=[];if(s.dungeon.inside===undefined)s.dungeon.inside=null;if(!Number.isInteger(s.dungeon.x))s.dungeon.x=D.dungeon.start.x;if(!Number.isInteger(s.dungeon.y))s.dungeon.y=D.dungeon.start.y;
+    ensure([null,...heroIds].includes(s.dungeon.inside),'герой подземелья');ensure(s.dungeon.x>=0&&s.dungeon.x<D.dungeon.W&&s.dungeon.y>=0&&s.dungeon.y<D.dungeon.H,'позиция подземелья');
     ensure(s.objects&&Object.keys(s.objects).length===D.objects.length,'реестр объектов');
     for(const o of D.objects){
       const st=s.objects[o.id];
