@@ -319,6 +319,7 @@
       );
       on('buildingInfoClose',()=>this.closeBuildingInfo());
       on('buildingInfoClose2',()=>this.closeBuildingInfo());
+      this.$('buildingInfoModal').addEventListener('click',e=>{if(e.target===this.$('buildingInfoModal'))this.closeBuildingInfo()});
       on('objectListBtn',()=>{
         this.engine.cancelMovement();
         this.renderObjectList();
@@ -353,6 +354,7 @@
       }
       );
       this.canvas.addEventListener('pointercancel',()=>this.pointer.cancel());
+      this.doc.addEventListener('dblclick',e=>{if(e.target.closest?.('.app'))e.preventDefault()},{passive:false});
       this.canvas.addEventListener('lostpointercapture',()=>{
         if(this.pointer.points.size)this.pointer.cancel()
       }
@@ -484,9 +486,13 @@
       if(id==='arcaneTower')extra='<p><b>Развитие:</b> маги улучшаются с I до V уровня. Каждый новый уровень даёт +12% базового урона магов.</p>';
       this.$('buildingInfoName').textContent=d.n;
       this.$('buildingInfoBody').innerHTML='<p>'+escape(d.desc||'Городская постройка.')+'</p><p>'+escape(req)+'</p><p><b>Стоимость:</b> '+d.cost[0]+'🪙 '+d.cost[1]+'🪵 '+d.cost[2]+'🪨</p><p><b>Статус:</b> '+(s.build[id]?'Построено':'Не построено')+'</p>'+extra;
-      this.$('buildingInfoModal').classList.remove('hidden');this.lastModal='buildingInfoModal';
+      this.localModal='buildingInfoModal';
+      this.syncModal();
     }
-    closeBuildingInfo(){this.$('buildingInfoModal').classList.add('hidden');if(this.lastModal==='buildingInfoModal')this.lastModal=null}
+    closeBuildingInfo(){
+      if(this.localModal==='buildingInfoModal')this.localModal=null;
+      this.syncModal();
+    }
     renderTown(){
       const s=this.engine.s,h=s.heroes[s.activeHero],local=C.atTown(s,h.id),inc=C.income(s);
       this.$('econGrid').innerHTML=Object.entries(inc).map(([k,n])=>'<div class="econCard">'+({
@@ -1019,16 +1025,16 @@
         ctx.translate(p.x,p.y-bob);
         if(pose.dir==='left')ctx.scale(-1,1);
         if(pose.moving)ctx.rotate(lean);
-        const sprite=id==='arden'?'ivan-rider.png':'varvara-map.png';
+        const sprite=id==='arden'?'ivan-rider.png':'varvara-map-v2.png';
         if(id==='arden')this.image(ctx,this.assets[sprite]?sprite:h.img,-64,-84,128,147);
-        else this.image(ctx,this.assets[sprite]?sprite:h.img,-46,-54,92,92);
+        else this.image(ctx,this.assets[sprite]?sprite:h.img,-34,-54,68,72);
         ctx.restore();
         if(pose.moving&&Math.abs(gait)>.82){
           ctx.save();ctx.globalAlpha=.16;ctx.fillStyle='#d8c7a0';ctx.beginPath();ctx.arc(p.x-pose.dx*.05,p.y+38,3.5,0,Math.PI*2);ctx.fill();ctx.restore()
         }
         if(active){
           ctx.beginPath();
-          ctx.ellipse(p.x,p.y+35,36,11,0,0,Math.PI*2);
+          ctx.ellipse(p.x,p.y+35,id==='arden'?36:27,id==='arden'?11:8,0,0,Math.PI*2);
           ctx.strokeStyle='#f0c55e';
           ctx.lineWidth=3/z;
           ctx.stroke()

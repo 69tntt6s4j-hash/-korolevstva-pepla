@@ -1,4 +1,4 @@
-/* 8.9.0: Army & City Progression — troop upgrades, training buildings and Citadel. */
+/* 8.9.1: Mobile UI & Map Fix — bridge, modal, city/recruit cards and Varvara marker. */
 (function(root,factory){
   const data=factory();
   if(typeof module==='object'&&module.exports)module.exports=data;
@@ -250,7 +250,7 @@
     }
   }
   ;
-  const VERSION='8.9.0', SCHEMA=1, W=26,H=20,WORLD_W=2600,WORLD_H=2000;
+  const VERSION='8.9.1', SCHEMA=1, W=26,H=20,WORLD_W=2600,WORLD_H=2000;
   const skills={
     logistics:{
       name:'Логистика',description:'+2 движения за ранг',max:3
@@ -276,7 +276,7 @@
   // Forest/swamp/desert are walkable. Water and mountain interiors are not.
   const mountainRows=[ [0,1,2,3,4,5,6,7,12,18,23,24,25], [0,1,2,5,6,7,11,12,19,22,23], [0,1,5,6,7,20,22,23,25], [0,3,6,7,22,24,25], [4,5,7,18,21,22,23,24,25], [20,21,23,24,25], [21,23,24,25], [18,21,24,25], [23,25], [25], [6,25], [6,7,19,25], [0,1,6,7,25], [0,1,5,6,20,25], [5,6,7,8,16,17], [6,7,8,9,18], [10,11,13,15,16], [10,11,12,13,14,15,16], [11,12,13,14,15,16,17], [12,13,14,15,16,17,18,19,20] ];
   const waterRows=[ [22],[8,9,15,16,17],[11,13,15,16,17], [2,12,13,14,15,16,17],[1,2,8,9,12,16], [2,3,8,9,10,16,17],[4,5,6], [6,8],[8,9,10,17,18,19,20,21,22], [11,12,13,14,15,16],[13,14,15], [17,18],[18,20,21,23], [2,3,4,21,22,23,24],[0,1,2,3,24,25], [0,1,2],[0,1,2,3,4,5,6,7,8], [0,1,2,3,4,5,6,7,8,9],[0,1,2,3,4,5,6,7,8,9,10], [0,1,2,3,4,5,6,7,8,9,10,11] ];
-  const bridges=[[11,5],[7,7],[16,8],[17,8],[16,10],[19,12],[3,15],[4,15],[5,15]];
+  const bridges=[[11,5],[7,7],[11,9],[16,8],[17,8],[16,10],[19,12],[3,15],[4,15],[5,15]];
   const terrain=Array.from({
     length:H
   }
@@ -345,7 +345,7 @@
     id:'obelisk',x:4,y:6,t:'obelisk',label:'Заброшенная башня',img:'castle.jpg',radius:90,offset:[18,-10],landmark:true,legacyKeys:[]
   }
   );
-  const imageFiles=['water-mask.png','foam-mask.png','ivan-rider.png','varvara-map.png','world-v6.jpg','hero.jpg','mage.jpg','castle.jpg','mine.jpg','sawmill.jpg','chest.jpg','portal.jpg','orc.jpg','wolf.jpg','necromancer.jpg','pikeman.jpg','archer.jpg','cavalier.jpg','griffin.jpg','skeleton.jpg','battlefield.jpg','city.jpg'];
+  const imageFiles=['water-mask.png','foam-mask.png','ivan-rider.png','varvara-map.png','varvara-map-v2.png','world-v6.jpg','hero.jpg','mage.jpg','castle.jpg','mine.jpg','sawmill.jpg','chest.jpg','portal.jpg','orc.jpg','wolf.jpg','necromancer.jpg','pikeman.jpg','archer.jpg','cavalier.jpg','griffin.jpg','skeleton.jpg','battlefield.jpg','city.jpg'];
   const byId=Object.fromEntries(objects.map(o=>[o.id,o]));
   const cellKey=(x,y)=>x+','+y;
   const cells=new Set();

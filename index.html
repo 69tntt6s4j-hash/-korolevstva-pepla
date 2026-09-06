@@ -2,13 +2,13 @@
 <html lang="ru">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,maximum-scale=5">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,maximum-scale=1,user-scalable=no">
 <meta name="theme-color" content="#090c09">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Королевства Пепла">
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="icon-180.png">
-<title>Королевства Пепла 8.9.0 — Living Water II</title>
+<title>Королевства Пепла 8.9.1 — Mobile UI & Map Fix</title>
 <style>
 :root{--gold:#ddb45c;--text:#f4ecd8;--muted:#b8af9c;--line:#735b29;--panel:#101611;--panel2:#192219}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
@@ -31,8 +31,8 @@ button{font:inherit;color:inherit;touch-action:manipulation}
 .btn{min-height:44px;border:1px solid var(--line);background:#1b241b;border-radius:8px;padding:8px}.btn.gold{background:#57431d}.btn.red{background:#4b2924}.btn.blue{background:#233f55}.btn:disabled{opacity:.42}
 .heroSelect{display:grid;grid-template-columns:repeat(2,1fr);gap:7px}.heroBtn{display:grid;grid-template-columns:52px 1fr;gap:8px;align-items:center;text-align:left}.heroBtn img{width:52px;height:62px;object-fit:cover;border-radius:7px}.heroBtn.active{border-color:var(--gold);background:#302918}
 .heroPane{display:grid;grid-template-columns:110px 1fr;gap:10px}.heroPane img{width:110px;height:150px;object-fit:cover;border-radius:8px;border:1px solid var(--line)}
-.unitcard{border:1px solid #3c473a;border-radius:8px;overflow:hidden;background:#151d16}.unitcard img{width:100%;height:92px;object-fit:cover;display:block}.unitcard .txt{padding:6px;text-align:center}.unitcard b{display:block;font-size:17px}
-.cityArt{height:205px;border:1px solid var(--line);border-radius:8px;background:url('city.jpg') center/cover no-repeat}.building{position:relative;text-align:left}.built{border-color:#b48f43;background:#332b1b}.lock{position:absolute;right:6px;top:5px}
+.unitcard{border:1px solid #3c473a;border-radius:8px;overflow:hidden;background:#151d16}.unitcard img{width:100%;height:104px;object-fit:cover;object-position:center top;display:block}.unitcard .txt{padding:6px;text-align:center}.unitcard b{display:block;font-size:17px}
+.cityArt{width:100%;height:auto;aspect-ratio:11/7;border:1px solid var(--line);border-radius:8px;background:url('city.jpg') center/100% 100% no-repeat}.building{position:relative;text-align:left}.built{border-color:#b48f43;background:#332b1b}.lock{position:absolute;right:6px;top:5px}
 .skill{border-left:3px solid var(--gold);padding-left:8px;margin:7px 0}.quest{border:1px solid #3c473a;border-radius:7px;padding:8px;margin-bottom:6px}.quest.done{opacity:.6}.log{max-height:230px;overflow:auto;font-size:12px;line-height:1.45}
 .nav{display:grid;grid-template-columns:repeat(6,1fr);background:#0e130f;border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom);flex:0 0 auto;z-index:20}
 .nav button{min-height:59px;border:0;border-right:1px solid #2c342b;background:#111711;font-size:10px;padding:6px 2px}.nav b{display:block;font-size:20px}.nav button.active{background:#312817;color:#f0ca72}
@@ -97,6 +97,15 @@ button:focus-visible,[tabindex]:focus-visible{outline:3px solid #f5d47b;outline-
 @media(max-height:560px) and (orientation:landscape){#battleModal{align-items:flex-start}#battleModal .dialog{max-height:100dvh;overflow:auto}#battleModal .battleArt{aspect-ratio:8/4.25}#battleModal .turnbar{display:none}#battleModal .battleStatus{font-size:11px}#battleModal .btn{min-height:36px;padding:4px}}
 .buildingWrap{position:relative}.buildingWrap .building{width:100%;height:100%;padding-right:48px}.helpBtn{position:absolute;right:7px;top:7px;z-index:2;border:1px solid #9c8246;border-radius:50%;width:34px;height:34px;min-width:34px;padding:0;background:#111a12;color:#f5d47b;font-weight:900;font-size:18px}.upgradeCard{text-align:left;display:grid;grid-template-columns:54px 1fr;gap:8px;align-items:center}.upgradeCard img{width:54px;height:64px;object-fit:cover;border-radius:6px}.upgradeCard .level{color:#f1cf79;font-weight:800}
 @media(prefers-reduced-motion:reduce){.toast{transition:none}}
+@media(max-width:600px){
+  #recruits{grid-template-columns:repeat(2,minmax(0,1fr))}
+  #recruits .unitcard img{height:118px;object-position:center top}
+  .cityArt{aspect-ratio:11/7;background-size:100% 100%}
+}
+html,body,.app{touch-action:manipulation}
+#mapCanvas{touch-action:none}
+#buildingInfoModal{cursor:pointer}
+#buildingInfoModal .dialog{cursor:default}
 </style>
 </head>
 <body><main class="app">
@@ -143,6 +152,6 @@ button:focus-visible,[tabindex]:focus-visible{outline:3px solid #f5d47b;outline-
 
 <div class="modal hidden" id="buildingInfoModal"><div class="dialog"><div class="row"><h2 id="buildingInfoName">Постройка</h2><button class="miniBtn" id="buildingInfoClose">✕</button></div><div id="buildingInfoBody"></div><button class="btn" id="buildingInfoClose2">Закрыть</button></div></div>
 <div class="modal hidden" id="objectListModal"><div class="dialog"><h2>Разведанные объекты</h2><div class="objectList" id="knownObjects"></div><button class="btn" id="objectListClose">Закрыть</button></div></div>
-<div class="modal" id="startupModal"><div class="dialog"><h2>Королевства Пепла 8.9.0</h2><p id="startupMessage" role="status">Загрузка игры…</p><button class="btn" id="retryLoad" hidden>Повторить загрузку</button><button class="btn" id="recoveryImport" hidden>Импортировать сохранение</button><button class="btn red" id="recoveryNew" hidden>Начать новую игру</button></div></div>
+<div class="modal" id="startupModal"><div class="dialog"><h2>Королевства Пепла 8.9.1</h2><p id="startupMessage" role="status">Загрузка игры…</p><button class="btn" id="retryLoad" hidden>Повторить загрузку</button><button class="btn" id="recoveryImport" hidden>Импортировать сохранение</button><button class="btn red" id="recoveryNew" hidden>Начать новую игру</button></div></div>
 <script src="game-data.js"></script><script src="game-core.js"></script><script src="game-controls.js"></script><script src="game-ui.js"></script>
 </body></html>
