@@ -8,7 +8,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Королевства Пепла">
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="icon-180.png">
-<title>Королевства Пепла 8.9.2 — Unified Cards UI</title>
+<title>Королевства Пепла 8.9.4 — Unified Cards UI</title>
 <style>
 :root{--gold:#ddb45c;--text:#f4ecd8;--muted:#b8af9c;--line:#735b29;--panel:#101611;--panel2:#192219}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
@@ -68,7 +68,7 @@ button{font:inherit;color:inherit;touch-action:manipulation}
 @keyframes stackIdle{0%,100%{transform:translateY(0) scale(1)}50%{transform:translateY(-1.5px) scale(1.018)}}
 @media(prefers-reduced-motion:reduce){.cell.sel .stack{animation:none}.stack{transition:none}}
 
-/* 8.9.2: unified clean portrait cards; source artwork labels are never shown in cards. */
+/* 8.9.4: unified clean portrait cards; source artwork labels are never shown in cards. */
 .heroBtn{grid-template-columns:58px minmax(0,1fr);min-height:78px;padding:8px;gap:10px}.heroBtn img{width:58px;height:58px;border-radius:10px;object-fit:cover;border:1px solid #665b3e}.heroBtn span{min-width:0}.heroBtn b{display:block;font-size:16px;line-height:1.15}.heroBtn small{display:block;margin-top:4px;color:var(--muted);font-size:12px}
 .heroPane{grid-template-columns:96px minmax(0,1fr);align-items:center}.heroPane img{width:96px;height:112px;object-fit:cover;object-position:center;border-radius:11px}
 #army{grid-template-columns:repeat(2,minmax(0,1fr))}.unitcard{display:grid;grid-template-columns:72px minmax(0,1fr);align-items:center;min-height:88px;padding:7px;gap:9px;overflow:hidden}.unitcard img{width:72px;height:72px;border-radius:9px;object-fit:cover;border:1px solid #59634f}.unitcard .txt{padding:0;text-align:left;min-width:0}.unitcard .txt>b{font-size:14px;line-height:1.15;white-space:normal}.unitcard .unitQty{display:block;color:#f1cf79;font-size:22px;font-weight:850;line-height:1.1;margin-top:3px}.unitcard .small{display:block;margin-top:2px;font-size:11px}
@@ -85,7 +85,7 @@ button{font:inherit;color:inherit;touch-action:manipulation}
 .skillChoice span{display:block;font-size:14px;opacity:.78;line-height:1.25}
 @media(max-width:520px){.skillChoices{grid-template-columns:1fr}.skillChoice{min-height:72px}}
 
-/* 8.9.2: unified clean portrait cards; source artwork labels are never shown in cards. */
+/* 8.9.4: unified clean portrait cards; source artwork labels are never shown in cards. */
 .heroBtn{grid-template-columns:58px minmax(0,1fr);min-height:78px;padding:8px;gap:10px}.heroBtn img{width:58px;height:58px;border-radius:10px;object-fit:cover;border:1px solid #665b3e}.heroBtn span{min-width:0}.heroBtn b{display:block;font-size:16px;line-height:1.15}.heroBtn small{display:block;margin-top:4px;color:var(--muted);font-size:12px}
 .heroPane{grid-template-columns:96px minmax(0,1fr);align-items:center}.heroPane img{width:96px;height:112px;object-fit:cover;object-position:center;border-radius:11px}
 #army{grid-template-columns:repeat(2,minmax(0,1fr))}.unitcard{display:grid;grid-template-columns:72px minmax(0,1fr);align-items:center;min-height:88px;padding:7px;gap:9px;overflow:hidden}.unitcard img{width:72px;height:72px;border-radius:9px;object-fit:cover;border:1px solid #59634f}.unitcard .txt{padding:0;text-align:left;min-width:0}.unitcard .txt>b{font-size:14px;line-height:1.15;white-space:normal}.unitcard .unitQty{display:block;color:#f1cf79;font-size:22px;font-weight:850;line-height:1.1;margin-top:3px}.unitcard .small{display:block;margin-top:2px;font-size:11px}
@@ -128,13 +128,31 @@ html,body,.app{touch-action:manipulation}
 #buildingInfoModal{cursor:pointer}
 #buildingInfoModal .dialog{cursor:default}
 
-/* 8.9.2: unified clean portrait cards; source artwork labels are never shown in cards. */
+/* 8.9.4: unified clean portrait cards; source artwork labels are never shown in cards. */
 .heroBtn{grid-template-columns:58px minmax(0,1fr);min-height:78px;padding:8px;gap:10px}.heroBtn img{width:58px;height:58px;border-radius:10px;object-fit:cover;border:1px solid #665b3e}.heroBtn span{min-width:0}.heroBtn b{display:block;font-size:16px;line-height:1.15}.heroBtn small{display:block;margin-top:4px;color:var(--muted);font-size:12px}
 .heroPane{grid-template-columns:96px minmax(0,1fr);align-items:center}.heroPane img{width:96px;height:112px;object-fit:cover;object-position:center;border-radius:11px}
 #army{grid-template-columns:repeat(2,minmax(0,1fr))}.unitcard{display:grid;grid-template-columns:72px minmax(0,1fr);align-items:center;min-height:88px;padding:7px;gap:9px;overflow:hidden}.unitcard img{width:72px;height:72px;border-radius:9px;object-fit:cover;border:1px solid #59634f}.unitcard .txt{padding:0;text-align:left;min-width:0}.unitcard .txt>b{font-size:14px;line-height:1.15;white-space:normal}.unitcard .unitQty{display:block;color:#f1cf79;font-size:22px;font-weight:850;line-height:1.1;margin-top:3px}.unitcard .small{display:block;margin-top:2px;font-size:11px}
 .upgradeCard img,.recruitCard img{object-position:center}
 @media(max-width:430px){.heroSelect{grid-template-columns:1fr}.heroBtn{min-height:72px}.heroPane{grid-template-columns:84px minmax(0,1fr)}.heroPane img{width:84px;height:96px}#army{grid-template-columns:1fr 1fr}.unitcard{grid-template-columns:58px minmax(0,1fr);min-height:76px;padding:6px;gap:7px}.unitcard img{width:58px;height:58px}.unitcard .txt>b{font-size:13px}.unitcard .unitQty{font-size:19px}}
 @media(max-width:355px){#army{grid-template-columns:1fr}.unitcard{grid-template-columns:64px minmax(0,1fr)}.unitcard img{width:64px;height:64px}}
+</style>
+
+<style id="cards-894-fix">
+/* 8.9.4 definitive card layout — intentionally last in cascade */
+.heroSelect{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:8px!important}
+.heroBtn{grid-template-columns:54px minmax(0,1fr)!important;min-height:72px!important;padding:8px!important;gap:9px!important;overflow:hidden!important}
+.heroBtn img{width:54px!important;height:54px!important;object-fit:cover!important;object-position:center!important;border:1px solid #665b3e!important;border-radius:9px!important}
+.heroBtn b{font-size:15px!important;white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important}
+.heroPane{grid-template-columns:92px minmax(0,1fr)!important;gap:14px!important;align-items:center!important}
+.heroPane img{width:92px!important;height:92px!important;object-fit:cover!important;object-position:center!important;border-radius:12px!important}
+#army{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:8px!important}
+.unitcard{grid-template-columns:64px minmax(0,1fr)!important;min-height:82px!important;padding:8px!important;gap:9px!important;overflow:hidden!important}
+.unitcard img{width:64px!important;height:64px!important;object-fit:cover!important;object-position:center!important;border-radius:10px!important}
+.unitcard .txt{min-width:0!important;text-align:left!important;padding:0!important}
+.unitcard .txt>b{font-size:13px!important;line-height:1.1!important}
+.unitcard .unitQty{font-size:20px!important;line-height:1.05!important;margin-top:3px!important}
+.unitcard .small{font-size:11px!important;line-height:1.2!important;margin-top:3px!important}
+@media(max-width:380px){.heroBtn{grid-template-columns:46px minmax(0,1fr)!important}.heroBtn img{width:46px!important;height:46px!important}.unitcard{grid-template-columns:54px minmax(0,1fr)!important}.unitcard img{width:54px!important;height:54px!important}}
 </style>
 </head>
 <body><main class="app">
@@ -181,6 +199,6 @@ html,body,.app{touch-action:manipulation}
 
 <div class="modal hidden" id="buildingInfoModal"><div class="dialog"><div class="row"><h2 id="buildingInfoName">Постройка</h2><button class="miniBtn" id="buildingInfoClose">✕</button></div><div id="buildingInfoBody"></div><button class="btn" id="buildingInfoClose2">Закрыть</button></div></div>
 <div class="modal hidden" id="objectListModal"><div class="dialog"><h2>Разведанные объекты</h2><div class="objectList" id="knownObjects"></div><button class="btn" id="objectListClose">Закрыть</button></div></div>
-<div class="modal" id="startupModal"><div class="dialog"><h2>Королевства Пепла 8.9.1</h2><p id="startupMessage" role="status">Загрузка игры…</p><button class="btn" id="retryLoad" hidden>Повторить загрузку</button><button class="btn" id="recoveryImport" hidden>Импортировать сохранение</button><button class="btn red" id="recoveryNew" hidden>Начать новую игру</button></div></div>
+<div class="modal" id="startupModal"><div class="dialog"><h2>Королевства Пепла 8.9.4</h2><p id="startupMessage" role="status">Загрузка игры…</p><button class="btn" id="retryLoad" hidden>Повторить загрузку</button><button class="btn" id="recoveryImport" hidden>Импортировать сохранение</button><button class="btn red" id="recoveryNew" hidden>Начать новую игру</button></div></div>
 <script src="game-data.js"></script><script src="game-core.js"></script><script src="game-controls.js"></script><script src="game-ui.js"></script>
 </body></html>
