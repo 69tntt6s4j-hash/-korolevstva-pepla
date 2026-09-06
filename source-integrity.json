@@ -1,0 +1,33 @@
+{
+  "originalFiles": 26,
+  "originalAndBackupMatch": true,
+  "originalIndexSHA256": "fcc6b72fc08dcdf2e80711f85919e7c448ae1d196bd1125549c8b0d09f551206",
+  "unchangedImagesInNewVersion": [
+    "castle.jpg",
+    "hero.jpg",
+    "orc.jpg",
+    "mage.jpg",
+    "world-v6.jpg",
+    "mine.jpg",
+    "city.jpg",
+    "necromancer.jpg",
+    "griffin.jpg",
+    "chest.jpg",
+    "icon-180.png",
+    "wolf.jpg",
+    "cavalier.jpg",
+    "portal.jpg",
+    "archer.jpg",
+    "varvara-map.png",
+    "skeleton.jpg",
+    "ivan-rider.png",
+    "sawmill.jpg",
+    "pikeman.jpg",
+    "battlefield.jpg",
+    "icon-512.png"
+  ],
+  "removedUnusedImages": [
+    "world.jpg",
+    "varvara-sprite.png"
+  ]
+}

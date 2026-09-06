@@ -1,0 +1,16 @@
+{
+  "units": "identical",
+  "enemies": "identical",
+  "staticEnemyArmiesRewardsXP": "identical",
+  "comparedEnemyIds": [
+    "object-8-3",
+    "deadarmy",
+    "necropolis",
+    "object-18-3",
+    "object-22-14",
+    "object-14-15",
+    "object-4-16",
+    "object-19-18"
+  ],
+  "scope": "Base definitions only. Effective balance changes when formerly broken skills and defence begin to work."
+}

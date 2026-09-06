@@ -1,4 +1,4 @@
-/* 8.7.2: immutable game definitions; original army/economy values. */
+/* 8.7.3: immutable game definitions; original army/economy values. */
 (function(root,factory){
   const data=factory();
   if(typeof module==='object'&&module.exports)module.exports=data;
@@ -219,7 +219,7 @@
     }
   }
   ;
-  const VERSION='8.7.2', SCHEMA=1, W=26,H=20,WORLD_W=2600,WORLD_H=2000;
+  const VERSION='8.7.3', SCHEMA=1, W=26,H=20,WORLD_W=2600,WORLD_H=2000;
   const skills={
     logistics:{
       name:'Логистика',description:'+2 движения за ранг',max:3

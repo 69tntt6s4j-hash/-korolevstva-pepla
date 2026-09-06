@@ -1,0 +1,104 @@
+{
+  "scope": "Production text, version/config and tests including fixtures. Excludes QA, reports, README and binary images. This is a structural replacement, not a small patch.",
+  "files": [
+    {
+      "file": "VERSION-8.6.5.txt",
+      "status": "deleted",
+      "addedLines": 0,
+      "removedLines": 12
+    },
+    {
+      "file": "VERSION-8.7.0-full-fix.txt",
+      "status": "added",
+      "addedLines": 6,
+      "removedLines": 0
+    },
+    {
+      "file": "game-controls.js",
+      "status": "added",
+      "addedLines": 153,
+      "removedLines": 0
+    },
+    {
+      "file": "game-core.js",
+      "status": "added",
+      "addedLines": 1514,
+      "removedLines": 0
+    },
+    {
+      "file": "game-data.js",
+      "status": "added",
+      "addedLines": 334,
+      "removedLines": 0
+    },
+    {
+      "file": "game-ui.js",
+      "status": "added",
+      "addedLines": 983,
+      "removedLines": 0
+    },
+    {
+      "file": "index.html",
+      "status": "modified",
+      "addedLines": 33,
+      "removedLines": 917
+    },
+    {
+      "file": "manifest.webmanifest",
+      "status": "added",
+      "addedLines": 16,
+      "removedLines": 0
+    },
+    {
+      "file": "package.json",
+      "status": "added",
+      "addedLines": 8,
+      "removedLines": 0
+    },
+    {
+      "file": "sw.js",
+      "status": "added",
+      "addedLines": 28,
+      "removedLines": 0
+    },
+    {
+      "file": "tests/fixtures/balance865.json",
+      "status": "added",
+      "addedLines": 292,
+      "removedLines": 0
+    },
+    {
+      "file": "tests/fixtures/legacy865.json",
+      "status": "added",
+      "addedLines": 539,
+      "removedLines": 0
+    },
+    {
+      "file": "tests/helpers.cjs",
+      "status": "added",
+      "addedLines": 9,
+      "removedLines": 0
+    },
+    {
+      "file": "tests/mock-dom.cjs",
+      "status": "added",
+      "addedLines": 28,
+      "removedLines": 0
+    },
+    {
+      "file": "tests/regression.cjs",
+      "status": "added",
+      "addedLines": 75,
+      "removedLines": 0
+    },
+    {
+      "file": "tests/ui-checks.cjs",
+      "status": "added",
+      "addedLines": 51,
+      "removedLines": 0
+    }
+  ],
+  "addedLines": 4069,
+  "removedLines": 929,
+  "patchBytes": 281621
+}

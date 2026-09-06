@@ -8,7 +8,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Королевства Пепла">
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="icon-180.png">
-<title>Королевства Пепла 8.7.2 — Kingdom Edition</title>
+<title>Королевства Пепла 8.7.3 — Kingdom Edition</title>
 <style>
 :root{--gold:#ddb45c;--text:#f4ecd8;--muted:#b8af9c;--line:#735b29;--panel:#101611;--panel2:#192219}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
@@ -83,10 +83,13 @@ button:focus-visible,[tabindex]:focus-visible{outline:3px solid #f5d47b;outline-
 .mapObjectList{position:absolute;top:10px;right:10px;z-index:9;background:#101710de;max-width:55%;min-height:44px}
 .mapHud{align-items:flex-end}.heroCard{width:205px;max-width:calc(100% - 106px)}.heroCard b{font-size:14px}.heroCard .small{font-size:11px}
 .nextDay{bottom:94px}.objectInfo{top:65px}.modal{padding:calc(10px + env(safe-area-inset-top)) max(10px,env(safe-area-inset-right)) calc(10px + env(safe-area-inset-bottom)) max(10px,env(safe-area-inset-left))}
-.dialog{max-height:calc(100dvh - 24px - env(safe-area-inset-top) - env(safe-area-inset-bottom));overscroll-behavior:contain}.battleViewport{overflow-x:auto;overscroll-behavior:contain}.battleArt{min-width:392px;height:278px}.bgrid{grid-template-columns:repeat(8,minmax(44px,1fr));grid-template-rows:repeat(5,minmax(44px,1fr))}.cell{min-width:44px;min-height:44px;padding:0}.stack .qty{font-size:12px}.turnchip{font-size:12px;min-width:48px}
+.dialog{max-height:calc(100dvh - 24px - env(safe-area-inset-top) - env(safe-area-inset-bottom));overscroll-behavior:contain}.battleViewport{overflow:hidden;overscroll-behavior:contain;width:100%}.battleArt{width:100%;min-width:0;height:auto;aspect-ratio:8/5}.bgrid{inset:4px;gap:2px;grid-template-columns:repeat(8,minmax(0,1fr));grid-template-rows:repeat(5,minmax(0,1fr))}.cell{min-width:0;min-height:0;padding:0}.stack .qty{font-size:12px}.turnchip{font-size:12px;min-width:48px}
 #persistentStatus{position:fixed;left:6px;right:6px;top:calc(env(safe-area-inset-top) + 44px);z-index:75;background:#47291e;color:#fff1d2;padding:8px;border:1px solid #bd9460;border-radius:8px;font-size:12px}
 .objectList{display:grid;gap:7px}.objectList .btn{text-align:left}.dialog h2{font-size:20px;margin:0 0 10px}.dialog .btn{margin-top:5px}.skillChoices{grid-template-columns:1fr}
 @media(max-width:350px){.heroCard{grid-template-columns:32px 1fr;gap:4px;padding:5px}.heroCard img{width:32px;height:38px}.heroCard b{font-size:12px}.heroCard .small{font-size:10px}.nav button{font-size:10px}.econGrid{grid-template-columns:repeat(2,1fr)}.heroPane{grid-template-columns:90px 1fr}.heroPane img{width:90px;height:130px}}
+
+@media(max-width:600px){#battleModal{padding:calc(2px + env(safe-area-inset-top)) max(2px,env(safe-area-inset-right)) calc(2px + env(safe-area-inset-bottom)) max(2px,env(safe-area-inset-left));align-items:center}#battleModal .dialog{width:100%;max-width:none;max-height:calc(100dvh - 4px - env(safe-area-inset-top) - env(safe-area-inset-bottom));padding:5px;border-radius:8px}#battleModal .battleArt{width:100%;aspect-ratio:8/5}#battleModal .bgrid{inset:2px;gap:1px}#battleModal .turnbar{margin:5px 0}#battleModal .battleStatus{margin-top:4px;padding:5px}#battleModal .grid.g2{gap:5px;margin-top:5px!important}#battleModal .btn{min-height:42px;padding:6px;font-size:13px}#battleModal .title{font-size:17px;margin-bottom:4px}#battleModal .small{font-size:11px}}
+@media(max-height:560px) and (orientation:landscape){#battleModal{align-items:flex-start}#battleModal .dialog{max-height:100dvh;overflow:auto}#battleModal .battleArt{aspect-ratio:8/4.25}#battleModal .turnbar{display:none}#battleModal .battleStatus{font-size:11px}#battleModal .btn{min-height:36px;padding:4px}}
 @media(prefers-reduced-motion:reduce){.toast{transition:none}}
 </style>
 </head>
@@ -133,6 +136,6 @@ button:focus-visible,[tabindex]:focus-visible{outline:3px solid #f5d47b;outline-
 
 
 <div class="modal hidden" id="objectListModal"><div class="dialog"><h2>Разведанные объекты</h2><div class="objectList" id="knownObjects"></div><button class="btn" id="objectListClose">Закрыть</button></div></div>
-<div class="modal" id="startupModal"><div class="dialog"><h2>Королевства Пепла 8.7.2</h2><p id="startupMessage" role="status">Загрузка игры…</p><button class="btn" id="retryLoad" hidden>Повторить загрузку</button><button class="btn" id="recoveryImport" hidden>Импортировать сохранение</button><button class="btn red" id="recoveryNew" hidden>Начать новую игру</button></div></div>
+<div class="modal" id="startupModal"><div class="dialog"><h2>Королевства Пепла 8.7.3</h2><p id="startupMessage" role="status">Загрузка игры…</p><button class="btn" id="retryLoad" hidden>Повторить загрузку</button><button class="btn" id="recoveryImport" hidden>Импортировать сохранение</button><button class="btn red" id="recoveryNew" hidden>Начать новую игру</button></div></div>
 <script src="game-data.js"></script><script src="game-core.js"></script><script src="game-controls.js"></script><script src="game-ui.js"></script>
 </body></html>
