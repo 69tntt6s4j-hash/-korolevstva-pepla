@@ -1,4 +1,4 @@
-/* 8.9.4: Cache-safe GitHub Pages release + Mobile UI/Card fixes. */
+/* 8.10.0: Cache-safe GitHub Pages release + Mobile UI/Card fixes. */
 (function(root,factory){
   const data=factory();
   if(typeof module==='object'&&module.exports)module.exports=data;
@@ -26,11 +26,11 @@
   ;
 
   const battleTraits={
-    pikes:{init:4,trait:'antiCav',traitText:'Стена копий: +50% урона рыцарям'},
-    bows:{init:5,trait:'ranged',traitText:'Дальний бой: до 4 клеток без ответного удара'},
-    cavs:{init:7,trait:'charge',traitText:'Натиск: +25% урона в первой атаке раунда'},
-    griffins:{init:8,trait:'noCounter',traitText:'Налёт: противник не отвечает на атаку'},
-    mages:{init:6,trait:'arcane',traitText:'Магический выстрел: игнорирует 25% защиты'},
+    pikes:{init:4,trait:'antiCav',traitText:'Стена копий: +50% урона рыцарям',levelTraits:{3:'Строй: +10% защиты',5:'Стена копий II: +75% урона рыцарям'}},
+    bows:{init:5,trait:'ranged',traitText:'Дальний бой: до 4 клеток без ответного удара',levelTraits:{3:'Меткость: +10% урона',5:'Залп: +25% урона дальними атаками'}},
+    cavs:{init:7,trait:'charge',traitText:'Натиск: +25% урона в первой атаке раунда',levelTraits:{3:'Закалка: +10% защиты',5:'Сокрушительный натиск: +45% первой атаки'}},
+    griffins:{init:8,trait:'noCounter',traitText:'Налёт: противник не отвечает на атаку',levelTraits:{3:'Высота: +10% урона',5:'Королевский налёт: +20% урона и без контратаки'}},
+    mages:{init:6,trait:'arcane',traitText:'Магический выстрел: игнорирует 25% защиты',levelTraits:{3:'Фокус: +15% урона',5:'Пробой чар: игнорирует 45% защиты'}},
     orcs:{init:3,trait:'brutal',traitText:'Свирепость: +15% урона в ближнем бою'},
     wolves:{init:7,trait:'pack',traitText:'Стая: +20% урона при численности 4+'},
     skeletons:{init:2,trait:'undead',traitText:'Нежить: 25% сопротивления магии'},
@@ -250,7 +250,7 @@
     }
   }
   ;
-  const VERSION='8.9.4', SCHEMA=1, W=26,H=20,WORLD_W=2600,WORLD_H=2000;
+  const VERSION='8.10.0', SCHEMA=1, W=26,H=20,WORLD_W=2600,WORLD_H=2000;
   const skills={
     logistics:{
       name:'Логистика',description:'+2 движения за ранг',max:3

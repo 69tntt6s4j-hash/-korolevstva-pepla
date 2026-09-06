@@ -1,0 +1,12 @@
+{
+  "version": "8.10.0",
+  "name": "Quality & Depth Update",
+  "features": [
+    "unified troop cards",
+    "hero progression screen",
+    "level-based troop abilities",
+    "object preview interactions",
+    "local ambient world effects",
+    "fog of war"
+  ]
+}

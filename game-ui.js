@@ -112,7 +112,7 @@
         else modal.setAttribute('aria-label','Событие игры')
       }
       const labels={
-        enemyInfoClose:'Закрыть сведения о противнике',enemyCancelBtn:'Отменить нападение',spellCancel:'Закрыть книгу боя',retreatBtn:'Отступить в город за 350 золота',objectListClose:'Закрыть список объектов',buildingInfoClose:'Закрыть справку о постройке',buildingInfoClose2:'Закрыть справку о постройке'
+        enemyInfoClose:'Закрыть сведения о противнике',enemyCancelBtn:'Отменить нападение',spellCancel:'Закрыть книгу боя',retreatBtn:'Отступить в город за 350 золота',objectListClose:'Закрыть список объектов',buildingInfoClose:'Закрыть справку о постройке',buildingInfoClose2:'Закрыть справку о постройке',objectPreviewClose:'Закрыть сведения об объекте',objectPreviewGo:'Подойти к объекту'
       }
       ;
       for(const [id,text]of Object.entries(labels))this.$(id)?.setAttribute('aria-label',text);
@@ -470,8 +470,8 @@
       this.$('heroPortrait').alt=h.name;
       this.$('heroName').textContent=h.name;
       this.$('heroClass').textContent=h.cls;
-      for(const k of ['atk','def','magic','knowledge','level','xp'])this.$(k).textContent=h[k];
-      this.$('army').innerHTML=Object.entries(D.units).map(([k,u])=>'<div class="unitcard"><img src="'+this.portraitSource(u.img)+'" alt=""><div class="txt"><b>'+u.n+'</b><span class="unitQty">'+h.army[k]+'</span><span class="small">Уровень '+(s.troopLevels[k]||1)+'</span></div></div>').join('');
+      for(const k of ['atk','def','magic','knowledge','level','xp'])this.$(k).textContent=h[k]; const xpNext=h.level*100; const xn=this.$('xpNext'),xb=this.$('xpBar'); if(xn)xn.textContent=xpNext; if(xb)xb.style.width=Math.max(0,Math.min(100,h.xp/xpNext*100))+'%';
+      this.$('army').innerHTML=Object.entries(D.units).map(([k,u])=>{const lv=s.troopLevels[k]||1,tr=D.battleTraits?.[k],extra=tr?.levelTraits?.[lv]||tr?.levelTraits?.[lv>=5?5:lv>=3?3:0]||tr?.traitText||'';return '<div class="unitcard"><img src="'+this.portraitSource(u.img)+'" alt=""><div class="txt"><b>'+u.n+'</b><span class="unitQty">'+h.army[k]+'</span><span class="small">Уровень '+lv+'</span><span class="unitAbility">'+extra+'</span></div></div>'}).join('');
       this.$('skills').innerHTML=Object.entries(h.skills).filter(([,r])=>r>0).map(([k,r])=>'<div class="skill"><b>'+D.skills[k].name+' · ранг '+r+'</b><div class="small">'+D.skills[k].description+'</div></div>').join('')||'<div class="small">Навыки появятся при повышении уровня.</div>';
       this.$('artifacts').innerHTML=h.artifacts.map(k=>'<div class="quest">'+D.artifactDefs[k].icon+' '+D.artifactDefs[k].n+'</div>').join('')||'<div class="small">Артефактов пока нет.</div>';
       const a=s.heroes.arden,b=s.heroes.lyra,can=C.distance(a,b)<=1;
@@ -680,6 +680,31 @@
       this.localModal='spellModal';
       this.syncModal()
     }
+
+    objectDescription(o){
+      if(o.t==='sawmill')return 'Источник древесины. После захвата приносит ресурсы каждый день.';
+      if(o.t==='mine')return o.kind==='gems'?'Шахта самоцветов. После захвата приносит самоцветы каждый день.':'Рудник. После захвата приносит руду каждый день.';
+      if(o.t==='chest')return 'Сундук может содержать золото, знания или редкий артефакт.';
+      if(o.t==='portal')return 'Магический портал перемещает героя в другую область карты.';
+      if(o.t==='castle')return 'Стальной Холм: строительство, найм, гарнизон и развитие армии.';
+      if(o.t==='enemy')return 'Вражеский отряд охраняет территорию и награду.';
+      return 'Разведанный объект мира.'
+    }
+    openObjectPreview(id){
+      const s=this.engine.s,o=C.worldObject(s,id); if(!o||!C.isSeen(s,o))return;
+      if(o.t==='enemy'){this.openEnemy(id);return}
+      this.previewId=id; this.engine.cancelMovement();
+      this.$('objectPreviewName').textContent=label(o);
+      this.$('objectPreviewImg').src=this.imageSource(o.img,'chest.jpg');
+      this.$('objectPreviewImg').alt=label(o);
+      this.$('objectPreviewType').textContent=o.owner==='player'?'Ваш объект':'Разведано';
+      this.$('objectPreviewDesc').textContent=this.objectDescription(o);
+      const path=C.pathToInteract(s,s.activeHero,id);
+      this.$('objectPreviewReward').textContent=path?'Расстояние до взаимодействия: '+path.length+' клеток.':'Подход к объекту сейчас недоступен.';
+      this.$('objectPreviewGo').disabled=!path;
+      this.$('objectPreviewGo').onclick=()=>{const pid=this.previewId;this.closeLocal(); if(pid){const oo=C.worldObject(this.engine.s,pid),r=this.engine.commandInteract(this.engine.s.activeHero,pid);if(r.ok&&oo?.t==='castle'&&C.atTown(this.engine.s,this.engine.s.activeHero))this.switchScreen('town')}};
+      this.localModal='objectPreviewModal';this.syncModal();
+    }
     openEnemy(id){
       const s=this.engine.s,o=C.worldObject(s,id);
       if(!o||!C.isSeen(s,o))return;
@@ -707,11 +732,7 @@
         b.textContent=label(o)+' · '+C.distance(h,o)+' клеток'+(o.owner==='player'?' · ваш объект':'');
         b.onclick=()=>{
           this.closeLocal();
-          if(o.t==='enemy')this.openEnemy(o.id);
-          else{
-            const r=this.engine.commandInteract(s.activeHero,o.id);
-            if(r.ok&&o.t==='castle'&&C.atTown(s,s.activeHero))this.switchScreen('town')
-          }
+          this.openObjectPreview(o.id)
         }
         ;
         box.appendChild(b)
@@ -751,11 +772,7 @@
           return
         }
         this.clearSelection();
-        if(o.t==='enemy')this.openEnemy(o.id);
-        else{
-          const r=this.engine.commandInteract(s.activeHero,o.id);
-          if(r.ok&&o.t==='castle'&&C.atTown(s,s.activeHero))this.switchScreen('town')
-        }
+        this.openObjectPreview(o.id)
         return
       }
       this.clearSelection();
@@ -940,6 +957,19 @@
         ctx.restore();
       }
     }
+
+    drawAmbientWorld(ctx,t=0){
+      if(this.reduceMotion)return; const phase=(t||performance.now())*.001;
+      ctx.save();
+      // city smoke
+      for(let i=0;i<4;i++){const a=phase*.55+i*1.4,x=1260+Math.sin(a)*8,y=665-((phase*18+i*23)%80);ctx.fillStyle='rgba(220,225,214,'+(0.16-i*.02)+')';ctx.beginPath();ctx.arc(x,y,7+i*2,0,Math.PI*2);ctx.fill()}
+      // warm mine torch / magical glows
+      const glows=[[2050,650,'rgba(255,157,57,.22)'],[1550,1450,'rgba(91,157,255,.18)']];
+      for(const [x,y,c] of glows){const r=22+Math.sin(phase*2+x)*7,g=ctx.createRadialGradient(x,y,2,x,y,r);g.addColorStop(0,c);g.addColorStop(1,'rgba(0,0,0,0)');ctx.fillStyle=g;ctx.beginPath();ctx.arc(x,y,r,0,Math.PI*2);ctx.fill()}
+      // distant birds
+      ctx.strokeStyle='rgba(235,235,220,.45)';ctx.lineWidth=1.5;for(let i=0;i<3;i++){const x=(phase*28+i*130)%520+900,y=300+i*20+Math.sin(phase*1.8+i)*8;ctx.beginPath();ctx.arc(x-5,y,6,Math.PI*1.05,Math.PI*1.85);ctx.arc(x+5,y,6,Math.PI*1.15,Math.PI*1.95);ctx.stroke()}
+      ctx.restore();
+    }
     drawMap(t=0){
       if(!this.engine||!this.ready)return;
       const s=this.engine.s,ctx=this.canvas.getContext('2d'),r=this.canvas.getBoundingClientRect(),z=this.camera.zoom;
@@ -952,6 +982,7 @@
       ctx.translate(-this.camera.x,-this.camera.y);
       this.image(ctx,'world-v6.jpg',0,0,D.WORLD_W,D.WORLD_H);
       this.drawAmbientWater(ctx,t);
+      this.drawAmbientWorld(ctx,t);
       this.updateFog();
       ctx.drawImage(this.fog,0,0);
       this.labelHits=[];

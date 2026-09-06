@@ -959,18 +959,25 @@
         const level=this.s.troopLevels?.[attacker.type]||1;
         value*=1+(level-1)*(D.troopUpgrades?.damagePerLevel?.[attacker.type]||0)
       }
-      // Battle 2.0: unit identities matter without changing stack/save shape.
-      if(attacker.type==='pikes'&&target.type==='cavs')value*=1.5;
-      if(attacker.type==='cavs'&&!counter&&attacker.attackRound!==b.round)value*=1.25;
+      // Quality & Depth: troop level unlocks real battlefield traits, not only flat damage.
+      const troopLevel=attacker.side==='p'?(this.s.troopLevels?.[attacker.type]||1):1;
+      if(attacker.type==='pikes'&&target.type==='cavs')value*=troopLevel>=5?1.75:1.5;
+      if(attacker.type==='bows'&&troopLevel>=3)value*=1.10;
+      if(attacker.type==='bows'&&troopLevel>=5&&distance(attacker,target)>1)value*=1.15;
+      if(attacker.type==='cavs'&&!counter&&attacker.attackRound!==b.round)value*=troopLevel>=5?1.45:1.25;
+      if(attacker.type==='griffins'&&troopLevel>=3)value*=1.10;
+      if(attacker.type==='griffins'&&troopLevel>=5)value*=1.10;
+      if(attacker.type==='mages'&&troopLevel>=3)value*=1.15;
       if(attacker.type==='orcs'&&distance(attacker,target)<=1)value*=1.15;
       if(attacker.type==='wolves'&&attacker.qty>=4)value*=1.2;
       value*=counter?.55*(.85+this.random()*.25):.78+this.random()*.35;
       if(target.side==='p'){
         const defenceFactor=1+.04*h.def;
-        value/=attacker.type==='mages'?1+(defenceFactor-1)*.75:defenceFactor;
+        value/=attacker.type==='mages'?1+(defenceFactor-1)*((attacker.side==='p'&&(this.s.troopLevels?.mages||1)>=5)?.55:.75):defenceFactor;
         value*=1-.1*rank(h,'resistance');
         if(this.s.build.citadel&&atTown(this.s,b.heroId))value*=.80
       }
+      if(target.side==='p'){const tl=this.s.troopLevels?.[target.type]||1;if(tl>=3&&(target.type==='pikes'||target.type==='cavs'))value*=.90;}
       if(target.stone)value*=.72;
       if(target.defending)value*=.75;
       return Math.max(1,Math.round(value));
