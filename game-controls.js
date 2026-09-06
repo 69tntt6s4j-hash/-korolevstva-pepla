@@ -24,6 +24,14 @@
         x:h.x*100+50,y:h.y*100+50
       }
     }
+    pose(id){
+      const h=this.engine.state.heroes[id],m=this.engine.state.movement,j=this.step;
+      if(j&&m?.id===j.token&&j.heroId===id&&this.engine.idle()){
+        const dx=j.to.x-j.from.x,dy=j.to.y-j.from.y;
+        return {moving:true,progress:j.progress,dx,dy,dir:Math.abs(dx)>=Math.abs(dy)?(dx<0?'left':'right'):(dy<0?'up':'down')}
+      }
+      return {moving:false,progress:0,dx:0,dy:0,dir:'down'}
+    }
     frame(now){
       const s=this.engine.state,m=s.movement,h=m&&s.heroes[m.heroId];
       if(!m||!this.engine.idle()||!h||h.moves<=0||!m.path.length){

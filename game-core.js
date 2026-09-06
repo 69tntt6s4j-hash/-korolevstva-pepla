@@ -179,7 +179,7 @@
   }
   ;
   function stackDef(st){
-    const defs=st.side==='p'?D.units:D.enemies;return Object.hasOwn(defs,st.type)?defs[st.type]:undefined
+    const defs=st.side==='p'?D.units:D.enemies;if(!Object.hasOwn(defs,st.type))return undefined;return Object.assign({},defs[st.type],D.battleTraits?.[st.type]||{})
   }
   function stackAt(b,x,y){
     return b.stacks.find(st=>st.hp>0&&st.x===x&&st.y===y)||null
@@ -908,7 +908,7 @@
       guard++){
         if(b.index>=b.order.length){
           b.round++;
-          b.order=b.stacks.filter(st=>st.hp>0).sort((a,c)=>stackDef(c).spd-stackDef(a).spd||a.id.localeCompare(c.id)).map(st=>st.id);
+          b.order=b.stacks.filter(st=>st.hp>0).sort((a,c)=>(stackDef(c).init??stackDef(c).spd)-(stackDef(a).init??stackDef(a).spd)||stackDef(c).spd-stackDef(a).spd||a.id.localeCompare(c.id)).map(st=>st.id);
           b.index=0
         }
         const id=b.order[b.index++];
@@ -940,9 +940,15 @@
         value*=1+.1*rank(h,'leadership');
         if(attacker.type==='bows')value*=1+.15*rank(h,'archery')
       }
+      // Battle 2.0: unit identities matter without changing stack/save shape.
+      if(attacker.type==='pikes'&&target.type==='cavs')value*=1.5;
+      if(attacker.type==='cavs'&&!counter&&attacker.attackRound!==b.round)value*=1.25;
+      if(attacker.type==='orcs'&&distance(attacker,target)<=1)value*=1.15;
+      if(attacker.type==='wolves'&&attacker.qty>=4)value*=1.2;
       value*=counter?.55*(.85+this.random()*.25):.78+this.random()*.35;
       if(target.side==='p'){
-        value/=1+.04*h.def;
+        const defenceFactor=1+.04*h.def;
+        value/=attacker.type==='mages'?1+(defenceFactor-1)*.75:defenceFactor;
         value*=1-.1*rank(h,'resistance')
       }
       if(target.stone)value*=.72;
@@ -951,9 +957,10 @@
     }
     strike(a,t){
       const b=this.s.battle,amount=this.damage(a,t);
+      a.attackRound=b.round;
       applyDamage(t,amount);
       this.log(stackDef(a).n+' наносят '+amount+' урона');
-      if(t.hp>0&&distance(a,t)<=1&&stackDef(t).range===1&&t.counterRound!==b.round){
+      if(t.hp>0&&distance(a,t)<=1&&stackDef(t).range===1&&stackDef(a).trait!=='noCounter'&&t.counterRound!==b.round){
         t.counterRound=b.round;
         const counter=this.damage(t,a,{
           counter:true
@@ -1043,7 +1050,7 @@
       const b=this.s.battle,h=this.s.heroes[b.heroId],t=info.target;
       h.mana-=info.cost;
       if(kind==='fire')applyDamage(t,30+h.magic*14);
-      if(kind==='lightning')applyDamage(t,48+h.magic*18);
+      if(kind==='lightning'){const raw=48+h.magic*18,mitigation=['undead','undeadMage'].includes(stackDef(t).trait)?.75:1;applyDamage(t,Math.round(raw*mitigation));}
       if(kind==='stone')t.stone=true;
       if(kind==='heal')t.hp=Math.min(t.qty*stackDef(t).hp,t.hp+22+h.magic*10);
       this.log(({

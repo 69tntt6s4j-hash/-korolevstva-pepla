@@ -1,4 +1,4 @@
-/* 8.7.3: immutable game definitions; original army/economy values. */
+/* 8.8.2: Battle 2.0 — explicit initiative and unit traits. */
 (function(root,factory){
   const data=factory();
   if(typeof module==='object'&&module.exports)module.exports=data;
@@ -24,6 +24,18 @@
     }
   }
   ;
+
+  const battleTraits={
+    pikes:{init:4,trait:'antiCav',traitText:'Стена копий: +50% урона рыцарям'},
+    bows:{init:5,trait:'ranged',traitText:'Дальний бой: до 4 клеток без ответного удара'},
+    cavs:{init:7,trait:'charge',traitText:'Натиск: +25% урона в первой атаке раунда'},
+    griffins:{init:8,trait:'noCounter',traitText:'Налёт: противник не отвечает на атаку'},
+    mages:{init:6,trait:'arcane',traitText:'Магический выстрел: игнорирует 25% защиты'},
+    orcs:{init:3,trait:'brutal',traitText:'Свирепость: +15% урона в ближнем бою'},
+    wolves:{init:7,trait:'pack',traitText:'Стая: +20% урона при численности 4+'},
+    skeletons:{init:2,trait:'undead',traitText:'Нежить: 25% сопротивления магии'},
+    necros:{init:5,trait:'undeadMage',traitText:'Нежить: 25% сопротивления магии · дальняя атака'}
+  };
   const enemies={
     orcs:{
       n:'Орки',img:'orc.jpg',p:3.2,hp:14,spd:3,range:1
@@ -219,7 +231,7 @@
     }
   }
   ;
-  const VERSION='8.7.3', SCHEMA=1, W=26,H=20,WORLD_W=2600,WORLD_H=2000;
+  const VERSION='8.8.2', SCHEMA=1, W=26,H=20,WORLD_W=2600,WORLD_H=2000;
   const skills={
     logistics:{
       name:'Логистика',description:'+2 движения за ранг',max:3
@@ -327,7 +339,7 @@
     return Object.freeze(o)
   }
   return deepFreeze({
-    VERSION,SCHEMA,W,H,WORLD_W,WORLD_H,units,enemies,builds,skills,artifactDefs,objects,byId,terrain,bridges,passes,relocations,imageFiles
+    VERSION,SCHEMA,W,H,WORLD_W,WORLD_H,units,enemies,battleTraits,builds,skills,artifactDefs,objects,byId,terrain,bridges,passes,relocations,imageFiles
   }
   );
 }

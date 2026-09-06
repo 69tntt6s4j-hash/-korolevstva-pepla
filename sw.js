@@ -1,6 +1,6 @@
 /* Scope-specific cache only. Never unregister another service worker. */
 'use strict';
-const VERSION='8.7.3';
+const VERSION='8.8.2';
 const SCOPE=self.registration.scope;
 const PREFIX='ash-full-fix:'+SCOPE+':';
 const CACHE=PREFIX+VERSION;

@@ -57,6 +57,8 @@
       }
       ;
       this.frameId=null;
+      this.ambientTimer=null;
+      this.reduceMotion=!!env.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
       this.motion=null;
       this.localModal=null;
       this.selection=null;
@@ -72,6 +74,8 @@
       this.loading=false;
       this.bootGeneration=0;
       this.labelHits=[];
+      this.battleVisual=null;
+      this.battleFxTimer=null;
       this.repository=new C.SaveRepository({
         getItem:k=>env.localStorage.getItem(k),setItem:(k,v)=>env.localStorage.setItem(k,v)
       }
@@ -397,6 +401,10 @@
       }
       this.clearSelection();
       this.screen=name;
+      if(name!=='map'&&this.ambientTimer!==null){
+        this.env.clearTimeout(this.ambientTimer);
+        this.ambientTimer=null
+      }
       if(name==='town')this.engine.visitTown();
       this.render();
       if(name==='map')this.resize()
@@ -428,6 +436,7 @@
       if(this.screen==='quests')this.renderQuests();
       if(this.screen==='settings')this.$('soundToggle').textContent='Звук: '+(s.settings.sound?'вкл':'выкл');
       if(s.battle)this.renderBattle();
+      else this.battleVisual=null;
       if(!s.battle&&s.levelChoices.length)this.renderLevel();
       this.syncModal();
       this.requestFrame();
@@ -501,14 +510,47 @@
       this.$('quests').innerHTML=[['Сделать первый ход героем',s.q.tutorialMove],['Открыть экран города',s.q.tutorialTown],['Захватить лесопилку',s.q.wood],['Захватить железную шахту',s.q.ore],['Захватить шахту самоцветов',s.q.gems],['Использовать Алтарь магии',s.q.altar],['Активировать сторожевую башню',s.q.obelisk],['Завершить цепочку Ивана',s.story.ivan>=2],['Завершить цепочку Варвары',s.story.varvara>=2],['Помочь 2 поселениям',s.q.villages>=2],['Исследовать 2 руины',s.q.ruins>=2],['Найти 2 артефакта',s.q.artifacts>=2],['Победить гарнизон Морвейна в Некрополе',s.q.boss]].map(([text,done])=>'<div class="quest '+(done?'done':'')+'">'+(done?'✅ ':'⬜ ')+text+'</div>').join('');
       this.$('log').innerHTML=s.logs.map(t=>'<div>'+escape(t)+'</div>').join('')
     }
+    battleSnapshot(b){
+      return b?{id:b.id,selectedId:b.selectedId,stacks:Object.fromEntries(b.stacks.map(st=>[st.id,{x:st.x,y:st.y,hp:st.hp,qty:st.qty,side:st.side,type:st.type}]))}:null
+    }
+    animateBattle(previous,current,board){
+      if(!previous||previous.id!==current.id||this.env.matchMedia?.('(prefers-reduced-motion: reduce)').matches)return;
+      const cells=[...board.querySelectorAll('.cell')],cellAt=(x,y)=>cells[y*8+x];
+      const currentById=Object.fromEntries(current.stacks.map(st=>[st.id,st]));
+      for(const [id,old] of Object.entries(previous.stacks)){
+        const now=currentById[id],node=now&&cellAt(now.x,now.y)?.querySelector('.stack');
+        if(now&&node&&(old.x!==now.x||old.y!==now.y)){
+          const from=cellAt(old.x,old.y)?.getBoundingClientRect(),to=cellAt(now.x,now.y)?.getBoundingClientRect();
+          if(from&&to&&typeof node.animate==='function')node.animate([{transform:`translate(${from.left-to.left}px,${from.top-to.top}px) scale(.96)`},{transform:'translate(0,0) scale(1.04)',offset:.82},{transform:'translate(0,0) scale(1)'}],{duration:360,easing:'cubic-bezier(.2,.75,.25,1)'});
+        }
+        if(now&&node&&now.hp<old.hp){
+          const loss=old.hp-now.hp;
+          if(typeof node.animate==='function')node.animate([{transform:'translateX(0)',filter:'brightness(1.65) saturate(1.35)'},{transform:'translateX(-5px)',offset:.25},{transform:'translateX(4px)',offset:.5},{transform:'translateX(-2px)',offset:.72},{transform:'translateX(0)',filter:'brightness(1) saturate(1.08)'}],{duration:300,easing:'ease-out'});
+          const cell=cellAt(now.x,now.y),fx=this.doc.createElement('span');
+          fx.className='damageFloat';fx.textContent='−'+loss;cell.appendChild(fx);
+          if(typeof fx.animate==='function')fx.animate([{opacity:0,transform:'translate(-50%,4px) scale(.8)'},{opacity:1,offset:.18,transform:'translate(-50%,-5px) scale(1.08)'},{opacity:0,transform:'translate(-50%,-28px) scale(1)'}],{duration:720,easing:'ease-out'}).onfinish=()=>fx.remove();
+        }
+        if(!now){
+          const cell=cellAt(old.x,old.y);if(cell){const ghost=this.doc.createElement('span');ghost.className='deathBurst';cell.appendChild(ghost);if(typeof ghost.animate==='function')ghost.animate([{opacity:.9,transform:'translate(-50%,-50%) scale(.55)'},{opacity:0,transform:'translate(-50%,-50%) scale(1.65)'}],{duration:420,easing:'ease-out'}).onfinish=()=>ghost.remove()}
+        }
+      }
+      const oldSelected=previous.stacks[previous.selectedId],newSelected=currentById[previous.selectedId];
+      if(oldSelected&&newSelected&&oldSelected.x===newSelected.x&&oldSelected.y===newSelected.y){
+        const damaged=Object.entries(previous.stacks).find(([id,st])=>currentById[id]&&currentById[id].hp<st.hp);
+        if(damaged){
+          const target=currentById[damaged[0]],attacker=cellAt(newSelected.x,newSelected.y)?.querySelector('.stack');
+          if(attacker&&target&&typeof attacker.animate==='function'){const dx=(target.x-newSelected.x)*13,dy=(target.y-newSelected.y)*13;attacker.animate([{transform:'translate(0,0)'},{transform:`translate(${dx}px,${dy}px) scale(1.08)`,offset:.52},{transform:'translate(0,0)'}],{duration:280,easing:'cubic-bezier(.2,.8,.3,1)'})}
+        }
+      }
+    }
     renderBattle(){
-      const b=this.engine.s.battle,a=C.selectedStack(b),player=b.phase==='player';
+      const b=this.engine.s.battle,previous=this.battleVisual,a=C.selectedStack(b),player=b.phase==='player';
       this.$('battleName').textContent=b.name;
       this.$('battleRound').textContent='Раунд '+b.round;
       this.$('battleHint').textContent=player?'Выберите доступную клетку или цель. Поле можно прокрутить.':b.phase==='enemy'?'Ход противника…':'Действие выполняется…';
       const h=this.engine.s.heroes[b.heroId];
-      this.$('battleStatus').textContent='Мана '+h.mana+'/'+h.manaMax+' · '+(a?C.stackDef(a).n:'Завершение хода');
-      this.$('turnbar').innerHTML=b.order.map(id=>b.stacks.find(st=>st.id===id&&st.hp>0)).filter(Boolean).map(st=>'<div class="turnchip '+(st.id===b.selectedId?'active':'')+'">'+(st.side==='p'?'🟦 ':'🟥 ')+C.stackDef(st).n+'</div>').join('');
+      this.$('battleStatus').textContent='Мана '+h.mana+'/'+h.manaMax+' · '+(a?C.stackDef(a).n+' · Инициатива '+(C.stackDef(a).init??C.stackDef(a).spd):'Завершение хода');
+      this.$('turnbar').innerHTML=b.order.map(id=>b.stacks.find(st=>st.id===id&&st.hp>0)).filter(Boolean).map(st=>'<div class="turnchip '+(st.id===b.selectedId?'active':'')+'" title="'+escape(C.stackDef(st).traitText||'')+'">'+(st.side==='p'?'🟦 ':'🟥 ')+C.stackDef(st).n+' · ⚡'+(C.stackDef(st).init??C.stackDef(st).spd)+'</div>').join('');
       const board=this.$('bgrid');
       board.innerHTML='';
       const battleId=b.id,turnId=b.turnId;
@@ -522,13 +564,14 @@
         const canAttack=player&&occ&&occ.side!=='p'&&C.distance(a,occ)<=C.stackDef(a).range;
         const canMove=player&&!occ&&!!C.tacticalPath(b,a,x,y);
         cell.disabled=!canAttack&&!canMove;
-        if(canAttack)cell.classList.add('attack');
+        if(canAttack){cell.classList.add('attack');cell.classList.add(C.distance(a,occ)>1?'rangedAttack':'meleeAttack');}
         if(canMove)cell.classList.add('move');
         if(occ?.id===b.selectedId)cell.classList.add('sel');
         cell.setAttribute('aria-label','Клетка '+(x+1)+','+(y+1)+(occ?': '+C.stackDef(occ).n+', '+occ.qty+', '+occ.hp+' HP'+(occ.side==='p'?', союзники':', противник'):canMove?', переместиться':', недоступна'));
         if(occ){
           const st=this.doc.createElement('span');
           st.className='stack '+(occ.side==='p'?'player':'enemy');
+          st.dataset.stackId=occ.id;
           st.style.backgroundImage="url('"+this.imageSource(C.stackDef(occ).img,occ.side==='e'?'necromancer.jpg':'hero.jpg')+"')";
           const q=this.doc.createElement('span');
           q.className='qty';
@@ -552,11 +595,14 @@
         }
         ,battleId,turnId)
       }
+      this.$('battleHint').textContent=player&&a?(C.stackDef(a).traitText||'Выберите доступную клетку или цель.'):(b.phase==='enemy'?'Ход противника…':'Действие выполняется…');
       this.$('spellBtn').disabled=!player;
       this.$('retreatBtn').disabled=b.phase==='resolving';
       this.$('retreatBtn').onclick=()=>{
         if(this.engine.s.battle?.id===battleId)this.engine.finishBattle('retreat')
       }
+      this.animateBattle(previous,b,board);
+      this.battleVisual=this.battleSnapshot(b);
       ;
     }
     renderLevel(){
@@ -743,9 +789,17 @@
         if(!this.ready||!this.engine||this.doc.hidden)return;
         const moving=this.motion.frame(t);
         if(this.screen==='map')this.drawMap(t);
-        if(moving)this.requestFrame()
+        if(moving)this.requestFrame();
+        else if(this.screen==='map'&&!this.reduceMotion)this.scheduleAmbientFrame()
       }
       )
+    }
+    scheduleAmbientFrame(){
+      if(this.ambientTimer!==null||this.doc.hidden||this.screen!=='map'||this.reduceMotion)return;
+      this.ambientTimer=this.env.setTimeout(()=>{
+        this.ambientTimer=null;
+        this.requestFrame()
+      },100)
     }
     resize(){
       const r=this.canvas.getBoundingClientRect(),dpr=Math.min(2,this.env.devicePixelRatio||1);
@@ -801,6 +855,73 @@
         ctx.fillRect(x*100,y*100,100,100)
       }
     }
+    drawAmbientWater(ctx,t=0){
+      if(this.reduceMotion)return;
+      const phase=(t||0)*.001,terrain=D.terrain;
+      const rect=this.canvas.getBoundingClientRect(),z=this.camera.zoom;
+      const left=Math.max(0,Math.floor((this.camera.x-120)/100));
+      const right=Math.min(D.W-1,Math.ceil((this.camera.x+rect.width/z+120)/100));
+      const top=Math.max(0,Math.floor((this.camera.y-120)/100));
+      const bottom=Math.min(D.H-1,Math.ceil((this.camera.y+rect.height/z+120)/100));
+      ctx.save();
+      ctx.globalCompositeOperation='screen';
+      ctx.lineCap='round';
+      for(let y=top;y<=bottom;y++)for(let x=left;x<=right;x++){
+        if(terrain[y]?.[x]!=='water')continue;
+        const cx=x*100+50,cy=y*100+50,seed=(x*37+y*71)%17;
+        const drift=((phase*24+seed*7)%82)-41;
+        ctx.strokeStyle='rgba(145,224,255,.16)';
+        ctx.lineWidth=1.7;
+        ctx.beginPath();
+        ctx.moveTo(cx-24+drift*.18,cy-8+Math.sin(phase*1.7+seed)*5);
+        ctx.quadraticCurveTo(cx,cy-15+Math.sin(phase*1.7+seed+1)*4,cx+26+drift*.18,cy-7+Math.sin(phase*1.7+seed+2)*5);
+        ctx.stroke();
+        ctx.strokeStyle='rgba(255,255,255,.11)';
+        ctx.lineWidth=1.15;
+        ctx.beginPath();
+        ctx.moveTo(cx-17-drift*.12,cy+18+Math.sin(phase*1.3+seed)*4);
+        ctx.quadraticCurveTo(cx,cy+12,cx+19-drift*.12,cy+18+Math.sin(phase*1.3+seed+1)*4);
+        ctx.stroke();
+        const n=[[0,-1,0,-46],[1,0,46,0],[0,1,0,46],[-1,0,-46,0]];
+        for(const [dx,dy,ox,oy] of n){
+          const ny=y+dy,nx=x+dx;
+          if(ny<0||ny>=D.H||nx<0||nx>=D.W||terrain[ny]?.[nx]==='water')continue;
+          const pulse=.14+.08*(.5+.5*Math.sin(phase*2.4+seed+dx*2+dy*3));
+          ctx.strokeStyle='rgba(240,250,255,'+pulse.toFixed(3)+')';
+          ctx.lineWidth=2.1;
+          ctx.beginPath();
+          if(dx){
+            ctx.moveTo(cx+ox,cy-24);
+            ctx.quadraticCurveTo(cx+ox-dx*5,cy,cx+ox,cy+24)
+          }else{
+            ctx.moveTo(cx-24,cy+oy);
+            ctx.quadraticCurveTo(cx,cy+oy-dy*5,cx+24,cy+oy)
+          }
+          ctx.stroke()
+        }
+      }
+      const falls=[
+        [205,430,38],[742,430,34],[1462,472,38],[1540,1028,42],[1718,965,34],[962,514,26]
+      ];
+      for(const [x,y,h] of falls){
+        if(x<this.camera.x-100||y<this.camera.y-100||x>this.camera.x+rect.width/z+100||y>this.camera.y+rect.height/z+100)continue;
+        const p=(phase*42)%18;
+        ctx.strokeStyle='rgba(215,246,255,.24)';
+        ctx.lineWidth=2.4;
+        for(let i=0;i<3;i++){
+          const xx=x+(i-1)*6+Math.sin(phase*2+i)*2;
+          ctx.beginPath();
+          ctx.moveTo(xx,y-h/2+p-9);
+          ctx.lineTo(xx+Math.sin(phase*3+i)*2,y+h/2+p-9);
+          ctx.stroke()
+        }
+        ctx.fillStyle='rgba(235,252,255,.16)';
+        ctx.beginPath();
+        ctx.ellipse(x,y+h/2+5,16+Math.sin(phase*2)*3,5,0,0,Math.PI*2);
+        ctx.fill()
+      }
+      ctx.restore()
+    }
     drawMap(t=0){
       if(!this.engine||!this.ready)return;
       const s=this.engine.s,ctx=this.canvas.getContext('2d'),r=this.canvas.getBoundingClientRect(),z=this.camera.zoom;
@@ -812,6 +933,7 @@
       ctx.scale(z,z);
       ctx.translate(-this.camera.x,-this.camera.y);
       this.image(ctx,'world-v6.jpg',0,0,D.WORLD_W,D.WORLD_H);
+      this.drawAmbientWater(ctx,t);
       this.updateFog();
       ctx.drawImage(this.fog,0,0);
       this.labelHits=[];
@@ -880,13 +1002,23 @@
         ctx.stroke()
       }
       for(const id of ['arden','lyra']){
-        const h=s.heroes[id],p=this.motion.position(id),active=id===s.activeHero,bob=m?.heroId===id?Math.sin(t*.01)*2:0;
+        const h=s.heroes[id],p=this.motion.position(id),pose=this.motion.pose(id),active=id===s.activeHero;
+        const gait=pose.moving?Math.sin(pose.progress*Math.PI*4):0,bob=pose.moving?Math.abs(gait)*3:0,lean=pose.moving?gait*.018:0;
         ctx.save();
-        ctx.translate(p.x,p.y+bob);
+        ctx.globalAlpha=.34;
+        ctx.fillStyle='#000';
+        ctx.beginPath();ctx.ellipse(p.x,p.y+38,pose.moving?34:31,pose.moving?9:8,0,0,Math.PI*2);ctx.fill();ctx.restore();
+        ctx.save();
+        ctx.translate(p.x,p.y-bob);
+        if(pose.dir==='left')ctx.scale(-1,1);
+        if(pose.moving)ctx.rotate(lean);
         const sprite=id==='arden'?'ivan-rider.png':'varvara-map.png';
         if(id==='arden')this.image(ctx,this.assets[sprite]?sprite:h.img,-64,-84,128,147);
         else this.image(ctx,this.assets[sprite]?sprite:h.img,-46,-54,92,92);
         ctx.restore();
+        if(pose.moving&&Math.abs(gait)>.82){
+          ctx.save();ctx.globalAlpha=.16;ctx.fillStyle='#d8c7a0';ctx.beginPath();ctx.arc(p.x-pose.dx*.05,p.y+38,3.5,0,Math.PI*2);ctx.fill();ctx.restore()
+        }
         if(active){
           ctx.beginPath();
           ctx.ellipse(p.x,p.y+35,36,11,0,0,Math.PI*2);
