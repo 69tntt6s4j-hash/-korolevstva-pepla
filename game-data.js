@@ -250,7 +250,7 @@
     }
   }
   ;
-  const VERSION='8.10.0', SCHEMA=1, W=26,H=20,WORLD_W=2600,WORLD_H=2000;
+  const VERSION='9.0.0', SCHEMA=1, W=26,H=20,WORLD_W=2600,WORLD_H=2000;
   const skills={
     logistics:{
       name:'Логистика',description:'+2 движения за ранг',max:3
@@ -345,6 +345,7 @@
     id:'obelisk',x:4,y:6,t:'obelisk',label:'Заброшенная башня',img:'castle.jpg',radius:90,offset:[18,-10],landmark:true,legacyKeys:[]
   }
   );
+  objects.push({id:'abyss-cave',x:18,y:13,t:'cave',label:'Пещера Бездны',img:'portal.jpg',radius:92,offset:[0,-15],landmark:true,legacyKeys:[]});
   const imageFiles=['water-mask.png','foam-mask.png','ivan-rider.png','varvara-map.png','varvara-map-v2.png','world-v6.jpg','hero.jpg','mage.jpg','castle.jpg','mine.jpg','sawmill.jpg','chest.jpg','portal.jpg','orc.jpg','wolf.jpg','necromancer.jpg','pikeman.jpg','archer.jpg','cavalier.jpg','griffin.jpg','skeleton.jpg','battlefield.jpg','city.jpg'];
   const byId=Object.fromEntries(objects.map(o=>[o.id,o]));
   const cellKey=(x,y)=>x+','+y;

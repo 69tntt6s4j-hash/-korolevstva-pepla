@@ -1,0 +1,11 @@
+{
+  "version": "9.0.0",
+  "features": [
+    "living enemy AI",
+    "territory capture",
+    "Necropolis threat",
+    "Steel Hill siege",
+    "three-stage Abyss dungeon",
+    "adaptive procedural music"
+  ]
+}

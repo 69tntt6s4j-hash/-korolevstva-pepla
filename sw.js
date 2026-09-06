@@ -1,6 +1,6 @@
 /* Scope-specific cache only. Cache-safe GitHub Pages release. */
 'use strict';
-const VERSION='8.10.0';
+const VERSION='9.0.0';
 const SCOPE=self.registration.scope;
 const PREFIX='ash-full-fix:'+SCOPE+':';
 const CACHE=PREFIX+VERSION;

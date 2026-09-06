@@ -8,7 +8,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Королевства Пепла">
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="icon-180.png">
-<title>Королевства Пепла 8.10.0 — Unified Cards UI</title>
+<title>Королевства Пепла 9.0.0 — Living World & Abyss</title>
 <style>
 :root{--gold:#ddb45c;--text:#f4ecd8;--muted:#b8af9c;--line:#735b29;--panel:#101611;--panel2:#192219}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
@@ -68,7 +68,7 @@ button{font:inherit;color:inherit;touch-action:manipulation}
 @keyframes stackIdle{0%,100%{transform:translateY(0) scale(1)}50%{transform:translateY(-1.5px) scale(1.018)}}
 @media(prefers-reduced-motion:reduce){.cell.sel .stack{animation:none}.stack{transition:none}}
 
-/* 8.10.0: unified clean portrait cards; source artwork labels are never shown in cards. */
+/* 9.0.0: unified clean portrait cards; source artwork labels are never shown in cards. */
 .heroBtn{grid-template-columns:58px minmax(0,1fr);min-height:78px;padding:8px;gap:10px}.heroBtn img{width:58px;height:58px;border-radius:10px;object-fit:cover;border:1px solid #665b3e}.heroBtn span{min-width:0}.heroBtn b{display:block;font-size:16px;line-height:1.15}.heroBtn small{display:block;margin-top:4px;color:var(--muted);font-size:12px}
 .heroPane{grid-template-columns:96px minmax(0,1fr);align-items:center}.heroPane img{width:96px;height:112px;object-fit:cover;object-position:center;border-radius:11px}
 #army{grid-template-columns:repeat(2,minmax(0,1fr))}.unitcard{display:grid;grid-template-columns:72px minmax(0,1fr);align-items:center;min-height:88px;padding:7px;gap:9px;overflow:hidden}.unitcard img{width:72px;height:72px;border-radius:9px;object-fit:cover;border:1px solid #59634f}.unitcard .txt{padding:0;text-align:left;min-width:0}.unitcard .txt>b{font-size:14px;line-height:1.15;white-space:normal}.unitcard .unitQty{display:block;color:#f1cf79;font-size:22px;font-weight:850;line-height:1.1;margin-top:3px}.unitcard .small{display:block;margin-top:2px;font-size:11px}
@@ -85,7 +85,7 @@ button{font:inherit;color:inherit;touch-action:manipulation}
 .skillChoice span{display:block;font-size:14px;opacity:.78;line-height:1.25}
 @media(max-width:520px){.skillChoices{grid-template-columns:1fr}.skillChoice{min-height:72px}}
 
-/* 8.10.0: unified clean portrait cards; source artwork labels are never shown in cards. */
+/* 9.0.0: unified clean portrait cards; source artwork labels are never shown in cards. */
 .heroBtn{grid-template-columns:58px minmax(0,1fr);min-height:78px;padding:8px;gap:10px}.heroBtn img{width:58px;height:58px;border-radius:10px;object-fit:cover;border:1px solid #665b3e}.heroBtn span{min-width:0}.heroBtn b{display:block;font-size:16px;line-height:1.15}.heroBtn small{display:block;margin-top:4px;color:var(--muted);font-size:12px}
 .heroPane{grid-template-columns:96px minmax(0,1fr);align-items:center}.heroPane img{width:96px;height:112px;object-fit:cover;object-position:center;border-radius:11px}
 #army{grid-template-columns:repeat(2,minmax(0,1fr))}.unitcard{display:grid;grid-template-columns:72px minmax(0,1fr);align-items:center;min-height:88px;padding:7px;gap:9px;overflow:hidden}.unitcard img{width:72px;height:72px;border-radius:9px;object-fit:cover;border:1px solid #59634f}.unitcard .txt{padding:0;text-align:left;min-width:0}.unitcard .txt>b{font-size:14px;line-height:1.15;white-space:normal}.unitcard .unitQty{display:block;color:#f1cf79;font-size:22px;font-weight:850;line-height:1.1;margin-top:3px}.unitcard .small{display:block;margin-top:2px;font-size:11px}
@@ -128,7 +128,7 @@ html,body,.app{touch-action:manipulation}
 #buildingInfoModal{cursor:pointer}
 #buildingInfoModal .dialog{cursor:default}
 
-/* 8.10.0: unified clean portrait cards; source artwork labels are never shown in cards. */
+/* 9.0.0: unified clean portrait cards; source artwork labels are never shown in cards. */
 .heroBtn{grid-template-columns:58px minmax(0,1fr);min-height:78px;padding:8px;gap:10px}.heroBtn img{width:58px;height:58px;border-radius:10px;object-fit:cover;border:1px solid #665b3e}.heroBtn span{min-width:0}.heroBtn b{display:block;font-size:16px;line-height:1.15}.heroBtn small{display:block;margin-top:4px;color:var(--muted);font-size:12px}
 .heroPane{grid-template-columns:96px minmax(0,1fr);align-items:center}.heroPane img{width:96px;height:112px;object-fit:cover;object-position:center;border-radius:11px}
 #army{grid-template-columns:repeat(2,minmax(0,1fr))}.unitcard{display:grid;grid-template-columns:72px minmax(0,1fr);align-items:center;min-height:88px;padding:7px;gap:9px;overflow:hidden}.unitcard img{width:72px;height:72px;border-radius:9px;object-fit:cover;border:1px solid #59634f}.unitcard .txt{padding:0;text-align:left;min-width:0}.unitcard .txt>b{font-size:14px;line-height:1.15;white-space:normal}.unitcard .unitQty{display:block;color:#f1cf79;font-size:22px;font-weight:850;line-height:1.1;margin-top:3px}.unitcard .small{display:block;margin-top:2px;font-size:11px}
@@ -138,7 +138,7 @@ html,body,.app{touch-action:manipulation}
 </style>
 
 <style id="cards-894-fix">
-/* 8.10.0 definitive card layout — intentionally last in cascade */
+/* 9.0.0 definitive card layout — intentionally last in cascade */
 .heroSelect{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:8px!important}
 .heroBtn{grid-template-columns:54px minmax(0,1fr)!important;min-height:72px!important;padding:8px!important;gap:9px!important;overflow:hidden!important}
 .heroBtn img{width:54px!important;height:54px!important;object-fit:cover!important;object-position:center!important;border:1px solid #665b3e!important;border-radius:9px!important}
@@ -156,7 +156,7 @@ html,body,.app{touch-action:manipulation}
 </style>
 
 <style id="cards-8100">
-/* 8.10.0 — single card system across Town and Hero screens. */
+/* 9.0.0 — single card system across Town and Hero screens. */
 #recruits{grid-template-columns:1fr!important;gap:8px!important}
 .recruitCard{grid-template-columns:76px minmax(0,1fr)!important;min-height:96px!important;padding:9px!important;gap:12px!important;border-radius:14px!important}
 .recruitCard img{width:76px!important;height:76px!important;border-radius:10px!important;object-fit:cover!important;object-position:center!important}
@@ -177,11 +177,12 @@ img[src$="griffin-portrait.jpg"]{object-fit:cover!important;object-position:cent
 .heroStats{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-top:8px}.heroStat{background:#0c160f;border:1px solid #344437;border-radius:10px;padding:7px 4px;text-align:center}.heroStat b{display:block;font-size:18px;color:#f0d078}.xpTrack{height:8px;background:#050806;border-radius:999px;overflow:hidden;margin-top:7px}.xpTrack i{display:block;height:100%;background:linear-gradient(90deg,#b48631,#e6c469)}
 .unitAbility{margin-top:4px;color:#d8c78d;font-size:10.5px;line-height:1.25}.unitcard{align-items:center}.unitcard img[src$="griffin-portrait.jpg"],.recruitCard img[src$="griffin-portrait.jpg"],.upgradeCard img[src$="griffin-portrait.jpg"]{object-fit:contain!important;background:#16251b!important;padding:2px!important}
 .objectPreviewGrid{display:grid;grid-template-columns:82px 1fr;gap:12px;align-items:start}.objectPreviewGrid img{width:82px;height:82px;object-fit:cover;border-radius:11px;border:1px solid var(--line)}.objectMeta{display:grid;gap:5px}.objectMeta .tag{display:inline-block;width:max-content;padding:3px 7px;border:1px solid #665b3e;border-radius:999px;font-size:11px;color:#d8c78d}.objectActions{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}
+.threatHud{position:absolute;z-index:8;top:calc(39px + env(safe-area-inset-top));left:50%;transform:translateX(-50%);background:rgba(12,7,8,.9);border:1px solid #763b3b;border-radius:999px;padding:5px 10px;color:#e7c9b2;font-size:11px;pointer-events:none}.threatHud b{color:#ff8a78}.threatHud .siege{color:#ff5f52;margin-left:7px;font-weight:800}.dungeonDialog{background:linear-gradient(#10100e,#050605);border-color:#6b4c2a}.dungeonArt{height:150px;margin:10px 0;border-radius:12px;border:1px solid #5a4329;background:radial-gradient(circle at 28% 62%,rgba(236,117,38,.28),transparent 12%),radial-gradient(circle at 72% 45%,rgba(91,75,180,.22),transparent 18%),linear-gradient(160deg,#171510,#050505 65%);display:flex;align-items:end;padding:12px;color:#e4c58a;font-weight:800;text-shadow:0 2px 4px #000}.enemyFlag{font-size:18px}.threatHigh{animation:pulseThreat 1.4s infinite}@keyframes pulseThreat{50%{box-shadow:0 0 14px rgba(255,70,50,.45)}}
 </style>
 </head>
 <body><main class="app">
 <div class="top"><span class="r">🪙 <b id="gold"></b></span><span class="r">🪵 <b id="wood"></b></span><span class="r">🪨 <b id="ore"></b></span><span class="r">💎 <b id="gems"></b></span><span class="r">🔮 <b id="crystal"></b></span><span class="grow"></span><span class="r">☀️ День <b id="day"></b> · Нед. <b id="week"></b> · Мес. <b id="month"></b></span></div>
-<div class="main">
+<div class="threatHud" id="threatHud">☠ Угроза Некрополя: <b id="threatValue">0%</b><span id="siegeState"></span></div><div class="main">
 <section class="screen active" id="s-map">
 <canvas id="mapCanvas" tabindex="0" role="img" aria-label="Карта мира. Стрелки перемещают обзор. Кнопка списка объектов даёт доступ к разведанным целям."></canvas><div id="objectInfo" class="objectInfo hidden"></div>
 <div class="zoom"><button id="zoomOut" aria-label="Уменьшить карту">−</button><button id="zoomIn" aria-label="Увеличить карту">＋</button></div>
@@ -197,7 +198,7 @@ img[src$="griffin-portrait.jpg"]{object-fit:cover!important;object-position:cent
 
 <section class="screen" id="s-quests"><div class="panel"><div class="title">Кампания: Пепельный Север</div><div class="small" id="worldStats" style="margin-bottom:8px"></div><div id="storyProgress"></div><div id="quests"></div></div><div class="panel"><div class="title">Журнал</div><div class="log" id="log"></div></div></section>
 
-<section class="screen" id="s-settings"><div class="panel"><div class="title">Настройки</div><div class="grid"><button class="btn" id="soundToggle"></button><button class="btn" id="centerHero">🎯 Центрировать карту</button><button class="btn gold" id="manualSave">💾 Сохранить игру</button><button class="btn" id="exportSave">Экспорт сохранения</button><button class="btn" id="importSave">Импорт сохранения</button><input id="saveFile" type="file" accept=".json,application/json" hidden><div id="storageStatus" class="small" role="status"></div><div id="offlineStatus" class="small" role="status"></div><button class="btn red" id="newGame">♻️ Новая игра</button></div></div></section>
+<section class="screen" id="s-settings"><div class="panel"><div class="title">Настройки</div><div class="grid"><button class="btn" id="soundToggle"></button><button class="btn" id="musicToggle"></button><button class="btn" id="centerHero">🎯 Центрировать карту</button><button class="btn gold" id="manualSave">💾 Сохранить игру</button><button class="btn" id="exportSave">Экспорт сохранения</button><button class="btn" id="importSave">Импорт сохранения</button><input id="saveFile" type="file" accept=".json,application/json" hidden><div id="storageStatus" class="small" role="status"></div><div id="offlineStatus" class="small" role="status"></div><button class="btn red" id="newGame">♻️ Новая игра</button></div></div></section>
 </div>
 <nav class="nav"><button data-s="map" class="active"><b>🗺️</b>Карта</button><button data-s="hero"><b>🛡️</b>Герои</button><button data-s="town"><b>🏰</b>Город</button><button data-s="magic"><b>📖</b>Магия</button><button data-s="quests"><b>📜</b>Кампания</button><button data-s="settings"><b>⚙️</b>Опции</button></nav>
 </main>
@@ -224,6 +225,7 @@ img[src$="griffin-portrait.jpg"]{object-fit:cover!important;object-position:cent
 <div class="modal hidden" id="buildingInfoModal"><div class="dialog"><div class="row"><h2 id="buildingInfoName">Постройка</h2><button class="miniBtn" id="buildingInfoClose">✕</button></div><div id="buildingInfoBody"></div><button class="btn" id="buildingInfoClose2">Закрыть</button></div></div>
 <div class="modal hidden" id="objectPreviewModal"><div class="dialog"><div class="objectPreviewGrid"><img id="objectPreviewImg" alt=""><div class="objectMeta"><h2 id="objectPreviewName" style="margin:0"></h2><span class="tag" id="objectPreviewType"></span><div class="small" id="objectPreviewDesc"></div><div class="small" id="objectPreviewReward"></div></div></div><div class="objectActions"><button class="btn" id="objectPreviewGo">Подойти</button><button class="btn" id="objectPreviewClose">Отмена</button></div></div></div>
 <div class="modal hidden" id="objectListModal"><div class="dialog"><h2>Разведанные объекты</h2><div class="objectList" id="knownObjects"></div><button class="btn" id="objectListClose">Закрыть</button></div></div>
-<div class="modal" id="startupModal"><div class="dialog"><h2>Королевства Пепла 8.10.0</h2><p id="startupMessage" role="status">Загрузка игры…</p><button class="btn" id="retryLoad" hidden>Повторить загрузку</button><button class="btn" id="recoveryImport" hidden>Импортировать сохранение</button><button class="btn red" id="recoveryNew" hidden>Начать новую игру</button></div></div>
+<div class="modal hidden" id="dungeonModal"><div class="dialog dungeonDialog"><div class="row"><div><h2 style="margin:0">🕯 Пещера Бездны</h2><div class="small">Подземелье живёт в том же времени, что и поверхность.</div></div><button class="miniBtn" id="dungeonClose">✕</button></div><div class="dungeonArt"><div id="dungeonDepth">Уровень I · Заброшенные шахты</div></div><div id="dungeonStatus" class="panel"></div><div class="grid g2"><button class="btn red" id="dungeonExplore">⚔️ Продвинуться глубже</button><button class="btn" id="dungeonLeave">Вернуться на поверхность</button></div></div></div>
+<div class="modal" id="startupModal"><div class="dialog"><h2>Королевства Пепла 9.0.0</h2><p id="startupMessage" role="status">Загрузка игры…</p><button class="btn" id="retryLoad" hidden>Повторить загрузку</button><button class="btn" id="recoveryImport" hidden>Импортировать сохранение</button><button class="btn red" id="recoveryNew" hidden>Начать новую игру</button></div></div>
 <script src="game-data.js"></script><script src="game-core.js"></script><script src="game-controls.js"></script><script src="game-ui.js"></script>
 </body></html>

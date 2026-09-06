@@ -203,10 +203,8 @@
           this.requestFrame()
         }
         ,onMessage:m=>this.toast(m),onEvent:event=>{
-          if(event.type==='town'){
-            this.screen='town';
-            this.localModal=null
-          }
+          if(event.type==='town'){this.screen='town';this.localModal=null}
+          if(event.type==='dungeon'){this.localModal='dungeonModal';this.renderDungeon()}
         }
       }
       );
@@ -219,7 +217,7 @@
         const Audio=this.env.AudioContext||this.env.webkitAudioContext;
         if(!Audio)return;
         this.audio=this.audio||new Audio();
-        if(this.audio.state==='suspended')this.audio.resume()?.catch(()=>{});
+        if(this.audio.state==='suspended')this.audio.resume()?.catch(()=>{});this.updateMusic();
       }catch(e){ /* Audio support is optional and never blocks a game command. */ }
     }
     sound(frequency,duration){
@@ -234,6 +232,13 @@
         oscillator.start();
         oscillator.stop(this.audio.currentTime+duration);
       }catch(e){ /* Audio failure must not interrupt movement or persistence. */ }
+    }
+    musicMode(){if(this.engine?.s.battle)return 'battle';if(this.localModal==='dungeonModal')return 'dungeon';if((this.engine?.s.q.threat||0)>=70)return 'danger';if(this.screen==='town')return 'town';return 'world'}
+    updateMusic(){
+      if(!this.audio||this.audio.state!=='running'||!this.engine?.s.settings.music){if(this.musicTimer){this.env.clearTimeout(this.musicTimer);this.musicTimer=null}return}
+      const mode=this.musicMode();if(this.musicModeActive===mode&&this.musicTimer)return;this.musicModeActive=mode;if(this.musicTimer)this.env.clearTimeout(this.musicTimer);
+      const seq={world:[196,247,294,247],town:[220,277,330,277],danger:[165,196,233,196],battle:[147,196,220,247],dungeon:[110,131,147,123]}[mode];let i=0;
+      const tick=()=>{if(!this.engine?.s.settings.music||!this.audio)return;try{const o=this.audio.createOscillator(),g=this.audio.createGain();o.type=mode==='battle'?'sawtooth':'sine';o.frequency.value=seq[i++%seq.length];g.gain.setValueAtTime(.0001,this.audio.currentTime);g.gain.exponentialRampToValueAtTime(.012*(this.engine.s.settings.musicVolume||.32),this.audio.currentTime+.05);g.gain.exponentialRampToValueAtTime(.0001,this.audio.currentTime+.7);o.connect(g);g.connect(this.audio.destination);o.start();o.stop(this.audio.currentTime+.75)}catch(e){}};tick();const loop=()=>{tick();this.musicTimer=this.env.setTimeout(loop,mode==='battle'?520:900)};this.musicTimer=this.env.setTimeout(loop,mode==='battle'?520:900)
     }
     imageSource(name,fallback='hero.jpg'){
       return this.assets[name]?name:fallback;
@@ -284,10 +289,9 @@
         else this.reportError(r.error)
       }
       );
-      on('soundToggle',()=>{
-        this.engine.setSound(!this.engine.s.settings.sound);
-        this.unlockAudio();
-      });
+      on('soundToggle',()=>{this.engine.setSound(!this.engine.s.settings.sound);this.unlockAudio()});
+      on('musicToggle',()=>{this.engine.setMusic(!this.engine.s.settings.music);this.unlockAudio();this.updateMusic()});
+      on('dungeonClose',()=>this.closeLocal());on('dungeonLeave',()=>this.closeLocal());on('dungeonExplore',()=>{const r=this.engine.dungeonEncounter(this.engine.s.activeHero);if(!r.ok)this.toast(r.reason||'Путь закрыт');this.renderDungeon()});
       on('centerHero',()=>{
         this.switchScreen('map');
         this.center()
@@ -449,7 +453,8 @@
       if(this.screen==='town')this.renderTown();
       if(this.screen==='magic')this.renderMagic();
       if(this.screen==='quests')this.renderQuests();
-      if(this.screen==='settings')this.$('soundToggle').textContent='Звук: '+(s.settings.sound?'вкл':'выкл');
+      if(this.screen==='settings'){this.$('soundToggle').textContent='Звуки: '+(s.settings.sound?'вкл':'выкл');this.$('musicToggle').textContent='Музыка: '+(s.settings.music?'вкл':'выкл')}
+      this.$('threatValue').textContent=(s.q.threat||0)+'%';this.$('siegeState').innerHTML=s.q.siege?'<span class="siege">⚠ ОСАДА</span>':'';this.$('threatHud').classList.toggle('threatHigh',(s.q.threat||0)>=70);this.updateMusic();
       if(s.battle)this.renderBattle();
       else this.battleVisual=null;
       if(!s.battle&&s.levelChoices.length)this.renderLevel();
@@ -541,14 +546,15 @@
     }
     renderQuests(){
       const s=this.engine.s;
-      this.$('worldStats').textContent='Исследовано '+s.seen.length+'/'+(D.W*D.H)+' клеток · Непосещённых объектов: '+C.allObjects(s).filter(o=>o.t!=='castle'&&o.owner!=='player').length+' · Репутация: '+s.reputation;
+      this.$('worldStats').textContent='Исследовано '+s.seen.length+'/'+(D.W*D.H)+' клеток · Непосещённых объектов: '+C.allObjects(s).filter(o=>o.t!=='castle'&&o.owner!=='player').length+' · Репутация: '+s.reputation+' · ☠ Угроза: '+(s.q.threat||0)+'%';
       this.$('storyProgress').innerHTML=['ivan','varvara','world'].map(k=>'<div class="storyCard"><b>'+({
         ivan:'Иван — Наследие Стального Холма',varvara:'Варвара — Тайна Пепельной магии',world:'Мировые события'
       }
       )[k]+'</b><div class="small">Этап '+s.story[k]+'/2</div></div>').join('');
-      this.$('quests').innerHTML=[['Сделать первый ход героем',s.q.tutorialMove],['Открыть экран города',s.q.tutorialTown],['Захватить лесопилку',s.q.wood],['Захватить железную шахту',s.q.ore],['Захватить шахту самоцветов',s.q.gems],['Использовать Алтарь магии',s.q.altar],['Активировать сторожевую башню',s.q.obelisk],['Завершить цепочку Ивана',s.story.ivan>=2],['Завершить цепочку Варвары',s.story.varvara>=2],['Помочь 2 поселениям',s.q.villages>=2],['Исследовать 2 руины',s.q.ruins>=2],['Найти 2 артефакта',s.q.artifacts>=2],['Победить гарнизон Морвейна в Некрополе',s.q.boss]].map(([text,done])=>'<div class="quest '+(done?'done':'')+'">'+(done?'✅ ':'⬜ ')+text+'</div>').join('');
+      this.$('quests').innerHTML=[['Сделать первый ход героем',s.q.tutorialMove],['Открыть экран города',s.q.tutorialTown],['Захватить лесопилку',s.q.wood],['Захватить железную шахту',s.q.ore],['Захватить шахту самоцветов',s.q.gems],['Использовать Алтарь магии',s.q.altar],['Активировать сторожевую башню',s.q.obelisk],['Завершить цепочку Ивана',s.story.ivan>=2],['Завершить цепочку Варвары',s.story.varvara>=2],['Помочь 2 поселениям',s.q.villages>=2],['Исследовать 2 руины',s.q.ruins>=2],['Найти 2 артефакта',s.q.artifacts>=2],['Исследовать Пещеру Бездны',s.q.dungeonLevel>=1],['Победить Хранителя Бездны',s.q.dungeonCleared],['Отбить осаду Стального Холма',s.q.siegeWins>=1],['Победить гарнизон Морвейна в Некрополе',s.q.boss]].map(([text,done])=>'<div class="quest '+(done?'done':'')+'">'+(done?'✅ ':'⬜ ')+text+'</div>').join('');
       this.$('log').innerHTML=s.logs.map(t=>'<div>'+escape(t)+'</div>').join('')
     }
+    renderDungeon(){const s=this.engine.s;if(!this.$('dungeonStatus'))return;const lv=s.q.dungeonLevel||0,names=['Заброшенные шахты','Древний город','Сердце Бездны'],foes=['Костяной караул · пещерные волки','Некроманты древнего города','Хранитель Бездны · элитная нежить'];const next=Math.min(2,lv);this.$('dungeonDepth').textContent='Уровень '+['I','II','III'][next]+' · '+names[next];this.$('dungeonStatus').innerHTML=s.q.dungeonCleared?'<b>🔥 Сердце Бездны очищено</b><div class="small">Сила Некрополя ослаблена. Угроза снижена.</div>':'<b>'+names[next]+'</b><div class="small">Рекомендуемая сила армии: '+[85,150,235][next]+'. Награды растут с глубиной. На III уровне ждёт Хранитель Бездны.</div><div class="small" style="margin-top:6px">Очищено уровней: '+lv+'/3 · найдено сокровищ: '+(s.q.dungeonLoot||0)+'</div>';this.$('dungeonExplore').disabled=!!s.q.dungeonCleared}
     battleSnapshot(b){
       return b?{id:b.id,selectedId:b.selectedId,stacks:Object.fromEntries(b.stacks.map(st=>[st.id,{x:st.x,y:st.y,hp:st.hp,qty:st.qty,side:st.side,type:st.type}]))}:null
     }
@@ -1005,7 +1011,7 @@
         if(!C.isSeen(s,o))continue;
         const p=this.objectPosition(o);
         if(p.x<this.camera.x-240||p.y<this.camera.y-180||p.x>this.camera.x+r.width/z+240||p.y>this.camera.y+r.height/z+180)continue;
-        const border=o.owner==='player'?'#72b8ff':'#d7b35d';
+        const border=o.owner==='player'?'#72b8ff':o.owner==='enemy'?'#e35d52':'#d7b35d';
         if(!o.landmark){
           ctx.save();
           this.round(ctx,p.x-34,p.y-34,68,68,10/z);

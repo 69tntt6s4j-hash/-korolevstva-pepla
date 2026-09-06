@@ -42,13 +42,14 @@
         pikes:16,bows:0,cavs:0,griffins:0,mages:0
       }
       ,garrison:emptyArmy(),seen:[],q:{
+        threat:18,siege:false,siegeWins:0,dungeonLevel:0,dungeonCleared:false,dungeonLoot:0,
         wood:false,ore:false,gems:false,artifacts:0,boss:false,tutorialMove:false,tutorialTown:false,altar:false,obelisk:false,villages:0,ruins:0
       }
       ,story:{
         ivan:0,varvara:0,world:0
       }
       ,reputation:0,settings:{
-        sound:true
+        sound:true,music:true,musicVolume:0.32
       }
       ,logs:[],movement:null,battle:null,levelChoices:[],victoryPending:false,freePlay:false
     }
@@ -513,6 +514,12 @@
         this.log((o.label||'Объект')+' захвачен');
         return this.commit()
       }
+      if(o.t==='cave'){
+        s.movement=null;
+        this.onEvent({type:'dungeon',heroId});
+        this.onMessage('Пещера Бездны');
+        return this.commit()
+      }
       if(o.t==='event'){
         const result=this.storyEvent(heroId,o);
         if(!result.ok){
@@ -726,19 +733,25 @@
       return this.commit();
     }
     enemyWorldTurn(){
-      const s=this.s;
-      if(!s.enemy.alive||s.battle||s.levelChoices.length)return;
-      const targets=heroIds.map(id=>({
-        id,h:s.heroes[id],path:search(s.enemy.x,s.enemy.y,(x,y)=>x===s.heroes[id].x&&y===s.heroes[id].y,(x,y)=>passable(x,y)&&objectAt(s,x,y)?.t!=='enemy')
+      const s=this.s;if(!s.enemy.alive||s.battle||s.levelChoices.length)return;
+      for(const id of heroIds)if(s.heroes[id].x===s.enemy.x&&s.heroes[id].y===s.enemy.y){this.checkContact(id);return}
+      s.q.threat=Math.min(100,(s.q.threat||0)+3+(s.day%7===0?5:0));
+      const castle=D.byId.castle;
+      const resources=allObjects(s).filter(o=>(o.t==='mine'||o.t==='sawmill')&&o.owner==='player');
+      let target=castle;
+      if(s.q.threat<65&&resources.length){resources.sort((a,b)=>distance(s.enemy,a)-distance(s.enemy,b));target=resources[0]}
+      const path=search(s.enemy.x,s.enemy.y,(x,y)=>x===target.x&&y===target.y,(x,y)=>passable(x,y)&&objectAt(s,x,y)?.t!=='enemy');
+      if(path&&path.length)[s.enemy.x,s.enemy.y]=path[0];
+      const captured=resources.find(o=>o.x===s.enemy.x&&o.y===s.enemy.y);
+      if(captured){s.objects[captured.id].owner='enemy';s.q.threat=Math.min(100,s.q.threat+8);this.log('☠ Некрополь захватил: '+captured.label)}
+      if(castle&&distance(s.enemy,castle)<=1){
+        s.q.siege=true;s.q.threat=100;
+        const defense=Object.entries(s.garrison).reduce((n,[k,q])=>n+q*D.units[k].p,0)*(s.build.citadel?1.45:1)*(s.build.barracks?1.1:1);
+        const attack=90+s.enemy.power*28;
+        if(defense>=attack){s.q.siegeWins=(s.q.siegeWins||0)+1;s.q.siege=false;s.q.threat=55;s.enemy.x=23;s.enemy.y=4;s.enemy.power++;this.log('🏰 Гарнизон отбил осаду Стального Холма!')}
+        else this.log('⚠️ Стальной Холм осаждён! Верните героя или усилите гарнизон.')
       }
-      )).filter(t=>t.path!==null).sort((a,b)=>a.path.length-b.path.length);
-      const t=targets[0];
-      if(!t)return;
-      if(t.path.length)[s.enemy.x,s.enemy.y]=t.path[0];
-      for(const id of heroIds)if(s.heroes[id].x===s.enemy.x&&s.heroes[id].y===s.enemy.y){
-        this.checkContact(id);
-        break
-      }
+      for(const id of heroIds)if(s.heroes[id].x===s.enemy.x&&s.heroes[id].y===s.enemy.y){this.checkContact(id);break}
     }
     dailyEvent(){
       const s=this.s;
@@ -853,6 +866,22 @@
       this.log((direction==='out'?'Вся армия гарнизона передана герою ':'Вся армия героя передана в гарнизон: ')+this.s.heroes[heroId].name);
       return this.commit()
     }
+    dungeonEncounter(heroId){
+      if(!this.idle())return this.fail('Сначала завершите текущее событие');
+      const s=this.s,h=s.heroes[heroId],level=Math.min(3,(s.q.dungeonLevel||0)+1);
+      if(s.q.dungeonCleared)return this.fail('Сердце Бездны уже очищено');
+      const need=[0,85,150,235][level],power=heroPower(h);
+      if(power<need)return this.fail('Армия слишком слаба. Рекомендуемая сила: '+need);
+      const loss=Math.max(1,Math.round((level*4)/(1+h.def*.08)));
+      for(const k of troopTypes){if(h.army[k]>0){h.army[k]=Math.max(0,h.army[k]-Math.min(h.army[k],Math.ceil(loss/(level+2))));break}}
+      const rewards=[null,[650,2,0],[1100,0,2],[2400,2,2]][level];s.gold+=rewards[0];s.gems+=rewards[1];s.crystal+=rewards[2];s.q.dungeonLoot=(s.q.dungeonLoot||0)+1;s.q.dungeonLevel=level;
+      s.q.threat=Math.max(0,(s.q.threat||0)-(level===3?30:8));
+      if(level===3){s.q.dungeonCleared=true;if(!h.artifacts.includes('crown')){h.artifacts.push('crown');h.knowledge+=D.artifactDefs.crown?.v||1}this.log('🔥 Хранитель Бездны повержен. Источник силы Некрополя ослаблен.')}
+      else this.log('🕯 Подземелье: очищен уровень '+level+'. Найдены сокровища.');
+      this.log('Подземная экспедиция заняла целый день. Мир наверху продолжил движение.');
+      return this.applyNextDay()
+    }
+    setMusic(on){this.s.settings.music=!!on;return this.commit()}
     setSound(on){
       this.s.settings.sound=!!on;
       return this.commit()
@@ -1212,8 +1241,8 @@
     }
     ensure(Array.isArray(s.seen)&&s.seen.length<=D.W*D.H&&new Set(s.seen).size===s.seen.length&&s.seen.every(k=>typeof k==='string'&&/^\d+,\d+$/.test(k)&&validCell(...k.split(',').map(Number))),'разведка');
     ensure(Array.isArray(s.logs)&&s.logs.length<=80&&s.logs.every(l=>typeof l==='string'&&l.length<=2000),'журнал');
-    ensure(s.settings&&typeof s.settings.sound==='boolean','звук');
-    ensure(s.q&&s.story,'кампания');
+    ensure(s.settings&&typeof s.settings.sound==='boolean','звук'); if(s.settings.music===undefined)s.settings.music=true; if(s.settings.musicVolume===undefined)s.settings.musicVolume=.32;
+    ensure(s.q&&s.story,'кампания'); if(s.q.threat===undefined)s.q.threat=18;if(s.q.siege===undefined)s.q.siege=false;if(s.q.siegeWins===undefined)s.q.siegeWins=0;if(s.q.dungeonLevel===undefined)s.q.dungeonLevel=0;if(s.q.dungeonCleared===undefined)s.q.dungeonCleared=false;if(s.q.dungeonLoot===undefined)s.q.dungeonLoot=0;
     for(const k of ['wood','ore','gems','boss','tutorialMove','tutorialTown','altar','obelisk'])ensure(typeof s.q[k]==='boolean','задание '+k);
     for(const k of ['artifacts','villages','ruins'])integer(s.q[k],'счётчик '+k);
     for(const k of ['ivan','varvara','world'])integer(s.story[k],'сюжет '+k,0,2);
