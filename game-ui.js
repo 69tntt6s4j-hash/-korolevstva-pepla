@@ -112,7 +112,7 @@
         else modal.setAttribute('aria-label','Событие игры')
       }
       const labels={
-        enemyInfoClose:'Закрыть сведения о противнике',enemyCancelBtn:'Отменить нападение',spellCancel:'Закрыть книгу боя',retreatBtn:'Отступить в город за 350 золота',objectListClose:'Закрыть список объектов'
+        enemyInfoClose:'Закрыть сведения о противнике',enemyCancelBtn:'Отменить нападение',spellCancel:'Закрыть книгу боя',retreatBtn:'Отступить в город за 350 золота',objectListClose:'Закрыть список объектов',buildingInfoClose:'Закрыть справку о постройке',buildingInfoClose2:'Закрыть справку о постройке'
       }
       ;
       for(const [id,text]of Object.entries(labels))this.$(id)?.setAttribute('aria-label',text);
@@ -317,6 +317,8 @@
         this.engine.commandInteract(this.engine.s.activeHero,id)
       }
       );
+      on('buildingInfoClose',()=>this.closeBuildingInfo());
+      on('buildingInfoClose2',()=>this.closeBuildingInfo());
       on('objectListBtn',()=>{
         this.engine.cancelMovement();
         this.renderObjectList();
@@ -462,7 +464,7 @@
       this.$('heroName').textContent=h.name;
       this.$('heroClass').textContent=h.cls;
       for(const k of ['atk','def','magic','knowledge','level','xp'])this.$(k).textContent=h[k];
-      this.$('army').innerHTML=Object.entries(D.units).map(([k,u])=>'<div class="unitcard"><img src="'+this.imageSource(u.img)+'" alt=""><div class="txt"><b>'+h.army[k]+'</b><span class="small">'+u.n+'</span></div></div>').join('');
+      this.$('army').innerHTML=Object.entries(D.units).map(([k,u])=>'<div class="unitcard"><img src="'+this.imageSource(u.img)+'" alt=""><div class="txt"><b>'+h.army[k]+'</b><span class="small">'+u.n+' · ур. '+(s.troopLevels[k]||1)+'</span></div></div>').join('');
       this.$('skills').innerHTML=Object.entries(h.skills).filter(([,r])=>r>0).map(([k,r])=>'<div class="skill"><b>'+D.skills[k].name+' · ранг '+r+'</b><div class="small">'+D.skills[k].description+'</div></div>').join('')||'<div class="small">Навыки появятся при повышении уровня.</div>';
       this.$('artifacts').innerHTML=h.artifacts.map(k=>'<div class="quest">'+D.artifactDefs[k].icon+' '+D.artifactDefs[k].n+'</div>').join('')||'<div class="small">Артефактов пока нет.</div>';
       const a=s.heroes.arden,b=s.heroes.lyra,can=C.distance(a,b)<=1;
@@ -473,6 +475,18 @@
       }
       ;
     }
+    openBuildingInfo(id){
+      const d=D.builds[id],s=this.engine.s;if(!d)return;
+      const req=d.req?'Требование: '+D.builds[d.req].n+'. ':'Без предварительных построек. ';
+      let extra='';
+      if(id==='citadel')extra='<p><b>Эффект:</b> армия героя получает +25% эффективной защиты в боях рядом со Стальным Холмом. Также Цитадель открывает IV и V уровни улучшений войск.</p>';
+      if(id==='training')extra='<p><b>Развитие:</b> копейщики, стрелки, рыцари и грифоны улучшаются с I до V уровня. Каждый новый уровень даёт +10% базового урона.</p>';
+      if(id==='arcaneTower')extra='<p><b>Развитие:</b> маги улучшаются с I до V уровня. Каждый новый уровень даёт +12% базового урона магов.</p>';
+      this.$('buildingInfoName').textContent=d.n;
+      this.$('buildingInfoBody').innerHTML='<p>'+escape(d.desc||'Городская постройка.')+'</p><p>'+escape(req)+'</p><p><b>Стоимость:</b> '+d.cost[0]+'🪙 '+d.cost[1]+'🪵 '+d.cost[2]+'🪨</p><p><b>Статус:</b> '+(s.build[id]?'Построено':'Не построено')+'</p>'+extra;
+      this.$('buildingInfoModal').classList.remove('hidden');this.lastModal='buildingInfoModal';
+    }
+    closeBuildingInfo(){this.$('buildingInfoModal').classList.add('hidden');if(this.lastModal==='buildingInfoModal')this.lastModal=null}
     renderTown(){
       const s=this.engine.s,h=s.heroes[s.activeHero],local=C.atTown(s,h.id),inc=C.income(s);
       this.$('econGrid').innerHTML=Object.entries(inc).map(([k,n])=>'<div class="econCard">'+({
@@ -488,11 +502,19 @@
       };
       for(const bt of this.$('garrison').querySelectorAll('[data-garrison-all]'))bt.onclick=()=>this.engine.garrisonAll(h.id,bt.dataset.garrisonAll);
       this.$('buildings').innerHTML=Object.entries(D.builds).map(([k,d])=>{
-        let reason=s.build[k]?(k==='citadel'?'Построено ранее; эффект не определён':'Построено'):k==='citadel'?'Недоступна: эффект не определён':d.req&&!s.build[d.req]?'Нужно: '+D.builds[d.req].n:s.gold<d.cost[0]||s.wood<d.cost[1]||s.ore<d.cost[2]?'Не хватает ресурсов':'';
-        return '<button class="btn building '+(s.build[k]?'built':'')+'" data-build="'+k+'" '+(reason?'disabled':'')+'><b>'+d.n+'</b><br><span class="small">'+(reason||d.cost[0]+'🪙 '+d.cost[1]+'🪵 '+d.cost[2]+'🪨')+'</span></button>'
-      }
-      ).join('');
+        const reason=s.build[k]?'Построено':d.req&&!s.build[d.req]?'Нужно: '+D.builds[d.req].n:s.gold<d.cost[0]||s.wood<d.cost[1]||s.ore<d.cost[2]?'Не хватает ресурсов':'';
+        return '<div class="buildingWrap"><button class="btn building '+(s.build[k]?'built':'')+'" data-build="'+k+'" '+(reason?'disabled':'')+'><b>'+d.n+'</b><br><span class="small">'+(reason||d.cost[0]+'🪙 '+d.cost[1]+'🪵 '+d.cost[2]+'🪨')+'</span></button><button class="helpBtn" data-build-help="'+k+'" aria-label="Справка: '+d.n+'">?</button></div>'
+      }).join('');
       for(const bt of this.$('buildings').querySelectorAll('[data-build]'))bt.onclick=()=>this.engine.build(bt.dataset.build);
+      for(const bt of this.$('buildings').querySelectorAll('[data-build-help]'))bt.onclick=e=>{e.stopPropagation();this.openBuildingInfo(bt.dataset.buildHelp)};
+      this.$('upgrades').innerHTML=Object.entries(D.units).map(([k,u])=>{
+        const level=s.troopLevels[k]||1,max=D.troopUpgrades.maxLevel,magic=D.troopUpgrades.magic.includes(k),building=magic?'arcaneTower':'training';
+        let reason='';let costText='Максимальный уровень';
+        if(level<max){const c=D.troopUpgrades.costs[k][level-1];costText=c[0]+'🪙 '+c[1]+'🪵 '+c[2]+'🪨'+(c[3]?' '+c[3]+'💎':'');reason=!s.build[building]?'Нужно: '+D.builds[building].n:level>=3&&!s.build.citadel?'Нужна Цитадель':s.gold<c[0]||s.wood<c[1]||s.ore<c[2]||s.gems<c[3]?'Не хватает ресурсов':''}
+        const bonus=Math.round((level-1)*(D.troopUpgrades.damagePerLevel[k]||0)*100);
+        return '<button class="btn upgradeCard" data-upgrade="'+k+'" '+(level>=max||reason?'disabled':'')+'><img src="'+this.imageSource(u.img)+'" alt=""><span><b>'+u.n+'</b><br><span class="level">Уровень '+level+'/'+max+'</span><br><span class="small">Урон +'+bonus+'% · '+(reason||costText)+'</span></span></button>'
+      }).join('');
+      for(const bt of this.$('upgrades').querySelectorAll('[data-upgrade]'))bt.onclick=()=>this.engine.upgradeTroop(bt.dataset.upgrade);
       this.$('recruits').innerHTML=Object.entries(D.units).map(([k,u])=>{
         const reason=!s.build[u.req]?'Нужно: '+D.builds[u.req].n:s.avail[k]<u.qty?'Мало доступных воинов':s.gold<u.cost?'Не хватает золота':'';
         return '<button class="unitcard" data-recruit="'+k+'" '+(reason?'disabled':'')+'><img src="'+this.imageSource(u.img)+'" alt=""><div class="txt"><b>'+u.n+'</b><span class="small">'+(reason||'Доступно '+s.avail[k]+' · '+u.qty+' за '+u.cost+'🪙')+'</span></div></button>'
@@ -866,37 +888,43 @@
       const world=this.assets['world-v6.jpg'],mask=this.assets['water-mask.png'],foamMask=this.assets['foam-mask.png'];
       if(!world||!mask)return;
       const phase=(t||performance.now())*.001;
-      const wx=Math.sin(phase*.72)*3.0,wy=Math.cos(phase*.53)*1.8;
+
+      // Important: water-mask.png is a real RGBA alpha mask. Black/transparent land must not
+      // participate in compositing; otherwise Safari blends a shifted copy of the WHOLE map
+      // and the result looks like global flicker instead of moving water.
+      const wx=Math.sin(phase*.92)*4.2;
+      const wy=Math.sin(phase*.61+1.1)*2.0;
       const wctx=this.waterFx.getContext('2d');
       wctx.setTransform(1,0,0,1,0,0);
       wctx.clearRect(0,0,D.WORLD_W,D.WORLD_H);
       wctx.globalCompositeOperation='source-over';
       wctx.globalAlpha=1;
-      wctx.drawImage(mask,0,0,D.WORLD_W,D.WORLD_H);
-      wctx.globalCompositeOperation='source-in';
       wctx.drawImage(world,wx,wy,D.WORLD_W,D.WORLD_H);
+      wctx.globalCompositeOperation='destination-in';
+      wctx.drawImage(mask,0,0,D.WORLD_W,D.WORLD_H);
       wctx.globalCompositeOperation='source-over';
       ctx.save();
-      ctx.globalAlpha=.34;
+      ctx.globalAlpha=.72;
       ctx.drawImage(this.waterFx,0,0);
       ctx.restore();
 
-      // Белая вода и пена используют саму текстуру карты и мягко смещаются вниз.
-      // Здесь нет нарисованных линий/струй: двигаются только пиксели, уже принадлежащие воде.
+      // Waterfalls/foam: a second masked copy moves primarily vertically. Because the mask
+      // itself is stationary, banks, trees and roads never move; only pixels inside foam areas do.
       if(foamMask){
-        const flow=(phase*9)%7;
+        const fy=Math.sin(phase*2.35)*5.5;
+        const fx=Math.sin(phase*.8)*.8;
         const fctx=this.foamFx.getContext('2d');
         fctx.setTransform(1,0,0,1,0,0);
         fctx.clearRect(0,0,D.WORLD_W,D.WORLD_H);
         fctx.globalCompositeOperation='source-over';
         fctx.globalAlpha=1;
+        fctx.drawImage(world,fx,fy,D.WORLD_W,D.WORLD_H);
+        fctx.globalCompositeOperation='destination-in';
         fctx.drawImage(foamMask,0,0,D.WORLD_W,D.WORLD_H);
-        fctx.globalCompositeOperation='source-in';
-        fctx.drawImage(world,0,flow,D.WORLD_W,D.WORLD_H);
         fctx.globalCompositeOperation='source-over';
         ctx.save();
         ctx.globalCompositeOperation='screen';
-        ctx.globalAlpha=.18;
+        ctx.globalAlpha=.26;
         ctx.drawImage(this.foamFx,0,0);
         ctx.restore();
       }

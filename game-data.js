@@ -1,4 +1,4 @@
-/* 8.8.4: Battle 2.0 — explicit initiative and unit traits. */
+/* 8.9.0: Army & City Progression — troop upgrades, training buildings and Citadel. */
 (function(root,factory){
   const data=factory();
   if(typeof module==='object'&&module.exports)module.exports=data;
@@ -53,28 +53,47 @@
   ;
   const builds={
     barracks:{
-      n:'Казармы',cost:[800,3,0],req:null
+      n:'Казармы',cost:[800,3,0],req:null,desc:'Открывают найм копейщиков и служат основой военной инфраструктуры.'
     }
     ,range:{
-      n:'Стрельбище',cost:[1000,4,0],req:'barracks'
+      n:'Стрельбище',cost:[1000,4,0],req:'barracks',desc:'Открывает найм стрелков.'
     }
     ,stable:{
-      n:'Конюшни',cost:[1500,3,3],req:'barracks'
+      n:'Конюшни',cost:[1500,3,3],req:'barracks',desc:'Открывают найм рыцарей.'
     }
     ,griffin:{
-      n:'Башня грифонов',cost:[2200,5,4],req:'stable'
+      n:'Башня грифонов',cost:[2200,5,4],req:'stable',desc:'Открывает найм грифонов.'
     }
     ,mage:{
-      n:'Гильдия магов',cost:[1800,4,3],req:'range'
+      n:'Гильдия магов',cost:[1800,4,3],req:'range',desc:'Открывает найм магов и при постройке усиливает магию героев.'
     }
     ,market:{
-      n:'Рынок',cost:[1200,2,2],req:null
+      n:'Рынок',cost:[1200,2,2],req:null,desc:'Даёт +100 золота каждый игровой день.'
     }
     ,citadel:{
-      n:'Цитадель',cost:[2600,6,6],req:'barracks'
+      n:'Цитадель',cost:[2600,6,6],req:'barracks',desc:'Укрепляет Стальной Холм и открывает высшие уровни развития войск. Даёт +25% защиты армии героя в боях у города.'
+    }
+    ,training:{
+      n:'Тренировочная база',cost:[2100,5,4],req:'barracks',desc:'Позволяет улучшать копейщиков, стрелков, рыцарей и грифонов до V уровня. Каждый уровень увеличивает базовый урон.'
+    }
+    ,arcaneTower:{
+      n:'Магическая башня',cost:[2400,4,4],req:'mage',desc:'Позволяет улучшать магов до V уровня. Каждый уровень сильнее увеличивает их боевое воздействие.'
     }
   }
   ;
+  const troopUpgrades={
+    maxLevel:5,
+    military:['pikes','bows','cavs','griffins'],
+    magic:['mages'],
+    damagePerLevel:{pikes:.10,bows:.10,cavs:.10,griffins:.10,mages:.12},
+    costs:{
+      pikes:[[500,1,0,0],[900,2,1,0],[1500,3,2,0],[2400,4,3,1]],
+      bows:[[600,1,0,0],[1050,2,1,0],[1700,3,2,0],[2600,4,3,1]],
+      cavs:[[800,1,1,0],[1400,2,2,0],[2200,3,3,1],[3300,4,4,1]],
+      griffins:[[1000,2,1,0],[1750,3,2,1],[2700,4,3,1],[4000,5,4,2]],
+      mages:[[1000,1,1,1],[1800,2,2,1],[2800,3,3,2],[4200,4,4,3]]
+    }
+  };
   const artifactDefs={
     sword:{
       n:'Меч Стража',icon:'🗡️',stat:'atk',v:2
@@ -231,7 +250,7 @@
     }
   }
   ;
-  const VERSION='8.8.4', SCHEMA=1, W=26,H=20,WORLD_W=2600,WORLD_H=2000;
+  const VERSION='8.9.0', SCHEMA=1, W=26,H=20,WORLD_W=2600,WORLD_H=2000;
   const skills={
     logistics:{
       name:'Логистика',description:'+2 движения за ранг',max:3
@@ -339,7 +358,7 @@
     return Object.freeze(o)
   }
   return deepFreeze({
-    VERSION,SCHEMA,W,H,WORLD_W,WORLD_H,units,enemies,battleTraits,builds,skills,artifactDefs,objects,byId,terrain,bridges,passes,relocations,imageFiles
+    VERSION,SCHEMA,W,H,WORLD_W,WORLD_H,units,enemies,battleTraits,builds,troopUpgrades,skills,artifactDefs,objects,byId,terrain,bridges,passes,relocations,imageFiles
   }
   );
 }

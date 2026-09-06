@@ -38,7 +38,7 @@
       ])),enemy:{
         id:'morvein-field',x:15,y:11,power:1,alive:true
       }
-      ,build:Object.fromEntries(Object.keys(D.builds).map(k=>[k,false])),avail:{
+      ,build:Object.fromEntries(Object.keys(D.builds).map(k=>[k,false])),troopLevels:Object.fromEntries(troopTypes.map(k=>[k,1])),avail:{
         pikes:16,bows:0,cavs:0,griffins:0,mages:0
       }
       ,garrison:emptyArmy(),seen:[],q:{
@@ -766,7 +766,6 @@
       if(!this.idle())return this.fail('Сначала завершите событие');
       const s=this.s,d=D.builds[id];
       if(!d)return this.fail('Неизвестное здание');
-      if(id==='citadel')return this.fail('Цитадель недоступна: её эффект ещё не определён');
       if(s.build[id])return this.fail('Уже построено');
       if(d.req&&!s.build[d.req])return this.fail('Сначала постройте '+D.builds[d.req].n);
       if(s.gold<d.cost[0]||s.wood<d.cost[1]||s.ore<d.cost[2])return this.fail('Не хватает ресурсов');
@@ -780,7 +779,25 @@
         h.manaMax+=5;
         h.mana=h.manaMax
       }
-      this.log('Построено: '+d.n);
+      if(id==='citadel')this.log('Построена Цитадель: +25% защиты в боях у Стального Холма и открыт доступ к высшим улучшениям');
+      else this.log('Построено: '+d.n);
+      return this.commit()
+    }
+    upgradeTroop(type){
+      if(!this.idle())return this.fail('Сначала завершите событие');
+      const s=this.s,u=D.units[type],cfg=D.troopUpgrades;
+      if(!u||!cfg)return this.fail('Неизвестный тип войск');
+      const magic=cfg.magic.includes(type),building=magic?'arcaneTower':'training';
+      if(!s.build[building])return this.fail('Сначала постройте '+D.builds[building].n);
+      const level=s.troopLevels[type]||1;
+      if(level>=cfg.maxLevel)return this.fail('Достигнут максимальный уровень');
+      if(level>=3&&!s.build.citadel)return this.fail('Для IV и V уровня требуется Цитадель');
+      const cost=cfg.costs[type][level-1], [gold,wood,ore,gems]=cost;
+      if(s.gold<gold||s.wood<wood||s.ore<ore||s.gems<gems)return this.fail('Не хватает ресурсов для улучшения');
+      s.gold-=gold;s.wood-=wood;s.ore-=ore;s.gems-=gems;
+      s.troopLevels[type]=level+1;
+      const bonus=Math.round(cfg.damagePerLevel[type]*100*(level));
+      this.log(D.units[type].n+' улучшены до уровня '+(level+1)+' · бонус базового урона +'+bonus+'%');
       return this.commit()
     }
     recruit(id,heroId=this.s.activeHero){
@@ -938,7 +955,9 @@
       if(attacker.side==='p'){
         value*=1+.04*h.atk;
         value*=1+.1*rank(h,'leadership');
-        if(attacker.type==='bows')value*=1+.15*rank(h,'archery')
+        if(attacker.type==='bows')value*=1+.15*rank(h,'archery');
+        const level=this.s.troopLevels?.[attacker.type]||1;
+        value*=1+(level-1)*(D.troopUpgrades?.damagePerLevel?.[attacker.type]||0)
       }
       // Battle 2.0: unit identities matter without changing stack/save shape.
       if(attacker.type==='pikes'&&target.type==='cavs')value*=1.5;
@@ -949,7 +968,8 @@
       if(target.side==='p'){
         const defenceFactor=1+.04*h.def;
         value/=attacker.type==='mages'?1+(defenceFactor-1)*.75:defenceFactor;
-        value*=1-.1*rank(h,'resistance')
+        value*=1-.1*rank(h,'resistance');
+        if(this.s.build.citadel&&atTown(this.s,b.heroId))value*=.80
       }
       if(target.stone)value*=.72;
       if(target.defending)value*=.75;
@@ -1177,6 +1197,8 @@
     ensure(s.enemy?.id==='morvein-field'&&typeof s.enemy.alive==='boolean'&&validCell(s.enemy.x,s.enemy.y)&&passable(s.enemy.x,s.enemy.y),'полевой противник');
     integer(s.enemy.power,'сила противника',1,10000);
     for(const k of Object.keys(D.builds))ensure(typeof s.build?.[k]==='boolean','здание '+k);
+    ensure(s.troopLevels&&typeof s.troopLevels==='object','уровни войск');
+    for(const k of troopTypes)integer(s.troopLevels[k],'уровень '+k,1,D.troopUpgrades.maxLevel);
     for(const k of troopTypes){
       integer(s.avail?.[k],'найм '+k,0,1000000);
       integer(s.garrison?.[k],'гарнизон '+k,0,1000000)
@@ -1397,13 +1419,21 @@
     }
     )
   }
+  function normalizeCurrentState(s){
+    if(s&&s.schemaVersion===D.SCHEMA){
+      s.build=s.build||{};for(const k of Object.keys(D.builds))if(typeof s.build[k]!=='boolean')s.build[k]=false;
+      s.troopLevels=s.troopLevels||{};for(const k of troopTypes)if(!Number.isInteger(s.troopLevels[k]))s.troopLevels[k]=1;
+      s.gameVersion=D.VERSION;
+    }
+    return s
+  }
   function decode(raw){
     const packet=JSON.parse(raw);
     if(packet?.format==='ash-save'){
       ensure(packet.schema===D.SCHEMA&&typeof packet.payload==='string'&&checksum(packet.payload)===packet.checksum,'контрольная сумма');
-      return validateState(JSON.parse(packet.payload))
+      return validateState(normalizeCurrentState(JSON.parse(packet.payload)))
     }
-    if(packet?.schemaVersion)return validateState(packet);
+    if(packet?.schemaVersion)return validateState(normalizeCurrentState(packet));
     return migrateLegacy(packet)
   }
   class SaveRepository{

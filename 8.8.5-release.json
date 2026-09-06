@@ -1,0 +1,302 @@
+{
+  "version": "8.8.5",
+  "name": "Living Water II",
+  "generated_at": "2026-09-06T19:27:25.589066+00:00",
+  "tests": {
+    "total": 116,
+    "passed": 116,
+    "failed": 0
+  },
+  "files": [
+    {
+      "path": "8.8.2-release.json",
+      "size": 7729,
+      "sha256": "c0d3af3143ede259e55941b3dbaad281d0387845ea82defd4e3e065ca652e4ef"
+    },
+    {
+      "path": "8.8.3-release.json",
+      "size": 7900,
+      "sha256": "760c9ed7ed9095ebbf03e0f5f3658e71c3ef5a5720b8704e6b123726bad02cd5"
+    },
+    {
+      "path": "8.8.4-release.json",
+      "size": 8637,
+      "sha256": "de78d54794f726d6d3e09b3af885374ce981376fee7cfcc9c1566e792138e6fe"
+    },
+    {
+      "path": "README.md",
+      "size": 6782,
+      "sha256": "93e916893c4cdc51705928110b1bdc101d16bc57543e52683ae86afe9713720b"
+    },
+    {
+      "path": "VERSION-8.8.5.txt",
+      "size": 230,
+      "sha256": "62984a850688376c38e2b30bd4e1e6625736715acb2816d08affd0560fccff1f"
+    },
+    {
+      "path": "archer.jpg",
+      "size": 26442,
+      "sha256": "2c80e9f2489d7cfb32292b8bf7d9e50972590c73d5563a3e6ad80aaacb940f32"
+    },
+    {
+      "path": "battlefield.jpg",
+      "size": 200367,
+      "sha256": "3bd807b130bbc95141f803e2533fe1216cddadecbe959b2e5bb1bdb5a3bc0721"
+    },
+    {
+      "path": "castle.jpg",
+      "size": 48026,
+      "sha256": "2066eaaa6afc0597b4ec9f0192f98fc9afa8103d1c9769a07214adab523d8204"
+    },
+    {
+      "path": "cavalier.jpg",
+      "size": 30437,
+      "sha256": "187a7454062a5754927ed737ced09ad9f8f0279bb28e6f24e3a59ccf9578da9f"
+    },
+    {
+      "path": "chest.jpg",
+      "size": 37043,
+      "sha256": "f2b0ef6e8ea1aa80f22f32b5885d5a068965ffd4601f34b9f712481f7edf480d"
+    },
+    {
+      "path": "city.jpg",
+      "size": 184644,
+      "sha256": "e6ddb466c5d9b98b838964992fd601c3f266b3a66275256e007e12abae42fa79"
+    },
+    {
+      "path": "foam-mask.png",
+      "size": 688722,
+      "sha256": "5da99693994c9bb4739bc0bda43d290ec483e6e2176e4c38f95172c4a6db97f8"
+    },
+    {
+      "path": "game-controls.js",
+      "size": 4729,
+      "sha256": "1becb28dc8bb86bdfbba1e8b9ea8198a4005ddaeeed6d99c3e5ed645fd963936"
+    },
+    {
+      "path": "game-core.js",
+      "size": 60416,
+      "sha256": "928bf3404fc761a7cd62efc3a342e9f32861c6ebb57c6f709561eb779189025c"
+    },
+    {
+      "path": "game-data.js",
+      "size": 12878,
+      "sha256": "04c365711bd47fce4bf3adcdfd1d60119208a20e234d9010e38da8dd6efbaa68"
+    },
+    {
+      "path": "game-ui.js",
+      "size": 52064,
+      "sha256": "0827ca1644ad495e53b15e6c12f415d6f7fefb67c5ee36beab431812d9231f53"
+    },
+    {
+      "path": "griffin.jpg",
+      "size": 31874,
+      "sha256": "7ed77a04f36d409390a343bfa412305679bd75eb87f486a1b4370b34949ab1d8"
+    },
+    {
+      "path": "hero.jpg",
+      "size": 73237,
+      "sha256": "f5f8d6d3d28cd57219999ad97a3802db71712062095d1be407f90936376243bc"
+    },
+    {
+      "path": "icon-180.png",
+      "size": 1765,
+      "sha256": "84742dea79804b04f6d18cd070f675dce8f243f9b7e6eb7b5905124c826d1231"
+    },
+    {
+      "path": "icon-512.png",
+      "size": 5128,
+      "sha256": "3c8a36bd27bbfdb50ac0e48f9ff588df0676f12d73fe781ef789fba5e91e7aa2"
+    },
+    {
+      "path": "index.html",
+      "size": 24702,
+      "sha256": "0281c022c97e0dc6bb02fee71be7570bc9183f12f7e3a937af84e3bc62dffecb"
+    },
+    {
+      "path": "ivan-rider.png",
+      "size": 53659,
+      "sha256": "0e5fe09ebfe3f430258ed910fb5123980925d31cd0ce676d1a1813c92948ff17"
+    },
+    {
+      "path": "mage.jpg",
+      "size": 28745,
+      "sha256": "c4d4e344b5a93418085e5f7e32ddee5acffaacd983f5f041d84d723c5d7fb144"
+    },
+    {
+      "path": "manifest.webmanifest",
+      "size": 456,
+      "sha256": "3d5852617160f940bc6f8cde88dcd5ae41d60c63f535b18bf99ab43d35c19bee"
+    },
+    {
+      "path": "mine.jpg",
+      "size": 43232,
+      "sha256": "c623ce4b8903d8639fec46de93a8035c40b2c3ad26b89ed28c32a0ae4b7e48ac"
+    },
+    {
+      "path": "necromancer.jpg",
+      "size": 29393,
+      "sha256": "a454788edec70afa9747cea606066eae6d09ec7e8526b3e8508c628502211cec"
+    },
+    {
+      "path": "orc.jpg",
+      "size": 29548,
+      "sha256": "6955652d1252e99329dcba41058921acc639cffa6ed111881d75bb2727a91162"
+    },
+    {
+      "path": "package.json",
+      "size": 267,
+      "sha256": "23877404734cb020f75425de08da3b8cd3b84ad8ddf3885986698c6a1b4410c9"
+    },
+    {
+      "path": "pikeman.jpg",
+      "size": 29514,
+      "sha256": "01a571a868f27d31328b90d500ad34998e716cb8461aefe253c6776befc4dabd"
+    },
+    {
+      "path": "portal.jpg",
+      "size": 38451,
+      "sha256": "152768050007afae013f9ffa443226a790c7c15f692ffc42681595ecd3099619"
+    },
+    {
+      "path": "qa/8.7.1-manual-qa-fixes.md",
+      "size": 1349,
+      "sha256": "44ee71031251059bae29bd41add00f00c88174db18f19413f8daa2f59e964b00"
+    },
+    {
+      "path": "qa/8.7.2-battle-visibility-fix.md",
+      "size": 1453,
+      "sha256": "a5d2104b1a3ec18a0ad15b05d797d889d0f09179692954c4fd1727552893af9e"
+    },
+    {
+      "path": "qa/8.7.3-battle-fit-fix.md",
+      "size": 447,
+      "sha256": "74ab5a03ba770f264f586b04a177162dc9e2ae6d7ace9dc8f601eb9895f66f18"
+    },
+    {
+      "path": "qa/8.8.0-battle-2.md",
+      "size": 994,
+      "sha256": "2727882d1eaf2b5a51d70fdec761bfaf9ada604a04ef7ab6b6698657569f7ac1"
+    },
+    {
+      "path": "qa/8.8.1-animation-update.md",
+      "size": 933,
+      "sha256": "8266c7b4f8be0ddfde0e48cfe6d1c24aee2360bb2c0a133eeb5b45b51f798906"
+    },
+    {
+      "path": "qa/8.8.2-living-world.md",
+      "size": 1071,
+      "sha256": "5ffc512bc45eae36403d601d92d04de5d41055d33cd00af0bb43a7b2fb03fc20"
+    },
+    {
+      "path": "qa/8.8.3-living-world.md",
+      "size": 761,
+      "sha256": "612f094f2a0660087ab34b65962e1d3999d56c3cf8f2ffb176e38fa909537306"
+    },
+    {
+      "path": "qa/8.8.4-living-water-fix.md",
+      "size": 1126,
+      "sha256": "d1eee0b530517efc5d652d8b8c7783e11309b8538825293180e2a1d1f41e5d88"
+    },
+    {
+      "path": "qa/8.8.5-water-alpha-fix.md",
+      "size": 978,
+      "sha256": "13925e17d74de749aefc44d35a46049a3664fe6fb5b32bf20503e419e2dc0625"
+    },
+    {
+      "path": "qa/balance-preservation.json",
+      "size": 394,
+      "sha256": "5cd011816c2373034f58a00e909a79555f54ba56fca3d7685bf4f3b5033d3140"
+    },
+    {
+      "path": "qa/collision-map.jpg",
+      "size": 723196,
+      "sha256": "87599bc845457ca809fdf317ede14710937094f74de2c03ffc2885d16cedbf6a"
+    },
+    {
+      "path": "qa/diff-stat.json",
+      "size": 2214,
+      "sha256": "0026d7b230ee1ba043552c222a933b4ceb29e2b6c203465f61d0ff3cf254313e"
+    },
+    {
+      "path": "qa/full-fix-report.md",
+      "size": 41983,
+      "sha256": "44a96f64baab1d86f21fe6c25ea50a10f79d7787a2d2d6214afbf2780353c0b7"
+    },
+    {
+      "path": "qa/regression-results.json",
+      "size": 18617,
+      "sha256": "9ff6ac1f7a01040a1707312856036220225d22d9812b322a77d68419b0c06ad5"
+    },
+    {
+      "path": "qa/source-integrity.json",
+      "size": 680,
+      "sha256": "3c6d9ee1c677e4bd314dc8f4841af8e17dac9874d91f005615421878854986c9"
+    },
+    {
+      "path": "sawmill.jpg",
+      "size": 43476,
+      "sha256": "a7122b5b3382bdd4b8ccb6370cc424a4c8d61a1886bdc825ddfc33fcb9cd1890"
+    },
+    {
+      "path": "skeleton.jpg",
+      "size": 29281,
+      "sha256": "8f06a648fc24855e1599b9523a6874227fb507cc11b9577c5011f5e43b7e3489"
+    },
+    {
+      "path": "sw.js",
+      "size": 1671,
+      "sha256": "d02d1cf2fa6bd7abd2424b70b4a81527a06bf97aa3590df12378de60617dcd41"
+    },
+    {
+      "path": "tests/fixtures/balance865.json",
+      "size": 4550,
+      "sha256": "2f7d93c9c4347c590ddc7ddf88e818aea0d716d297c620bef2b83498594452ae"
+    },
+    {
+      "path": "tests/fixtures/legacy865.json",
+      "size": 9891,
+      "sha256": "2d3a525232539d6f27b05de91830991458b0be6ac47117dbf3d36bb65fdf3914"
+    },
+    {
+      "path": "tests/helpers.cjs",
+      "size": 1987,
+      "sha256": "2c3aa787f00b26b3c571889d310b40a1e18665923eba5748d8751ebed19d817a"
+    },
+    {
+      "path": "tests/mock-dom.cjs",
+      "size": 6520,
+      "sha256": "114e52d9a8a5c00502f31aaa6cedb81152fffa1fb70ea447fa3f20a7ce0da6c2"
+    },
+    {
+      "path": "tests/regression.cjs",
+      "size": 32480,
+      "sha256": "6587ef303d08745b3eab63330e49c7f45a83267ef17d17e981008fcc7cae8b60"
+    },
+    {
+      "path": "tests/ui-checks.cjs",
+      "size": 18053,
+      "sha256": "a0476af362c1f3f6fb004324b33869258c636fbd6139bcd8f6ca242446774d51"
+    },
+    {
+      "path": "varvara-map.png",
+      "size": 96066,
+      "sha256": "8aef61abac03a7d8906cf94c39c04491b5c121475f4314570baf3c7474ab1a4c"
+    },
+    {
+      "path": "water-mask.png",
+      "size": 509686,
+      "sha256": "2e91e46af68b74f296e5c080c32ea76ff2b4aa69cf6b31cc9b77e5ccda07cccb"
+    },
+    {
+      "path": "wolf.jpg",
+      "size": 25245,
+      "sha256": "a2cc85bce4cb1b8a9e81c2d3a5a606a7d189ac8d208c2dddb158afd7a3b6e69b"
+    },
+    {
+      "path": "world-v6.jpg",
+      "size": 2460338,
+      "sha256": "514d4df3fd5b1c6134080643064bd32581695e1f5a4f21c402d58a912afb3516"
+    }
+  ]
+}

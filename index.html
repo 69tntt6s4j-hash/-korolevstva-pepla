@@ -8,7 +8,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Королевства Пепла">
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="icon-180.png">
-<title>Королевства Пепла 8.8.4 — Living Water Fix</title>
+<title>Королевства Пепла 8.9.0 — Living Water II</title>
 <style>
 :root{--gold:#ddb45c;--text:#f4ecd8;--muted:#b8af9c;--line:#735b29;--panel:#101611;--panel2:#192219}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
@@ -63,7 +63,7 @@ button{font:inherit;color:inherit;touch-action:manipulation}
 .storyCard b{color:#f1cf79}.storyCard .reward{margin-top:5px;color:#a9d8a4}
 .regionTag{display:inline-block;padding:3px 7px;border:1px solid #58664e;border-radius:999px;font-size:10px;margin:2px;background:#121a13}
 
-/* 8.8.4 Living Water Fix */
+/* 8.8.5 Living Water II */
 .stack{transform-origin:50% 65%;will-change:transform,filter}.cell.sel .stack{animation:stackIdle 1.6s ease-in-out infinite}.damageFloat{position:absolute;z-index:8;left:50%;top:30%;pointer-events:none;font:800 clamp(12px,3.6vw,20px)/1 sans-serif;color:#ffe0b0;text-shadow:0 2px 4px #000,0 0 8px #8b190f}.deathBurst{position:absolute;z-index:7;left:50%;top:50%;width:48%;aspect-ratio:1;border-radius:50%;pointer-events:none;background:radial-gradient(circle,#fff3 0 12%,#e39b5f66 30%,#1110 70%)}
 @keyframes stackIdle{0%,100%{transform:translateY(0) scale(1)}50%{transform:translateY(-1.5px) scale(1.018)}}
 @media(prefers-reduced-motion:reduce){.cell.sel .stack{animation:none}.stack{transition:none}}
@@ -95,6 +95,7 @@ button:focus-visible,[tabindex]:focus-visible{outline:3px solid #f5d47b;outline-
 
 @media(max-width:600px){#battleModal{padding:calc(2px + env(safe-area-inset-top)) max(2px,env(safe-area-inset-right)) calc(2px + env(safe-area-inset-bottom)) max(2px,env(safe-area-inset-left));align-items:center}#battleModal .dialog{width:100%;max-width:none;max-height:calc(100dvh - 4px - env(safe-area-inset-top) - env(safe-area-inset-bottom));padding:5px;border-radius:8px}#battleModal .battleArt{width:100%;aspect-ratio:8/5}#battleModal .bgrid{inset:2px;gap:1px}#battleModal .turnbar{margin:5px 0}#battleModal .battleStatus{margin-top:4px;padding:5px}#battleModal .grid.g2{gap:5px;margin-top:5px!important}#battleModal .btn{min-height:42px;padding:6px;font-size:13px}#battleModal .title{font-size:17px;margin-bottom:4px}#battleModal .small{font-size:11px}}
 @media(max-height:560px) and (orientation:landscape){#battleModal{align-items:flex-start}#battleModal .dialog{max-height:100dvh;overflow:auto}#battleModal .battleArt{aspect-ratio:8/4.25}#battleModal .turnbar{display:none}#battleModal .battleStatus{font-size:11px}#battleModal .btn{min-height:36px;padding:4px}}
+.buildingWrap{position:relative}.buildingWrap .building{width:100%;height:100%;padding-right:48px}.helpBtn{position:absolute;right:7px;top:7px;z-index:2;border:1px solid #9c8246;border-radius:50%;width:34px;height:34px;min-width:34px;padding:0;background:#111a12;color:#f5d47b;font-weight:900;font-size:18px}.upgradeCard{text-align:left;display:grid;grid-template-columns:54px 1fr;gap:8px;align-items:center}.upgradeCard img{width:54px;height:64px;object-fit:cover;border-radius:6px}.upgradeCard .level{color:#f1cf79;font-weight:800}
 @media(prefers-reduced-motion:reduce){.toast{transition:none}}
 </style>
 </head>
@@ -110,7 +111,7 @@ button:focus-visible,[tabindex]:focus-visible{outline:3px solid #f5d47b;outline-
 
 <section class="screen" id="s-hero"><div class="panel"><div class="title">Герои</div><div class="heroSelect" id="heroSelect"></div></div><div class="panel heroPane"><img id="heroPortrait" alt=""><div><div class="title" id="heroName"></div><div class="small" id="heroClass"></div><div class="row"><span>Атака</span><b id="atk"></b></div><div class="row"><span>Защита</span><b id="def"></b></div><div class="row"><span>Магия</span><b id="magic"></b></div><div class="row"><span>Знания</span><b id="knowledge"></b></div><div class="small">Ур. <b id="level"></b> · Опыт <b id="xp"></b></div></div></div><div class="panel"><div class="title">Армия</div><div class="grid g3" id="army"></div></div><div class="panel"><div class="title">Навыки</div><div id="skills"></div></div><div class="panel"><div class="title">Артефакты</div><div id="artifacts"></div></div><div class="panel"><div class="title">Военный совет</div><div class="small" style="margin-bottom:7px">Передача войск между Иваном и Варварой доступна, когда они стоят рядом. Найм вдали от города пополняет гарнизон; забрать его можно у города.</div><div id="transferPanel"></div></div></section>
 
-<section class="screen" id="s-town"><div class="panel"><div class="cityArt"></div><div class="title" style="margin-top:8px">Стальной Холм</div><div class="small">Столица северного королевства</div></div><div class="panel"><div class="title">Экономика города</div><div class="econGrid" id="econGrid"></div><div class="small" id="econHint" style="margin-top:7px"></div></div><div class="panel"><div class="title">Гарнизон</div><div id="garrison"></div></div><div class="panel"><div class="title">Строительство</div><div class="grid g2" id="buildings"></div></div><div class="panel"><div class="title">Найм</div><div class="grid g3" id="recruits"></div></div></section>
+<section class="screen" id="s-town"><div class="panel"><div class="cityArt"></div><div class="title" style="margin-top:8px">Стальной Холм</div><div class="small">Столица северного королевства</div></div><div class="panel"><div class="title">Экономика города</div><div class="econGrid" id="econGrid"></div><div class="small" id="econHint" style="margin-top:7px"></div></div><div class="panel"><div class="title">Гарнизон</div><div id="garrison"></div></div><div class="panel"><div class="title">Строительство</div><div class="grid g2" id="buildings"></div></div><div class="panel"><div class="title">Развитие войск</div><div class="small" style="margin-bottom:8px">Улучшения действуют на всех текущих и будущих бойцов этого типа.</div><div class="grid g2" id="upgrades"></div></div><div class="panel"><div class="title">Найм</div><div class="grid g3" id="recruits"></div></div></section>
 
 <section class="screen" id="s-magic"><div class="panel"><div class="title">Книга магии</div><div>Мана: <b id="mana"></b>/<b id="manaMax"></b></div></div><div class="panel grid" id="spells"></div></section>
 
@@ -140,7 +141,8 @@ button:focus-visible,[tabindex]:focus-visible{outline:3px solid #f5d47b;outline-
 
 
 
+<div class="modal hidden" id="buildingInfoModal"><div class="dialog"><div class="row"><h2 id="buildingInfoName">Постройка</h2><button class="miniBtn" id="buildingInfoClose">✕</button></div><div id="buildingInfoBody"></div><button class="btn" id="buildingInfoClose2">Закрыть</button></div></div>
 <div class="modal hidden" id="objectListModal"><div class="dialog"><h2>Разведанные объекты</h2><div class="objectList" id="knownObjects"></div><button class="btn" id="objectListClose">Закрыть</button></div></div>
-<div class="modal" id="startupModal"><div class="dialog"><h2>Королевства Пепла 8.8.4</h2><p id="startupMessage" role="status">Загрузка игры…</p><button class="btn" id="retryLoad" hidden>Повторить загрузку</button><button class="btn" id="recoveryImport" hidden>Импортировать сохранение</button><button class="btn red" id="recoveryNew" hidden>Начать новую игру</button></div></div>
+<div class="modal" id="startupModal"><div class="dialog"><h2>Королевства Пепла 8.9.0</h2><p id="startupMessage" role="status">Загрузка игры…</p><button class="btn" id="retryLoad" hidden>Повторить загрузку</button><button class="btn" id="recoveryImport" hidden>Импортировать сохранение</button><button class="btn red" id="recoveryNew" hidden>Начать новую игру</button></div></div>
 <script src="game-data.js"></script><script src="game-core.js"></script><script src="game-controls.js"></script><script src="game-ui.js"></script>
 </body></html>
