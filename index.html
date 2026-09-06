@@ -8,7 +8,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Королевства Пепла">
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="icon-180.png">
-<title>Королевства Пепла 8.7.0-full-fix — Kingdom Edition</title>
+<title>Королевства Пепла 8.7.2 — Kingdom Edition</title>
 <style>
 :root{--gold:#ddb45c;--text:#f4ecd8;--muted:#b8af9c;--line:#735b29;--panel:#101611;--panel2:#192219}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
@@ -77,6 +77,8 @@ button{font:inherit;color:inherit;touch-action:manipulation}
 <style>
 .app{height:100vh;height:100dvh}.main{isolation:isolate}.top .r{font-size:11px}.nav button{font-size:11px}
 button:focus-visible,[tabindex]:focus-visible{outline:3px solid #f5d47b;outline-offset:2px}button:disabled{cursor:not-allowed;opacity:.48}
+/* 8.7.2: tactical cells may be disabled as controls but their occupants must remain fully visible. */
+.bgrid .cell:disabled{opacity:1;cursor:default}.stack{filter:saturate(1.08) contrast(1.06);}
 .zoom button,.roundBtn{width:44px;height:44px}.mapBtns{grid-template-columns:repeat(2,44px)}.miniBtn{min-height:44px;min-width:44px}
 .mapObjectList{position:absolute;top:10px;right:10px;z-index:9;background:#101710de;max-width:55%;min-height:44px}
 .mapHud{align-items:flex-end}.heroCard{width:205px;max-width:calc(100% - 106px)}.heroCard b{font-size:14px}.heroCard .small{font-size:11px}
@@ -131,6 +133,6 @@ button:focus-visible,[tabindex]:focus-visible{outline:3px solid #f5d47b;outline-
 
 
 <div class="modal hidden" id="objectListModal"><div class="dialog"><h2>Разведанные объекты</h2><div class="objectList" id="knownObjects"></div><button class="btn" id="objectListClose">Закрыть</button></div></div>
-<div class="modal" id="startupModal"><div class="dialog"><h2>Королевства Пепла 8.7.0</h2><p id="startupMessage" role="status">Загрузка игры…</p><button class="btn" id="retryLoad" hidden>Повторить загрузку</button><button class="btn" id="recoveryImport" hidden>Импортировать сохранение</button><button class="btn red" id="recoveryNew" hidden>Начать новую игру</button></div></div>
+<div class="modal" id="startupModal"><div class="dialog"><h2>Королевства Пепла 8.7.2</h2><p id="startupMessage" role="status">Загрузка игры…</p><button class="btn" id="retryLoad" hidden>Повторить загрузку</button><button class="btn" id="recoveryImport" hidden>Импортировать сохранение</button><button class="btn red" id="recoveryNew" hidden>Начать новую игру</button></div></div>
 <script src="game-data.js"></script><script src="game-core.js"></script><script src="game-controls.js"></script><script src="game-ui.js"></script>
 </body></html>

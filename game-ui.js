@@ -464,13 +464,14 @@
         gold:'🪙',wood:'🪵',ore:'🪨',gems:'💎'
       }
       )[k]+'<b>'+n+'</b><span class="small">/день</span></div>').join('');
-      this.$('econHint').textContent=(s.build.market?'Рынок: +100 золота в день. ':'Рынок даёт +100 золота в день. ')+(local?'Найм пополняет армию '+h.name+'.':'Герой далеко: найм пополняет гарнизон.');
-      this.$('garrison').innerHTML=Object.keys(D.units).map(k=>'<div class="garrisonRow"><span>'+D.units[k].n+': <b>'+s.garrison[k]+'</b></span><button class="miniBtn" data-garrison="'+k+':in" '+(!local||!h.army[k]?'disabled':'')+' aria-label="В гарнизон: '+D.units[k].n+'">+1</button><button class="miniBtn" data-garrison="'+k+':out" '+(!local||!s.garrison[k]?'disabled':'')+' aria-label="Забрать из гарнизона: '+D.units[k].n+'">−1</button></div>').join('');
+      this.$('econHint').textContent=(s.build.market?'Рынок: +100 золота в день. ':'Рынок даёт +100 золота в день. ')+'Найм всегда пополняет армию выбранного героя: '+h.name+'.';
+      const garAny=Object.keys(D.units).some(k=>s.garrison[k]>0),heroAny=Object.keys(D.units).some(k=>h.army[k]>0);
+      this.$('garrison').innerHTML='<div class="row" style="gap:8px;flex-wrap:wrap"><button class="btn" data-garrison-all="out" '+(!local||!garAny?'disabled':'')+'>Всех → герой</button><button class="btn" data-garrison-all="in" '+(!local||!heroAny?'disabled':'')+'>Всех → гарнизон</button></div>'+Object.keys(D.units).map(k=>'<div class="garrisonRow"><span>'+D.units[k].n+': <b>'+s.garrison[k]+'</b></span><button class="miniBtn" data-garrison="'+k+':in" '+(!local||!h.army[k]?'disabled':'')+' aria-label="В гарнизон: '+D.units[k].n+'">+1</button><button class="miniBtn" data-garrison="'+k+':out" '+(!local||!s.garrison[k]?'disabled':'')+' aria-label="Забрать из гарнизона: '+D.units[k].n+'">−1</button></div>').join('');
       for(const bt of this.$('garrison').querySelectorAll('[data-garrison]'))bt.onclick=()=>{
         const [k,d]=bt.dataset.garrison.split(':');
         this.engine.garrison(h.id,k,d)
-      }
-      ;
+      };
+      for(const bt of this.$('garrison').querySelectorAll('[data-garrison-all]'))bt.onclick=()=>this.engine.garrisonAll(h.id,bt.dataset.garrisonAll);
       this.$('buildings').innerHTML=Object.entries(D.builds).map(([k,d])=>{
         let reason=s.build[k]?(k==='citadel'?'Построено ранее; эффект не определён':'Построено'):k==='citadel'?'Недоступна: эффект не определён':d.req&&!s.build[d.req]?'Нужно: '+D.builds[d.req].n:s.gold<d.cost[0]||s.wood<d.cost[1]||s.ore<d.cost[2]?'Не хватает ресурсов':'';
         return '<button class="btn building '+(s.build[k]?'built':'')+'" data-build="'+k+'" '+(reason?'disabled':'')+'><b>'+d.n+'</b><br><span class="small">'+(reason||d.cost[0]+'🪙 '+d.cost[1]+'🪵 '+d.cost[2]+'🪨')+'</span></button>'

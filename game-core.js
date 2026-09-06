@@ -792,9 +792,10 @@
       if(s.gold<u.cost)return this.fail('Не хватает золота');
       s.gold-=u.cost;
       s.avail[id]-=u.qty;
-      const local=atTown(s,heroId),target=local?s.heroes[heroId].army:s.garrison;
-      target[id]+=u.qty;
-      this.log(u.n+' +'+u.qty+(local?' — '+s.heroes[heroId].name:' — гарнизон Стального Холма'));
+      const hero=s.heroes[heroId];
+      if(!hero)return this.fail('Неизвестный герой');
+      hero.army[id]+=u.qty;
+      this.log(u.n+' +'+u.qty+' — '+hero.name);
       return this.commit()
     }
     transfer(from,to,type,count=1){
@@ -816,6 +817,23 @@
       if(!n)return this.fail('Нет воинов для передачи');
       from[type]-=n;
       to[type]+=n;
+      return this.commit()
+    }
+    garrisonAll(heroId,direction){
+      if(!this.idle())return this.fail('Сначала завершите событие');
+      if(!['in','out'].includes(direction))return this.fail('Неверная передача');
+      if(!atTown(this.s,heroId))return this.fail('Для передачи гарнизона герой должен быть у города');
+      const hero=this.s.heroes[heroId].army,gar=this.s.garrison,from=direction==='in'?hero:gar,to=direction==='in'?gar:hero;
+      let moved=0;
+      for(const type of troopTypes){
+        const n=from[type]||0;
+        if(!n)continue;
+        from[type]-=n;
+        to[type]+=n;
+        moved+=n
+      }
+      if(!moved)return this.fail(direction==='out'?'Гарнизон пуст':'Армия героя пуста');
+      this.log((direction==='out'?'Вся армия гарнизона передана герою ':'Вся армия героя передана в гарнизон: ')+this.s.heroes[heroId].name);
       return this.commit()
     }
     setSound(on){

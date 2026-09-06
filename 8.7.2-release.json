@@ -1,0 +1,236 @@
+{
+  "version": "8.7.2",
+  "tests": "103 PASS / 0 FAIL",
+  "files": [
+    {
+      "path": "README.md",
+      "bytes": 5811,
+      "sha256": "08acaa6c5ce54a9d75657b448b0452940da36a2db9a78cb49160332946fa6b96"
+    },
+    {
+      "path": "VERSION-8.7.2.txt",
+      "bytes": 776,
+      "sha256": "ed479d3a4d5eec2d8053e59f05b61517c8ef3d9aea022783c6c1cc40e618141b"
+    },
+    {
+      "path": "archer.jpg",
+      "bytes": 26442,
+      "sha256": "2c80e9f2489d7cfb32292b8bf7d9e50972590c73d5563a3e6ad80aaacb940f32"
+    },
+    {
+      "path": "battlefield.jpg",
+      "bytes": 200367,
+      "sha256": "3bd807b130bbc95141f803e2533fe1216cddadecbe959b2e5bb1bdb5a3bc0721"
+    },
+    {
+      "path": "castle.jpg",
+      "bytes": 48026,
+      "sha256": "2066eaaa6afc0597b4ec9f0192f98fc9afa8103d1c9769a07214adab523d8204"
+    },
+    {
+      "path": "cavalier.jpg",
+      "bytes": 30437,
+      "sha256": "187a7454062a5754927ed737ced09ad9f8f0279bb28e6f24e3a59ccf9578da9f"
+    },
+    {
+      "path": "chest.jpg",
+      "bytes": 37043,
+      "sha256": "f2b0ef6e8ea1aa80f22f32b5885d5a068965ffd4601f34b9f712481f7edf480d"
+    },
+    {
+      "path": "city.jpg",
+      "bytes": 184644,
+      "sha256": "e6ddb466c5d9b98b838964992fd601c3f266b3a66275256e007e12abae42fa79"
+    },
+    {
+      "path": "game-controls.js",
+      "bytes": 4311,
+      "sha256": "ee182bddfb8b117db3c311562c57c3d5b4b5114694d75a3865b17400f4c3a942"
+    },
+    {
+      "path": "game-core.js",
+      "bytes": 59652,
+      "sha256": "cdc30da417f8ffa2c0478f63b2d4128f49c50a69c407ae724859f5e1dc1cf8c9"
+    },
+    {
+      "path": "game-data.js",
+      "bytes": 11764,
+      "sha256": "e7fa2a2dced5a6421ec256bfa8040b299a94984fc20a74c50bfb25a8004d5216"
+    },
+    {
+      "path": "game-ui.js",
+      "bytes": 44513,
+      "sha256": "f07b3785de169c6a43ae18bdf817ead738be150b8355b30c4986202e749ca42c"
+    },
+    {
+      "path": "griffin.jpg",
+      "bytes": 31874,
+      "sha256": "7ed77a04f36d409390a343bfa412305679bd75eb87f486a1b4370b34949ab1d8"
+    },
+    {
+      "path": "hero.jpg",
+      "bytes": 73237,
+      "sha256": "f5f8d6d3d28cd57219999ad97a3802db71712062095d1be407f90936376243bc"
+    },
+    {
+      "path": "icon-180.png",
+      "bytes": 1765,
+      "sha256": "84742dea79804b04f6d18cd070f675dce8f243f9b7e6eb7b5905124c826d1231"
+    },
+    {
+      "path": "icon-512.png",
+      "bytes": 5128,
+      "sha256": "3c8a36bd27bbfdb50ac0e48f9ff588df0676f12d73fe781ef789fba5e91e7aa2"
+    },
+    {
+      "path": "index.html",
+      "bytes": 22726,
+      "sha256": "521d12fbc6a1f793aa53b080bd565d6d5cc18d4a70cb10cbca50aa204bb0ffe8"
+    },
+    {
+      "path": "ivan-rider.png",
+      "bytes": 53659,
+      "sha256": "0e5fe09ebfe3f430258ed910fb5123980925d31cd0ce676d1a1813c92948ff17"
+    },
+    {
+      "path": "mage.jpg",
+      "bytes": 28745,
+      "sha256": "c4d4e344b5a93418085e5f7e32ddee5acffaacd983f5f041d84d723c5d7fb144"
+    },
+    {
+      "path": "manifest.webmanifest",
+      "bytes": 456,
+      "sha256": "e194c7a475d70abacbbfeda1c7a11e2fec17aad2b9b72a4b369b31ec10b5ec04"
+    },
+    {
+      "path": "mine.jpg",
+      "bytes": 43232,
+      "sha256": "c623ce4b8903d8639fec46de93a8035c40b2c3ad26b89ed28c32a0ae4b7e48ac"
+    },
+    {
+      "path": "necromancer.jpg",
+      "bytes": 29393,
+      "sha256": "a454788edec70afa9747cea606066eae6d09ec7e8526b3e8508c628502211cec"
+    },
+    {
+      "path": "orc.jpg",
+      "bytes": 29548,
+      "sha256": "6955652d1252e99329dcba41058921acc639cffa6ed111881d75bb2727a91162"
+    },
+    {
+      "path": "package.json",
+      "bytes": 267,
+      "sha256": "8d16d97910d98554fffdd7d9006bfabdf1fb8e2b1897fd7af3bd78dd88fc0f4e"
+    },
+    {
+      "path": "pikeman.jpg",
+      "bytes": 29514,
+      "sha256": "01a571a868f27d31328b90d500ad34998e716cb8461aefe253c6776befc4dabd"
+    },
+    {
+      "path": "portal.jpg",
+      "bytes": 38451,
+      "sha256": "152768050007afae013f9ffa443226a790c7c15f692ffc42681595ecd3099619"
+    },
+    {
+      "path": "qa/8.7.1-manual-qa-fixes.md",
+      "bytes": 1349,
+      "sha256": "44ee71031251059bae29bd41add00f00c88174db18f19413f8daa2f59e964b00"
+    },
+    {
+      "path": "qa/8.7.2-battle-visibility-fix.md",
+      "bytes": 1453,
+      "sha256": "a5d2104b1a3ec18a0ad15b05d797d889d0f09179692954c4fd1727552893af9e"
+    },
+    {
+      "path": "qa/balance-preservation.json",
+      "bytes": 394,
+      "sha256": "5cd011816c2373034f58a00e909a79555f54ba56fca3d7685bf4f3b5033d3140"
+    },
+    {
+      "path": "qa/collision-map.jpg",
+      "bytes": 723196,
+      "sha256": "87599bc845457ca809fdf317ede14710937094f74de2c03ffc2885d16cedbf6a"
+    },
+    {
+      "path": "qa/diff-stat.json",
+      "bytes": 2214,
+      "sha256": "0026d7b230ee1ba043552c222a933b4ceb29e2b6c203465f61d0ff3cf254313e"
+    },
+    {
+      "path": "qa/full-fix-report.md",
+      "bytes": 41983,
+      "sha256": "44a96f64baab1d86f21fe6c25ea50a10f79d7787a2d2d6214afbf2780353c0b7"
+    },
+    {
+      "path": "qa/regression-results.json",
+      "bytes": 16440,
+      "sha256": "12842ba2c6374879385c5872a52f11b79d3801ebf1ca863f89c6193ebddb7310"
+    },
+    {
+      "path": "qa/source-integrity.json",
+      "bytes": 680,
+      "sha256": "3c6d9ee1c677e4bd314dc8f4841af8e17dac9874d91f005615421878854986c9"
+    },
+    {
+      "path": "sawmill.jpg",
+      "bytes": 43476,
+      "sha256": "a7122b5b3382bdd4b8ccb6370cc424a4c8d61a1886bdc825ddfc33fcb9cd1890"
+    },
+    {
+      "path": "skeleton.jpg",
+      "bytes": 29281,
+      "sha256": "8f06a648fc24855e1599b9523a6874227fb507cc11b9577c5011f5e43b7e3489"
+    },
+    {
+      "path": "sw.js",
+      "bytes": 1638,
+      "sha256": "4f84085c6518de4099b47d37e42c65bdd43fa6c9df125e480b39d5d2fea8d4ea"
+    },
+    {
+      "path": "tests/fixtures/balance865.json",
+      "bytes": 4550,
+      "sha256": "2f7d93c9c4347c590ddc7ddf88e818aea0d716d297c620bef2b83498594452ae"
+    },
+    {
+      "path": "tests/fixtures/legacy865.json",
+      "bytes": 9891,
+      "sha256": "2d3a525232539d6f27b05de91830991458b0be6ac47117dbf3d36bb65fdf3914"
+    },
+    {
+      "path": "tests/helpers.cjs",
+      "bytes": 1987,
+      "sha256": "2c3aa787f00b26b3c571889d310b40a1e18665923eba5748d8751ebed19d817a"
+    },
+    {
+      "path": "tests/mock-dom.cjs",
+      "bytes": 6520,
+      "sha256": "114e52d9a8a5c00502f31aaa6cedb81152fffa1fb70ea447fa3f20a7ce0da6c2"
+    },
+    {
+      "path": "tests/regression.cjs",
+      "bytes": 26375,
+      "sha256": "f66ac6211da2745a1a79f4c4fcf2a37268b945104457833db3a43c178c746162"
+    },
+    {
+      "path": "tests/ui-checks.cjs",
+      "bytes": 18018,
+      "sha256": "158a1ec078e65e8d576e590120e3c9752a164fb64f9e24837e4e01f6351c8d9e"
+    },
+    {
+      "path": "varvara-map.png",
+      "bytes": 96066,
+      "sha256": "8aef61abac03a7d8906cf94c39c04491b5c121475f4314570baf3c7474ab1a4c"
+    },
+    {
+      "path": "wolf.jpg",
+      "bytes": 25245,
+      "sha256": "a2cc85bce4cb1b8a9e81c2d3a5a606a7d189ac8d208c2dddb158afd7a3b6e69b"
+    },
+    {
+      "path": "world-v6.jpg",
+      "bytes": 2460338,
+      "sha256": "514d4df3fd5b1c6134080643064bd32581695e1f5a4f21c402d58a912afb3516"
+    }
+  ]
+}
