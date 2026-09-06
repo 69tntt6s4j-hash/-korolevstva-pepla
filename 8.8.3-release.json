@@ -1,0 +1,266 @@
+{
+  "version": "8.8.3",
+  "name": "Living World Update II",
+  "files": [
+    {
+      "path": "8.8.2-release.json",
+      "sha256": "c0d3af3143ede259e55941b3dbaad281d0387845ea82defd4e3e065ca652e4ef",
+      "size": 7729
+    },
+    {
+      "path": "README.md",
+      "sha256": "3778887db7216228e7cb1d8c37299ee7dfc9fac4a206b3b52979710944fb401f",
+      "size": 6789
+    },
+    {
+      "path": "VERSION-8.8.3.txt",
+      "sha256": "afb90d803df389c5505d15f8bfc9ad4ad44b9e79b62f9ffc011488e21af1124a",
+      "size": 67
+    },
+    {
+      "path": "archer.jpg",
+      "sha256": "2c80e9f2489d7cfb32292b8bf7d9e50972590c73d5563a3e6ad80aaacb940f32",
+      "size": 26442
+    },
+    {
+      "path": "battlefield.jpg",
+      "sha256": "3bd807b130bbc95141f803e2533fe1216cddadecbe959b2e5bb1bdb5a3bc0721",
+      "size": 200367
+    },
+    {
+      "path": "castle.jpg",
+      "sha256": "2066eaaa6afc0597b4ec9f0192f98fc9afa8103d1c9769a07214adab523d8204",
+      "size": 48026
+    },
+    {
+      "path": "cavalier.jpg",
+      "sha256": "187a7454062a5754927ed737ced09ad9f8f0279bb28e6f24e3a59ccf9578da9f",
+      "size": 30437
+    },
+    {
+      "path": "chest.jpg",
+      "sha256": "f2b0ef6e8ea1aa80f22f32b5885d5a068965ffd4601f34b9f712481f7edf480d",
+      "size": 37043
+    },
+    {
+      "path": "city.jpg",
+      "sha256": "e6ddb466c5d9b98b838964992fd601c3f266b3a66275256e007e12abae42fa79",
+      "size": 184644
+    },
+    {
+      "path": "game-controls.js",
+      "sha256": "1becb28dc8bb86bdfbba1e8b9ea8198a4005ddaeeed6d99c3e5ed645fd963936",
+      "size": 4729
+    },
+    {
+      "path": "game-core.js",
+      "sha256": "928bf3404fc761a7cd62efc3a342e9f32861c6ebb57c6f709561eb779189025c",
+      "size": 60416
+    },
+    {
+      "path": "game-data.js",
+      "sha256": "fb3f6653a6ebba7492c18d0b8cee9470f3a0035303323dd35338153592118bcc",
+      "size": 12845
+    },
+    {
+      "path": "game-ui.js",
+      "sha256": "ec210180cf482c097421330f86b4a13485943d6d5eda6a95c6c7aa49fc7568c6",
+      "size": 53403
+    },
+    {
+      "path": "griffin.jpg",
+      "sha256": "7ed77a04f36d409390a343bfa412305679bd75eb87f486a1b4370b34949ab1d8",
+      "size": 31874
+    },
+    {
+      "path": "hero.jpg",
+      "sha256": "f5f8d6d3d28cd57219999ad97a3802db71712062095d1be407f90936376243bc",
+      "size": 73237
+    },
+    {
+      "path": "icon-180.png",
+      "sha256": "84742dea79804b04f6d18cd070f675dce8f243f9b7e6eb7b5905124c826d1231",
+      "size": 1765
+    },
+    {
+      "path": "icon-512.png",
+      "sha256": "3c8a36bd27bbfdb50ac0e48f9ff588df0676f12d73fe781ef789fba5e91e7aa2",
+      "size": 5128
+    },
+    {
+      "path": "index.html",
+      "sha256": "5a25fdb2c51cd429fc744ab311e86053eb8c6c9c55f802ef4076af4fd7455786",
+      "size": 24716
+    },
+    {
+      "path": "ivan-rider.png",
+      "sha256": "0e5fe09ebfe3f430258ed910fb5123980925d31cd0ce676d1a1813c92948ff17",
+      "size": 53659
+    },
+    {
+      "path": "mage.jpg",
+      "sha256": "c4d4e344b5a93418085e5f7e32ddee5acffaacd983f5f041d84d723c5d7fb144",
+      "size": 28745
+    },
+    {
+      "path": "manifest.webmanifest",
+      "sha256": "ba5e853af78876acbf9fc57f0e24a651f9e2cb4a7b5e168f40746feb18cbe983",
+      "size": 456
+    },
+    {
+      "path": "mine.jpg",
+      "sha256": "c623ce4b8903d8639fec46de93a8035c40b2c3ad26b89ed28c32a0ae4b7e48ac",
+      "size": 43232
+    },
+    {
+      "path": "necromancer.jpg",
+      "sha256": "a454788edec70afa9747cea606066eae6d09ec7e8526b3e8508c628502211cec",
+      "size": 29393
+    },
+    {
+      "path": "orc.jpg",
+      "sha256": "6955652d1252e99329dcba41058921acc639cffa6ed111881d75bb2727a91162",
+      "size": 29548
+    },
+    {
+      "path": "package.json",
+      "sha256": "08cdff32a8579aaa8e7cd0f95138ed34cde7af68b9ec15438efc202eff0b1d4a",
+      "size": 267
+    },
+    {
+      "path": "pikeman.jpg",
+      "sha256": "01a571a868f27d31328b90d500ad34998e716cb8461aefe253c6776befc4dabd",
+      "size": 29514
+    },
+    {
+      "path": "portal.jpg",
+      "sha256": "152768050007afae013f9ffa443226a790c7c15f692ffc42681595ecd3099619",
+      "size": 38451
+    },
+    {
+      "path": "qa/8.7.1-manual-qa-fixes.md",
+      "sha256": "44ee71031251059bae29bd41add00f00c88174db18f19413f8daa2f59e964b00",
+      "size": 1349
+    },
+    {
+      "path": "qa/8.7.2-battle-visibility-fix.md",
+      "sha256": "a5d2104b1a3ec18a0ad15b05d797d889d0f09179692954c4fd1727552893af9e",
+      "size": 1453
+    },
+    {
+      "path": "qa/8.7.3-battle-fit-fix.md",
+      "sha256": "74ab5a03ba770f264f586b04a177162dc9e2ae6d7ace9dc8f601eb9895f66f18",
+      "size": 447
+    },
+    {
+      "path": "qa/8.8.0-battle-2.md",
+      "sha256": "2727882d1eaf2b5a51d70fdec761bfaf9ada604a04ef7ab6b6698657569f7ac1",
+      "size": 994
+    },
+    {
+      "path": "qa/8.8.1-animation-update.md",
+      "sha256": "8266c7b4f8be0ddfde0e48cfe6d1c24aee2360bb2c0a133eeb5b45b51f798906",
+      "size": 933
+    },
+    {
+      "path": "qa/8.8.2-living-world.md",
+      "sha256": "5ffc512bc45eae36403d601d92d04de5d41055d33cd00af0bb43a7b2fb03fc20",
+      "size": 1071
+    },
+    {
+      "path": "qa/8.8.3-living-world.md",
+      "sha256": "612f094f2a0660087ab34b65962e1d3999d56c3cf8f2ffb176e38fa909537306",
+      "size": 761
+    },
+    {
+      "path": "qa/balance-preservation.json",
+      "sha256": "5cd011816c2373034f58a00e909a79555f54ba56fca3d7685bf4f3b5033d3140",
+      "size": 394
+    },
+    {
+      "path": "qa/collision-map.jpg",
+      "sha256": "87599bc845457ca809fdf317ede14710937094f74de2c03ffc2885d16cedbf6a",
+      "size": 723196
+    },
+    {
+      "path": "qa/diff-stat.json",
+      "sha256": "0026d7b230ee1ba043552c222a933b4ceb29e2b6c203465f61d0ff3cf254313e",
+      "size": 2214
+    },
+    {
+      "path": "qa/full-fix-report.md",
+      "sha256": "44a96f64baab1d86f21fe6c25ea50a10f79d7787a2d2d6214afbf2780353c0b7",
+      "size": 41983
+    },
+    {
+      "path": "qa/regression-results.json",
+      "sha256": "e8cb6999784667c47074c79ef24c3190108c2a429942e60756684e71f7bc8809",
+      "size": 18295
+    },
+    {
+      "path": "qa/source-integrity.json",
+      "sha256": "3c6d9ee1c677e4bd314dc8f4841af8e17dac9874d91f005615421878854986c9",
+      "size": 680
+    },
+    {
+      "path": "sawmill.jpg",
+      "sha256": "a7122b5b3382bdd4b8ccb6370cc424a4c8d61a1886bdc825ddfc33fcb9cd1890",
+      "size": 43476
+    },
+    {
+      "path": "skeleton.jpg",
+      "sha256": "8f06a648fc24855e1599b9523a6874227fb507cc11b9577c5011f5e43b7e3489",
+      "size": 29281
+    },
+    {
+      "path": "sw.js",
+      "sha256": "bb292cbbafd801dec0918c5dc6c0e476e74167860e02ecfce19d90df412eae12",
+      "size": 1638
+    },
+    {
+      "path": "tests/fixtures/balance865.json",
+      "sha256": "2f7d93c9c4347c590ddc7ddf88e818aea0d716d297c620bef2b83498594452ae",
+      "size": 4550
+    },
+    {
+      "path": "tests/fixtures/legacy865.json",
+      "sha256": "2d3a525232539d6f27b05de91830991458b0be6ac47117dbf3d36bb65fdf3914",
+      "size": 9891
+    },
+    {
+      "path": "tests/helpers.cjs",
+      "sha256": "2c3aa787f00b26b3c571889d310b40a1e18665923eba5748d8751ebed19d817a",
+      "size": 1987
+    },
+    {
+      "path": "tests/mock-dom.cjs",
+      "sha256": "114e52d9a8a5c00502f31aaa6cedb81152fffa1fb70ea447fa3f20a7ce0da6c2",
+      "size": 6520
+    },
+    {
+      "path": "tests/regression.cjs",
+      "sha256": "3d3c65ba20fd6f0b13920b07c58fda952cd378a4c40a324afe5226dbaa617a17",
+      "size": 31411
+    },
+    {
+      "path": "tests/ui-checks.cjs",
+      "sha256": "a0476af362c1f3f6fb004324b33869258c636fbd6139bcd8f6ca242446774d51",
+      "size": 18053
+    },
+    {
+      "path": "varvara-map.png",
+      "sha256": "8aef61abac03a7d8906cf94c39c04491b5c121475f4314570baf3c7474ab1a4c",
+      "size": 96066
+    },
+    {
+      "path": "wolf.jpg",
+      "sha256": "a2cc85bce4cb1b8a9e81c2d3a5a606a7d189ac8d208c2dddb158afd7a3b6e69b",
+      "size": 25245
+    },
+    {
+      "path": "world-v6.jpg",
+      "sha256": "514d4df3fd5b1c6134080643064bd32581695e1f5a4f21c402d58a912afb3516",
+      "size": 2460338
+    }
+  ]
+}

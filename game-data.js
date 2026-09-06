@@ -1,4 +1,4 @@
-/* 8.8.2: Battle 2.0 — explicit initiative and unit traits. */
+/* 8.8.3: Battle 2.0 — explicit initiative and unit traits. */
 (function(root,factory){
   const data=factory();
   if(typeof module==='object'&&module.exports)module.exports=data;
@@ -231,7 +231,7 @@
     }
   }
   ;
-  const VERSION='8.8.2', SCHEMA=1, W=26,H=20,WORLD_W=2600,WORLD_H=2000;
+  const VERSION='8.8.3', SCHEMA=1, W=26,H=20,WORLD_W=2600,WORLD_H=2000;
   const skills={
     logistics:{
       name:'Логистика',description:'+2 движения за ранг',max:3

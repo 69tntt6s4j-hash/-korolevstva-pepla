@@ -857,68 +857,79 @@
     }
     drawAmbientWater(ctx,t=0){
       if(this.reduceMotion)return;
-      const phase=(t||0)*.001,terrain=D.terrain;
-      const rect=this.canvas.getBoundingClientRect(),z=this.camera.zoom;
-      const left=Math.max(0,Math.floor((this.camera.x-120)/100));
-      const right=Math.min(D.W-1,Math.ceil((this.camera.x+rect.width/z+120)/100));
-      const top=Math.max(0,Math.floor((this.camera.y-120)/100));
-      const bottom=Math.min(D.H-1,Math.ceil((this.camera.y+rect.height/z+120)/100));
+      const phase=(t||performance.now())*.001,rect=this.canvas.getBoundingClientRect(),z=this.camera.zoom;
+      const visible=(x,y,pad=120)=>x>this.camera.x-pad&&y>this.camera.y-pad&&x<this.camera.x+rect.width/z+pad&&y<this.camera.y+rect.height/z+pad;
       ctx.save();
       ctx.globalCompositeOperation='screen';
       ctx.lineCap='round';
-      for(let y=top;y<=bottom;y++)for(let x=left;x<=right;x++){
-        if(terrain[y]?.[x]!=='water')continue;
-        const cx=x*100+50,cy=y*100+50,seed=(x*37+y*71)%17;
-        const drift=((phase*24+seed*7)%82)-41;
-        ctx.strokeStyle='rgba(145,224,255,.16)';
+      ctx.lineJoin='round';
+
+      // Large moving highlights follow the painted rivers instead of the coarse terrain grid.
+      const rivers=[
+        [[780,245],[815,360],[730,455],[850,545],[735,625],[895,735],[790,825],[1000,930],[950,1015]],
+        [[1270,150],[1325,260],[1450,355],[1575,430],[1510,535],[1660,600]],
+        [[1510,535],[1660,600],[1780,735],[1670,850],[1810,940],[1690,1060],[1840,1180],[1720,1300],[1900,1410]],
+        [[2010,785],[1870,875],[1740,960],[1660,1080],[1790,1190],[1900,1280],[2070,1325]],
+        [[470,560],[590,640],[720,720],[650,810],[780,900],[930,980]],
+        [[2050,1310],[2160,1400],[2240,1510],[2380,1580]]
+      ];
+      for(let r=0;r<rivers.length;r++){
+        const pts=rivers[r];
+        if(!pts.some(p=>visible(p[0],p[1],220)))continue;
+        ctx.setLineDash([22,38]);
+        ctx.lineDashOffset=-(phase*52+r*17)%60;
+        ctx.strokeStyle='rgba(180,238,255,.34)';
+        ctx.lineWidth=3.2;
+        ctx.beginPath();
+        pts.forEach((p,i)=>i?ctx.lineTo(p[0],p[1]):ctx.moveTo(p[0],p[1]));
+        ctx.stroke();
+        ctx.setLineDash([7,55]);
+        ctx.lineDashOffset=-(phase*76+r*11)%62;
+        ctx.strokeStyle='rgba(255,255,255,.30)';
         ctx.lineWidth=1.7;
-        ctx.beginPath();
-        ctx.moveTo(cx-24+drift*.18,cy-8+Math.sin(phase*1.7+seed)*5);
-        ctx.quadraticCurveTo(cx,cy-15+Math.sin(phase*1.7+seed+1)*4,cx+26+drift*.18,cy-7+Math.sin(phase*1.7+seed+2)*5);
         ctx.stroke();
-        ctx.strokeStyle='rgba(255,255,255,.11)';
-        ctx.lineWidth=1.15;
-        ctx.beginPath();
-        ctx.moveTo(cx-17-drift*.12,cy+18+Math.sin(phase*1.3+seed)*4);
-        ctx.quadraticCurveTo(cx,cy+12,cx+19-drift*.12,cy+18+Math.sin(phase*1.3+seed+1)*4);
-        ctx.stroke();
-        const n=[[0,-1,0,-46],[1,0,46,0],[0,1,0,46],[-1,0,-46,0]];
-        for(const [dx,dy,ox,oy] of n){
-          const ny=y+dy,nx=x+dx;
-          if(ny<0||ny>=D.H||nx<0||nx>=D.W||terrain[ny]?.[nx]==='water')continue;
-          const pulse=.14+.08*(.5+.5*Math.sin(phase*2.4+seed+dx*2+dy*3));
-          ctx.strokeStyle='rgba(240,250,255,'+pulse.toFixed(3)+')';
-          ctx.lineWidth=2.1;
-          ctx.beginPath();
-          if(dx){
-            ctx.moveTo(cx+ox,cy-24);
-            ctx.quadraticCurveTo(cx+ox-dx*5,cy,cx+ox,cy+24)
-          }else{
-            ctx.moveTo(cx-24,cy+oy);
-            ctx.quadraticCurveTo(cx,cy+oy-dy*5,cx+24,cy+oy)
-          }
-          ctx.stroke()
-        }
       }
+      ctx.setLineDash([]);
+
+      // Sea: broad travelling wavelets and a brighter moving surf line near the coast.
+      const seaBands=[
+        [[0,1480],[180,1460],[350,1510],[520,1580],[650,1660]],
+        [[0,1625],[210,1605],[390,1650],[610,1740],[820,1830]],
+        [[0,1780],[250,1760],[480,1810],[700,1910],[900,1980]]
+      ];
+      seaBands.forEach((pts,i)=>{
+        ctx.setLineDash([30,44]);
+        ctx.lineDashOffset=-(phase*(42+i*7))%74;
+        ctx.strokeStyle='rgba(170,235,255,.30)';
+        ctx.lineWidth=2.6;
+        ctx.beginPath();pts.forEach((p,j)=>j?ctx.lineTo(...p):ctx.moveTo(...p));ctx.stroke();
+      });
+      const coast=[[160,1390],[310,1430],[470,1500],[600,1600],[735,1690],[850,1775],[1030,1840],[1180,1920]];
+      ctx.setLineDash([18,24]);ctx.lineDashOffset=-(phase*34)%42;
+      ctx.strokeStyle='rgba(245,253,255,.46)';ctx.lineWidth=4;
+      ctx.beginPath();coast.forEach((p,i)=>i?ctx.lineTo(...p):ctx.moveTo(...p));ctx.stroke();
+      ctx.setLineDash([]);
+
+      // Waterfalls: falling streaks visibly travel down and the foam pulses at the base.
       const falls=[
-        [205,430,38],[742,430,34],[1462,472,38],[1540,1028,42],[1718,965,34],[962,514,26]
+        [205,430,62],[742,430,68],[1462,472,72],[1540,1028,76],[1718,965,66],[962,514,56],
+        [585,430,62],[825,585,54],[1645,535,66],[1780,1140,62]
       ];
       for(const [x,y,h] of falls){
-        if(x<this.camera.x-100||y<this.camera.y-100||x>this.camera.x+rect.width/z+100||y>this.camera.y+rect.height/z+100)continue;
-        const p=(phase*42)%18;
-        ctx.strokeStyle='rgba(215,246,255,.24)';
-        ctx.lineWidth=2.4;
-        for(let i=0;i<3;i++){
-          const xx=x+(i-1)*6+Math.sin(phase*2+i)*2;
+        if(!visible(x,y,100))continue;
+        const travel=(phase*70)%22;
+        for(let i=-2;i<=2;i++){
+          const xx=x+i*5+Math.sin(phase*3+i)*1.8;
+          ctx.strokeStyle=i===0?'rgba(255,255,255,.58)':'rgba(195,238,255,.38)';
+          ctx.lineWidth=i===0?2.8:2;
           ctx.beginPath();
-          ctx.moveTo(xx,y-h/2+p-9);
-          ctx.lineTo(xx+Math.sin(phase*3+i)*2,y+h/2+p-9);
-          ctx.stroke()
+          ctx.moveTo(xx,y-h/2+travel-12);
+          ctx.lineTo(xx+Math.sin(phase*4+i)*2,y+h/2+travel-12);
+          ctx.stroke();
         }
-        ctx.fillStyle='rgba(235,252,255,.16)';
-        ctx.beginPath();
-        ctx.ellipse(x,y+h/2+5,16+Math.sin(phase*2)*3,5,0,0,Math.PI*2);
-        ctx.fill()
+        const pulse=1+.16*Math.sin(phase*4+x);
+        ctx.fillStyle='rgba(235,252,255,.34)';
+        ctx.beginPath();ctx.ellipse(x,y+h/2+6,23*pulse,7*pulse,0,0,Math.PI*2);ctx.fill();
       }
       ctx.restore()
     }
