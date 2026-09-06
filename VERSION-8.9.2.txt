@@ -1,0 +1,2 @@
+Королевства Пепла 8.9.2
+Unified mobile card redesign: heroes, army, upgrades and recruitment use clean cropped portraits without embedded source labels.

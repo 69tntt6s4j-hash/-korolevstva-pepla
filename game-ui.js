@@ -238,6 +238,11 @@
     imageSource(name,fallback='hero.jpg'){
       return this.assets[name]?name:fallback;
     }
+    portraitSource(name){
+      const map={'hero.jpg':'hero-portrait.jpg','mage.jpg':'mage-portrait.jpg','pikeman.jpg':'pikeman-portrait.jpg','archer.jpg':'archer-portrait.jpg','cavalier.jpg':'cavalier-portrait.jpg','griffin.jpg':'griffin-portrait.jpg'};
+      if(!this.assets[name])return 'hero-portrait.jpg';
+      return map[name]||name;
+    }
     bind(){
       const on=(id,fn)=>{
         this.$(id).onclick=(e)=>{
@@ -453,7 +458,7 @@
     }
     renderHero(){
       const s=this.engine.s,h=s.heroes[s.activeHero];
-      this.$('heroSelect').innerHTML=Object.values(s.heroes).map(x=>'<button class="btn heroBtn '+(x===h?'active':'')+'" data-hero="'+x.id+'"><img src="'+x.img+'" alt=""><span><b>'+x.name+'</b><br>Ур. '+x.level+'</span></button>').join('');
+      this.$('heroSelect').innerHTML=Object.values(s.heroes).map(x=>'<button class="btn heroBtn '+(x===h?'active':'')+'" data-hero="'+x.id+'"><img src="'+this.portraitSource(x.img)+'" alt=""><span><b>'+x.name+'</b><small>Ур. '+x.level+'</small></span></button>').join('');
       for(const bt of this.$('heroSelect').querySelectorAll('[data-hero]'))bt.onclick=()=>{
         if(this.engine.selectHero(bt.dataset.hero).ok){
           this.switchScreen('map');
@@ -461,12 +466,12 @@
         }
       }
       ;
-      this.$('heroPortrait').src=h.img;
+      this.$('heroPortrait').src=this.portraitSource(h.img);
       this.$('heroPortrait').alt=h.name;
       this.$('heroName').textContent=h.name;
       this.$('heroClass').textContent=h.cls;
       for(const k of ['atk','def','magic','knowledge','level','xp'])this.$(k).textContent=h[k];
-      this.$('army').innerHTML=Object.entries(D.units).map(([k,u])=>'<div class="unitcard"><img src="'+this.imageSource(u.img)+'" alt=""><div class="txt"><b>'+h.army[k]+'</b><span class="small">'+u.n+' · ур. '+(s.troopLevels[k]||1)+'</span></div></div>').join('');
+      this.$('army').innerHTML=Object.entries(D.units).map(([k,u])=>'<div class="unitcard"><img src="'+this.portraitSource(u.img)+'" alt=""><div class="txt"><b>'+u.n+'</b><span class="unitQty">'+h.army[k]+'</span><span class="small">Уровень '+(s.troopLevels[k]||1)+'</span></div></div>').join('');
       this.$('skills').innerHTML=Object.entries(h.skills).filter(([,r])=>r>0).map(([k,r])=>'<div class="skill"><b>'+D.skills[k].name+' · ранг '+r+'</b><div class="small">'+D.skills[k].description+'</div></div>').join('')||'<div class="small">Навыки появятся при повышении уровня.</div>';
       this.$('artifacts').innerHTML=h.artifacts.map(k=>'<div class="quest">'+D.artifactDefs[k].icon+' '+D.artifactDefs[k].n+'</div>').join('')||'<div class="small">Артефактов пока нет.</div>';
       const a=s.heroes.arden,b=s.heroes.lyra,can=C.distance(a,b)<=1;
@@ -518,12 +523,12 @@
         let reason='';let costText='Максимальный уровень';
         if(level<max){const c=D.troopUpgrades.costs[k][level-1];costText=c[0]+'🪙 '+c[1]+'🪵 '+c[2]+'🪨'+(c[3]?' '+c[3]+'💎':'');reason=!s.build[building]?'Нужно: '+D.builds[building].n:level>=3&&!s.build.citadel?'Нужна Цитадель':s.gold<c[0]||s.wood<c[1]||s.ore<c[2]||s.gems<c[3]?'Не хватает ресурсов':''}
         const bonus=Math.round((level-1)*(D.troopUpgrades.damagePerLevel[k]||0)*100);
-        return '<button class="btn upgradeCard" data-upgrade="'+k+'" '+(level>=max||reason?'disabled':'')+'><img src="'+this.imageSource(u.img)+'" alt=""><span><b>'+u.n+'</b><br><span class="level">Уровень '+level+'/'+max+'</span><br><span class="small">Урон +'+bonus+'% · '+(reason||costText)+'</span></span></button>'
+        return '<button class="btn upgradeCard" data-upgrade="'+k+'" '+(level>=max||reason?'disabled':'')+'><img src="'+this.portraitSource(u.img)+'" alt=""><span class="troopCardBody"><span class="troopCardTitle">'+u.n+'</span><span class="troopCardLevel">Уровень '+level+'/'+max+'</span><span class="troopCardMeta">Урон +'+bonus+'%</span><span class="troopCardMeta troopCardCost">'+(reason||costText)+'</span></span></button>'
       }).join('');
       for(const bt of this.$('upgrades').querySelectorAll('[data-upgrade]'))bt.onclick=()=>this.engine.upgradeTroop(bt.dataset.upgrade);
       this.$('recruits').innerHTML=Object.entries(D.units).map(([k,u])=>{
         const reason=!s.build[u.req]?'Нужно: '+D.builds[u.req].n:s.avail[k]<u.qty?'Мало доступных воинов':s.gold<u.cost?'Не хватает золота':'';
-        return '<button class="unitcard" data-recruit="'+k+'" '+(reason?'disabled':'')+'><img src="'+this.imageSource(u.img)+'" alt=""><div class="txt"><b>'+u.n+'</b><span class="small">'+(reason||'Доступно '+s.avail[k]+' · '+u.qty+' за '+u.cost+'🪙')+'</span></div></button>'
+        return '<button class="btn recruitCard" data-recruit="'+k+'" '+(reason?'disabled':'')+'><img src="'+this.portraitSource(u.img)+'" alt=""><span class="troopCardBody"><span class="troopCardTitle">'+u.n+'</span><span class="troopCardMeta">'+(reason||'Доступно: '+s.avail[k])+'</span><span class="troopCardMeta troopCardCost">'+(reason?'':'Найм: '+u.qty+' · '+u.cost+' 🪙')+'</span></span></button>'
       }
       ).join('');
       for(const bt of this.$('recruits').querySelectorAll('[data-recruit]'))bt.onclick=()=>this.engine.recruit(bt.dataset.recruit);

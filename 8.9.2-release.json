@@ -1,0 +1,11 @@
+{
+  "version": "8.9.2",
+  "name": "Unified Cards UI",
+  "changes": [
+    "Clean portrait assets without embedded text",
+    "Hero selector redesigned",
+    "Hero portrait panel redesigned",
+    "Army cards compact and consistent",
+    "Upgrade and recruitment cards use clean portraits"
+  ]
+}
