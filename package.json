@@ -1,0 +1,8 @@
+{
+  "name": "korolevstva-pepla",
+  "version": "8.7.0-full-fix",
+  "private": true,
+  "description": "Королевства Пепла — автономная браузерная игра",
+  "scripts": {"test": "node tests/regression.cjs"},
+  "engines": {"node": ">=18"}
+}

@@ -1,21 +1,16 @@
 {
-  "name": "Королевства Пепла 8.4.1",
-  "short_name": "Пепел 8.4.1",
-  "start_url": "./",
+  "id": "./",
+  "name": "Королевства Пепла 8.7.0 — Full Fix",
+  "short_name": "Королевства Пепла",
+  "lang": "ru",
+  "start_url": "./index.html",
+  "scope": "./",
   "display": "standalone",
+  "orientation": "any",
   "background_color": "#050705",
   "theme_color": "#090c09",
-  "orientation": "portrait-primary",
   "icons": [
-    {
-      "src": "icon-180.png",
-      "sizes": "180x180",
-      "type": "image/png"
-    },
-    {
-      "src": "icon-512.png",
-      "sizes": "512x512",
-      "type": "image/png"
-    }
+    {"src": "icon-180.png", "sizes": "180x180", "type": "image/png"},
+    {"src": "icon-512.png", "sizes": "512x512", "type": "image/png"}
   ]
 }
