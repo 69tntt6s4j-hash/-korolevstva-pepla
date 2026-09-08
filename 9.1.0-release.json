@@ -1,0 +1,18 @@
+{
+  "version": "9.1.0",
+  "name": "Living World Visual Engine",
+  "features": [
+    "art-directed Abyss map background with preserved logical grid and fog",
+    "environment-specific pseudo-3D tactical arenas",
+    "animated unit idle/movement/attack/damage/death feedback",
+    "dungeon battle arena using battle-cavern.jpg",
+    "animated embers/atmosphere and depth lighting",
+    "iPhone-first responsive battle layout",
+    "cache-safe 9.1.0 assets"
+  ],
+  "tests": {
+    "regression": "123/123",
+    "v9": "9/9",
+    "ui": "passed"
+  }
+}

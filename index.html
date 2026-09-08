@@ -8,7 +8,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Королевства Пепла">
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="icon-180.png">
-<title>Королевства Пепла 9.0.2 — Living World & Abyss</title>
+<title>Королевства Пепла 9.1.0 — Living World Visual Engine</title>
 <style>
 :root{--gold:#ddb45c;--text:#f4ecd8;--muted:#b8af9c;--line:#735b29;--panel:#101611;--panel2:#192219}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
@@ -75,6 +75,35 @@ button{font:inherit;color:inherit;touch-action:manipulation}
 .upgradeCard img,.recruitCard img{object-position:center}
 @media(max-width:430px){.heroSelect{grid-template-columns:1fr}.heroBtn{min-height:72px}.heroPane{grid-template-columns:84px minmax(0,1fr)}.heroPane img{width:84px;height:96px}#army{grid-template-columns:1fr 1fr}.unitcard{grid-template-columns:58px minmax(0,1fr);min-height:76px;padding:6px;gap:7px}.unitcard img{width:58px;height:58px}.unitcard .txt>b{font-size:13px}.unitcard .unitQty{font-size:19px}}
 @media(max-width:355px){#army{grid-template-columns:1fr}.unitcard{grid-template-columns:64px minmax(0,1fr)}.unitcard img{width:64px;height:64px}}
+
+/* 9.1.0 — Living World Visual Engine: псевдо-3D карта и тактический бой */
+#battleModal .dialog{background:linear-gradient(180deg,rgba(12,15,12,.96),rgba(4,6,5,.98));box-shadow:0 20px 70px #000;border-color:#96733a}
+#battleModal .battleArt{height:auto;aspect-ratio:16/9;isolation:isolate;background-image:url('battlefield.jpg');background-size:cover;background-position:center;box-shadow:inset 0 0 70px #000b,0 10px 30px #0008;perspective:780px}
+#battleModal[data-env="dungeon"] .battleArt{background-image:url('battle-cavern.jpg');background-position:center 52%}
+#battleModal .battleArt:before{content:"";position:absolute;inset:0;z-index:0;background:linear-gradient(180deg,rgba(0,0,0,.04),rgba(0,0,0,.18) 55%,rgba(0,0,0,.50)),radial-gradient(circle at 18% 22%,rgba(90,150,210,.16),transparent 32%),radial-gradient(circle at 82% 62%,rgba(255,82,20,.15),transparent 32%);pointer-events:none}
+#battleModal .battleVignette{position:absolute;inset:0;z-index:4;pointer-events:none;box-shadow:inset 0 0 65px 18px rgba(0,0,0,.66)}
+#battleModal .bgrid{z-index:2;inset:8% 4% 6%;gap:2px;transform:rotateX(5deg);transform-origin:50% 100%;filter:drop-shadow(0 12px 10px #0008)}
+#battleModal .cell{overflow:visible;border-radius:14px;border-color:rgba(233,206,125,.17);background:linear-gradient(180deg,rgba(85,99,71,.08),rgba(16,20,15,.08));box-shadow:inset 0 1px rgba(255,255,255,.025);transition:background .14s,border-color .14s,filter .14s}
+#battleModal .cell:disabled{opacity:1}
+#battleModal .cell.move{background:radial-gradient(circle,rgba(78,142,82,.32),rgba(27,71,37,.10));border-color:rgba(118,184,109,.52)}
+#battleModal .cell.attack{background:radial-gradient(circle,rgba(180,54,36,.37),rgba(91,28,20,.12));border-color:rgba(239,112,76,.62)}
+#battleModal .cell.sel{outline:2px solid #f0c866;filter:drop-shadow(0 0 7px rgba(240,200,102,.8))}
+#battleModal .stack{inset:-9% 4% 1%;border:0;border-radius:45% 45% 38% 38%;background-size:cover;background-position:center 22%;box-shadow:none;transform:rotateX(-5deg);transform-origin:50% 100%;filter:drop-shadow(0 8px 5px rgba(0,0,0,.75)) saturate(1.1);animation:unitIdle 2.8s ease-in-out infinite;overflow:visible}
+#battleModal .stack:before{content:"";position:absolute;left:10%;right:10%;bottom:-7%;height:16%;border-radius:50%;background:rgba(0,0,0,.58);filter:blur(3px);z-index:-1}
+#battleModal .stack:after{content:"";position:absolute;inset:-7%;border-radius:50%;pointer-events:none;opacity:.7}
+#battleModal .stack.player:after{box-shadow:inset 0 0 0 2px rgba(75,153,238,.7),0 0 16px rgba(54,129,223,.28)}
+#battleModal .stack.enemy:after{box-shadow:inset 0 0 0 2px rgba(224,73,55,.76),0 0 17px rgba(224,58,43,.32)}
+#battleModal .stack .qty{right:-4px;bottom:-3px;min-width:23px;text-align:center;font-weight:800;font-size:12px;padding:2px 5px;border:1px solid #d8b55f;background:linear-gradient(#171b16,#080a08);box-shadow:0 2px 7px #000}
+#battleModal .turnbar{padding:3px 0;scrollbar-width:none}.turnchip{background:linear-gradient(#1b211b,#0c100d);box-shadow:inset 0 1px rgba(255,255,255,.04)}.turnchip.active{box-shadow:0 0 12px rgba(221,180,92,.28),inset 0 0 0 1px #ddb45c}
+#battleModal .battleStatus{background:linear-gradient(90deg,rgba(18,25,19,.96),rgba(33,24,16,.94));border-color:#6e5930}
+.battleAtmosphere{position:absolute;inset:0;z-index:1;overflow:hidden;pointer-events:none}.battleAtmosphere i{position:absolute;width:4px;height:4px;border-radius:50%;background:#efc56c;box-shadow:0 0 9px #ff9b43;opacity:0;animation:emberRise 4.5s linear infinite}.battleAtmosphere i:nth-child(1){left:15%;bottom:8%;animation-delay:.2s}.battleAtmosphere i:nth-child(2){left:32%;bottom:2%;animation-delay:1.1s}.battleAtmosphere i:nth-child(3){left:48%;bottom:10%;animation-delay:2.3s}.battleAtmosphere i:nth-child(4){left:68%;bottom:5%;animation-delay:.7s}.battleAtmosphere i:nth-child(5){left:84%;bottom:13%;animation-delay:1.8s}.battleAtmosphere i:nth-child(6){left:93%;bottom:4%;animation-delay:3s}
+#battleModal[data-env="surface"] .battleAtmosphere i{background:#b8d1c0;box-shadow:0 0 7px rgba(183,218,192,.6);animation-duration:6.8s}
+.damageFloat{position:absolute;left:50%;top:20%;z-index:9;color:#fff0c2;font-weight:900;font-size:18px;text-shadow:0 2px 4px #000,0 0 7px #d83b28;pointer-events:none}.deathBurst{position:absolute;left:50%;top:50%;z-index:8;width:70%;aspect-ratio:1;border-radius:50%;background:radial-gradient(circle,#fff2a9 0,#e95a2b 22%,rgba(95,15,10,.6) 52%,transparent 72%);filter:blur(1px);pointer-events:none}
+@keyframes unitIdle{0%,100%{transform:rotateX(-5deg) translateY(0) scale(1)}50%{transform:rotateX(-5deg) translateY(-2.5%) scale(1.018)}}
+@keyframes emberRise{0%{transform:translate(0,15px) scale(.55);opacity:0}15%{opacity:.75}75%{opacity:.45}100%{transform:translate(15px,-170px) scale(1.2);opacity:0}}
+@media(max-width:600px){#battleModal .battleArt{aspect-ratio:16/10.2}#battleModal .bgrid{inset:10% 2% 5%;gap:1px}#battleModal .cell{border-radius:9px}#battleModal .stack{inset:-7% 1% 0;background-position:center 24%}#battleModal .stack .qty{font-size:11px}}
+@media(prefers-reduced-motion:reduce){#battleModal .stack,.battleAtmosphere i{animation:none!important}}
+
 </style>
 
 
@@ -227,7 +256,7 @@ img[src$="griffin-portrait.jpg"]{object-fit:cover!important;object-position:cent
 <button class="btn red" id="enemyAttackBtn">⚔️ Напасть</button>
 <button class="btn" id="enemyCancelBtn">Отмена</button>
 </div></div></div>
-<div class="modal hidden" id="battleModal"><div class="dialog"><div class="row"><div class="title">Битва: <span id="battleName"></span></div><div class="small" id="battleRound"></div></div><div class="turnbar" id="turnbar"></div><div class="battleViewport" tabindex="0" aria-label="Поле боя, прокрутка по горизонтали"><div class="battleArt"><div class="bgrid" id="bgrid" role="group" aria-label="Клетки поля боя"></div></div></div><div class="small" id="battleHint" style="margin-top:6px"></div><div class="battleStatus" id="battleStatus"></div><div class="grid g2" style="margin-top:8px"><button class="btn gold" id="waitBtn">⏳ Пропустить ход</button><button class="btn" id="defBtn">🛡️ Оборона</button><button class="btn blue" id="spellBtn">📖 Магия</button><button class="btn red" id="retreatBtn">Отступить</button></div></div></div>
+<div class="modal hidden" id="battleModal"><div class="dialog"><div class="row"><div class="title">Битва: <span id="battleName"></span></div><div class="small" id="battleRound"></div></div><div class="turnbar" id="turnbar"></div><div class="battleViewport" tabindex="0" aria-label="Поле боя, прокрутка по горизонтали"><div class="battleArt"><div class="battleAtmosphere" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i></div><div class="battleVignette" aria-hidden="true"></div><div class="bgrid" id="bgrid" role="group" aria-label="Клетки поля боя"></div></div></div><div class="small" id="battleHint" style="margin-top:6px"></div><div class="battleStatus" id="battleStatus"></div><div class="grid g2" style="margin-top:8px"><button class="btn gold" id="waitBtn">⏳ Пропустить ход</button><button class="btn" id="defBtn">🛡️ Оборона</button><button class="btn blue" id="spellBtn">📖 Магия</button><button class="btn red" id="retreatBtn">Отступить</button></div></div></div>
 <div class="modal hidden" id="levelModal"><div class="dialog"><div class="title">Новый уровень</div><div class="small">Выбери навык</div><div class="grid" id="levelChoices" style="margin-top:8px"></div></div></div>
 <div class="modal hidden" id="spellModal"><div class="dialog"><div class="title">Книга боя</div><div class="small">Выбери заклинание для текущего хода героя.</div><div class="spellChoice" id="spellChoices"></div><button class="btn" id="spellCancel" style="margin-top:8px">Отмена</button></div></div><div class="modal hidden" id="victoryModal"><div class="dialog"><div class="title">🏆 Победа</div><div>Морвейн повержен. Северные земли освобождены.</div><button class="btn gold" id="victoryClose" style="margin-top:10px">Продолжить</button></div></div>
 
@@ -237,6 +266,6 @@ img[src$="griffin-portrait.jpg"]{object-fit:cover!important;object-position:cent
 <div class="modal hidden" id="objectPreviewModal"><div class="dialog"><div class="objectPreviewGrid"><img id="objectPreviewImg" alt=""><div class="objectMeta"><h2 id="objectPreviewName" style="margin:0"></h2><span class="tag" id="objectPreviewType"></span><div class="small" id="objectPreviewDesc"></div><div class="small" id="objectPreviewReward"></div></div></div><div class="objectActions"><button class="btn" id="objectPreviewGo">Подойти</button><button class="btn" id="objectPreviewClose">Отмена</button></div></div></div>
 <div class="modal hidden" id="objectListModal"><div class="dialog"><h2>Разведанные объекты</h2><div class="objectList" id="knownObjects"></div><button class="btn" id="objectListClose">Закрыть</button></div></div>
 <div class="modal hidden" id="dungeonModal"><div class="dialog dungeonDialog"><div class="row"><div><h2 style="margin:0">🕯 Пещера Бездны</h2><div class="small">Подземелье живёт в том же времени, что и поверхность.</div></div><button class="miniBtn" id="dungeonClose">✕</button></div><div class="dungeonArt"><div id="dungeonDepth">Уровень I · Заброшенные шахты</div></div><div id="dungeonStatus" class="panel"></div><div class="grid g2"><button class="btn red" id="dungeonExplore">⚔️ Продвинуться глубже</button><button class="btn" id="dungeonLeave">Вернуться на поверхность</button></div></div></div>
-<div class="modal" id="startupModal"><div class="dialog"><h2>Королевства Пепла 9.0.2</h2><p id="startupMessage" role="status">Загрузка игры…</p><button class="btn" id="retryLoad" hidden>Повторить загрузку</button><button class="btn" id="recoveryImport" hidden>Импортировать сохранение</button><button class="btn red" id="recoveryNew" hidden>Начать новую игру</button></div></div>
+<div class="modal" id="startupModal"><div class="dialog"><h2>Королевства Пепла 9.1.0</h2><p id="startupMessage" role="status">Загрузка игры…</p><button class="btn" id="retryLoad" hidden>Повторить загрузку</button><button class="btn" id="recoveryImport" hidden>Импортировать сохранение</button><button class="btn red" id="recoveryNew" hidden>Начать новую игру</button></div></div>
 <script src="game-data.js"></script><script src="game-core.js"></script><script src="game-controls.js"></script><script src="game-ui.js"></script>
 </body></html>

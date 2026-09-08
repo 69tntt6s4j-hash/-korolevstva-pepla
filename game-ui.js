@@ -574,15 +574,13 @@
     dungeonZoneName(x,y){const z=D.dungeon.zones.find(z=>x>=z.x1&&x<=z.x2&&y>=z.y1&&y<=z.y2);return z?.name||'Глубинные переходы'}
     renderDungeonMap(){
       const c=this.dungeonCanvas,s=this.engine?.s;if(!c||!s?.dungeon)return;c.width=D.dungeon.WORLD_W;c.height=D.dungeon.WORLD_H;const ctx=c.getContext('2d'),d=s.dungeon,h=s.heroes[s.activeHero],seen=new Set(d.seen||[]),tile=100,now=Date.now()/1000;
-      const grd=ctx.createLinearGradient(0,0,c.width,c.height);grd.addColorStop(0,'#17130f');grd.addColorStop(.55,'#080a0b');grd.addColorStop(1,'#1b0b08');ctx.fillStyle=grd;ctx.fillRect(0,0,c.width,c.height);
+      // 9.1.0: художественная подземная сцена 1300×1000 служит геометрически согласованной подложкой; логическая сетка остаётся невидимой.
+      if(this.assets['abyss-map-v1.jpg'])ctx.drawImage(this.assets['abyss-map-v1.jpg'],0,0,c.width,c.height);else{const grd=ctx.createLinearGradient(0,0,c.width,c.height);grd.addColorStop(0,'#17130f');grd.addColorStop(.55,'#080a0b');grd.addColorStop(1,'#1b0b08');ctx.fillStyle=grd;ctx.fillRect(0,0,c.width,c.height)}
       for(let y=0;y<D.dungeon.H;y++)for(let x=0;x<D.dungeon.W;x++){const k=x+','+y,t=D.dungeon.terrain[y][x],wall=t==='#';
-        ctx.fillStyle=wall?'#211e1a':t==='~'?'#07151a':t==='='?'#40362a':t==='^'?'#35100b':t==='r'?'#25231d':((x+y)%2?'#171713':'#1c1b16');ctx.fillRect(x*tile,y*tile,tile,tile);
-        if(!wall){ctx.strokeStyle='rgba(177,137,83,.12)';ctx.strokeRect(x*tile+4,y*tile+4,tile-8,tile-8)}
-        if(t==='~'){ctx.strokeStyle='rgba(72,157,183,.55)';ctx.lineWidth=3;for(let i=0;i<4;i++){const yy=y*tile+18+i*21+Math.sin(now*1.7+x+i)*4;ctx.beginPath();ctx.moveTo(x*tile+8,yy);ctx.bezierCurveTo(x*tile+34,yy-5,x*tile+66,yy+5,x*tile+92,yy);ctx.stroke()}}
-        if(t==='='){ctx.fillStyle='#6b5336';for(let i=0;i<5;i++)ctx.fillRect(x*tile+8,y*tile+8+i*19,84,12);ctx.strokeStyle='#aa8150';ctx.lineWidth=4;ctx.strokeRect(x*tile+8,y*tile+5,84,90)}
-        if(t==='^'){const pulse=.55+.25*Math.sin(now*3+x+y);ctx.fillStyle='rgba(225,70,24,'+pulse+')';for(let i=0;i<5;i++){ctx.beginPath();ctx.arc(x*tile+16+i*18,y*tile+35+Math.sin(now*2+i)*18,10+i%2*5,0,Math.PI*2);ctx.fill()}ctx.fillStyle='rgba(255,184,64,.7)';ctx.fillRect(x*tile+8,y*tile+70,84,8)}
-        if(t==='r'){ctx.strokeStyle='rgba(156,142,112,.65)';ctx.lineWidth=7;ctx.strokeRect(x*tile+20,y*tile+24,60,54);ctx.beginPath();ctx.moveTo(x*tile+18,y*tile+52);ctx.lineTo(x*tile+82,y*tile+52);ctx.stroke();ctx.fillStyle='rgba(78,123,109,.25)';ctx.fillRect(x*tile+25,y*tile+30,14,18)}
-        if(!seen.has(k)){ctx.fillStyle='rgba(0,0,0,.91)';ctx.fillRect(x*tile,y*tile,tile,tile)}
+        if(!wall&&seen.has(k)){ctx.fillStyle='rgba(255,214,132,.018)';ctx.fillRect(x*tile,y*tile,tile,tile)}
+        if(t==='~'&&seen.has(k)){ctx.strokeStyle='rgba(84,185,220,.45)';ctx.lineWidth=2;for(let i=0;i<3;i++){const yy=y*tile+24+i*24+Math.sin(now*1.7+x+i)*3;ctx.beginPath();ctx.moveTo(x*tile+7,yy);ctx.bezierCurveTo(x*tile+35,yy-4,x*tile+66,yy+4,x*tile+93,yy);ctx.stroke()}}
+        if(t==='^'&&seen.has(k)){const pulse=.22+.16*Math.sin(now*3+x+y);ctx.fillStyle='rgba(255,79,20,'+pulse+')';ctx.fillRect(x*tile+7,y*tile+8,tile-14,tile-16)}
+        if(!seen.has(k)){const fog=ctx.createRadialGradient(x*tile+50,y*tile+50,10,x*tile+50,y*tile+50,78);fog.addColorStop(0,'rgba(0,0,0,.82)');fog.addColorStop(1,'rgba(0,0,0,.97)');ctx.fillStyle=fog;ctx.fillRect(x*tile,y*tile,tile,tile)}
       }
       // Animated torches illuminate only explored passages.
       for(const q of D.dungeon.torches||[]){if(!seen.has(q.x+','+q.y))continue;const px=q.x*tile+50,py=q.y*tile+50,fl=7+3*Math.sin(now*8+q.x*2);const glow=ctx.createRadialGradient(px,py,2,px,py,46);glow.addColorStop(0,'rgba(255,190,82,.34)');glow.addColorStop(1,'rgba(255,110,30,0)');ctx.fillStyle=glow;ctx.beginPath();ctx.arc(px,py,46,0,Math.PI*2);ctx.fill();ctx.fillStyle='#ffb347';ctx.beginPath();ctx.moveTo(px,py-fl);ctx.quadraticCurveTo(px+9,py,px,py+8);ctx.quadraticCurveTo(px-8,py,px,py-fl);ctx.fill();ctx.fillStyle='#6e4a2c';ctx.fillRect(px-2,py+7,4,16)}
@@ -623,13 +621,15 @@
         const damaged=Object.entries(previous.stacks).find(([id,st])=>currentById[id]&&currentById[id].hp<st.hp);
         if(damaged){
           const target=currentById[damaged[0]],attacker=cellAt(newSelected.x,newSelected.y)?.querySelector('.stack');
-          if(attacker&&target&&typeof attacker.animate==='function'){const dx=(target.x-newSelected.x)*13,dy=(target.y-newSelected.y)*13;attacker.animate([{transform:'translate(0,0)'},{transform:`translate(${dx}px,${dy}px) scale(1.08)`,offset:.52},{transform:'translate(0,0)'}],{duration:280,easing:'cubic-bezier(.2,.8,.3,1)'})}
+          if(attacker&&target&&typeof attacker.animate==='function'){const dist=Math.abs(target.x-newSelected.x)+Math.abs(target.y-newSelected.y),dx=(target.x-newSelected.x)*(dist>1?7:18),dy=(target.y-newSelected.y)*(dist>1?7:18);attacker.animate([{transform:'rotateX(-8deg) translate(0,0)'},{transform:`rotateX(-8deg) translate(${dx}px,${dy}px) scale(${dist>1?'1.04':'1.14'})`,offset:.48},{transform:'rotateX(-8deg) translate(0,0)'}],{duration:dist>1?360:300,easing:'cubic-bezier(.2,.8,.3,1)'})}
         }
       }
     }
     renderBattle(){
       const b=this.engine.s.battle,previous=this.battleVisual,a=C.selectedStack(b),player=b.phase==='player';
       this.$('battleName').textContent=b.name;
+      const battleModal=this.$('battleModal');
+      if(battleModal)battleModal.dataset.env=(b.source?.kind==='dungeon'?'dungeon':'surface');
       this.$('battleRound').textContent='Раунд '+b.round;
       this.$('battleHint').textContent=player?'Выберите доступную клетку или цель. Поле можно прокрутить.':b.phase==='enemy'?'Ход противника…':'Действие выполняется…';
       const h=this.engine.s.heroes[b.heroId];
@@ -654,7 +654,7 @@
         cell.setAttribute('aria-label','Клетка '+(x+1)+','+(y+1)+(occ?': '+C.stackDef(occ).n+', '+occ.qty+', '+occ.hp+' HP'+(occ.side==='p'?', союзники':', противник'):canMove?', переместиться':', недоступна'));
         if(occ){
           const st=this.doc.createElement('span');
-          st.className='stack '+(occ.side==='p'?'player':'enemy');
+          st.className='stack '+(occ.side==='p'?'player':'enemy')+' unit-'+occ.type;
           st.dataset.stackId=occ.id;
           st.style.backgroundImage="url('"+this.imageSource(C.stackDef(occ).img,occ.side==='e'?'necromancer.jpg':'hero.jpg')+"')";
           const q=this.doc.createElement('span');
