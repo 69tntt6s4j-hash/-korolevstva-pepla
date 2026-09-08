@@ -250,7 +250,7 @@
     }
   }
   ;
-  const VERSION='9.1.1', SCHEMA=1, W=26,H=20,WORLD_W=2600,WORLD_H=2000;
+  const VERSION='9.1.2', SCHEMA=1, W=26,H=20,WORLD_W=2600,WORLD_H=2000;
   const skills={
     logistics:{
       name:'Логистика',description:'+2 движения за ранг',max:3
@@ -347,7 +347,7 @@
   );
   objects.push({id:'abyss-cave',x:18,y:13,t:'cave',label:'Пещера Бездны',img:'portal.jpg',radius:92,offset:[0,-15],landmark:true,legacyKeys:[]});
 
-  // 9.1.1: Пещера Бездны — отдельная исследуемая карта 13×10 (вдвое меньше по каждой стороне основной сетки).
+  // 9.1.2: Пещера Бездны — отдельная исследуемая карта 13×10 (вдвое меньше по каждой стороне основной сетки).
   const dungeon={
     W:13,H:10,WORLD_W:1300,WORLD_H:1000,start:{x:1,y:8},
     // # rock, . floor, ~ underground river, = bridge, ^ lava, r ancient ruins.
@@ -386,7 +386,7 @@
     ]
   };
 
-  const imageFiles=['water-mask.png','foam-mask.png','ivan-rider.png','varvara-map.png','varvara-map-v2.png','world-v6.jpg','hero.jpg','mage.jpg','castle.jpg','mine.jpg','sawmill.jpg','chest.jpg','portal.jpg','orc.jpg','wolf.jpg','necromancer.jpg','pikeman.jpg','archer.jpg','cavalier.jpg','griffin.jpg','skeleton.jpg','battlefield.jpg','battle-cavern.jpg','abyss-map-v1.jpg','city.jpg'];
+  const imageFiles=['water-mask.png','foam-mask.png','ivan-rider.png','varvara-map.png','varvara-map-v2.png','world-v7.jpg','hero.jpg','mage.jpg','castle.jpg','mine.jpg','sawmill.jpg','chest.jpg','portal.jpg','orc.jpg','wolf.jpg','necromancer.jpg','pikeman.jpg','archer.jpg','cavalier.jpg','griffin.jpg','skeleton.jpg','battlefield.jpg','battle-cavern.jpg','abyss-map-v1.jpg','city.jpg'];
   const byId=Object.fromEntries(objects.map(o=>[o.id,o]));
   const cellKey=(x,y)=>x+','+y;
   const cells=new Set();

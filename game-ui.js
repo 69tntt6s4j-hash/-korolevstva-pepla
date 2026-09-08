@@ -55,7 +55,7 @@
       this.camera={
         x:0,y:0,zoom:.58
       };
-      // 9.1.1: independent aspect-correct dungeon camera. The canvas fills the phone,
+      // 9.1.2: independent aspect-correct dungeon camera. The canvas fills the phone,
       // while the world keeps its native 13:10 geometry instead of being stretched.
       this.dungeonCamera={x:0,y:0,zoom:.82,ready:false,dragging:false,pointerId:null,startX:0,startY:0,camX:0,camY:0,moved:false};
       this.frameId=null;
@@ -153,7 +153,7 @@
       if(generation!==this.bootGeneration)return;
       this.assets=loaded.assets;
       this.loading=false;
-      const required=['world-v6.jpg','hero.jpg','mage.jpg','necromancer.jpg','battlefield.jpg','city.jpg'];
+      const required=['world-v7.jpg','hero.jpg','mage.jpg','necromancer.jpg','battlefield.jpg','city.jpg'];
       const missing=loaded.missing.filter(n=>required.includes(n));
       if(missing.length){
         this.showStartup('Не удалось загрузить: '+missing.join(', ')+'. Проверьте, что архив полностью распакован.',true);
@@ -999,7 +999,7 @@
     }
     drawAmbientWater(ctx,t=0){
       if(this.reduceMotion)return;
-      const world=this.assets['world-v6.jpg'],mask=this.assets['water-mask.png'],foamMask=this.assets['foam-mask.png'];
+      const world=this.assets['world-v7.jpg'],mask=this.assets['water-mask.png'],foamMask=this.assets['foam-mask.png'];
       if(!world||!mask)return;
       const phase=(t||performance.now())*.001;
 
@@ -1066,10 +1066,12 @@
       ctx.save();
       ctx.scale(z,z);
       ctx.translate(-this.camera.x,-this.camera.y);
-      this.image(ctx,'world-v6.jpg',0,0,D.WORLD_W,D.WORLD_H);
+      this.image(ctx,'world-v7.jpg',0,0,D.WORLD_W,D.WORLD_H);
+      // 9.1.2 renderer: the illustrated terrain is the scene base; gameplay entities remain independent.
+      if(!this.reduceMotion){const ph=(t||performance.now())*.00025;ctx.save();ctx.globalAlpha=.055;ctx.translate(Math.sin(ph)*12,Math.cos(ph*.7)*7);ctx.fillStyle='rgba(255,224,160,.025)';ctx.fillRect(-30,-30,D.WORLD_W+60,D.WORLD_H+60);ctx.restore();}
       this.drawAmbientWater(ctx,t);
       this.drawAmbientWorld(ctx,t);
-      // 9.1.1 depth pass: slow cloud shadows and light shafts move independently of terrain.
+      // 9.1.2 depth pass: slow cloud shadows and light shafts move independently of terrain.
       if(!this.reduceMotion){const phase=(t||performance.now())*.00012;ctx.save();ctx.globalCompositeOperation='multiply';ctx.globalAlpha=.10;for(let i=0;i<5;i++){const x=((phase*900+i*620)%3400)-400,y=120+i*390;const g=ctx.createRadialGradient(x,y,20,x,y,310);g.addColorStop(0,'rgba(18,25,20,.65)');g.addColorStop(1,'rgba(18,25,20,0)');ctx.fillStyle=g;ctx.beginPath();ctx.ellipse(x,y,360,150,.2,0,Math.PI*2);ctx.fill()}ctx.restore()}
       this.updateFog();
       ctx.drawImage(this.fog,0,0);
@@ -1100,7 +1102,7 @@
           ctx.save();ctx.translate(p.x,p.y+bob);ctx.shadowColor='rgba(0,0,0,.72)';ctx.shadowBlur=16/z;ctx.shadowOffsetY=8/z;ctx.beginPath();ctx.arc(0,0,31,0,Math.PI*2);ctx.fillStyle='rgba(7,11,8,.68)';ctx.fill();ctx.shadowBlur=0;ctx.save();ctx.beginPath();ctx.arc(0,0,28,0,Math.PI*2);ctx.clip();this.image(ctx,o.img,-29,-29,58,58);ctx.restore();ctx.strokeStyle=border;ctx.lineWidth=3/z;ctx.beginPath();ctx.arc(0,0,30,0,Math.PI*2);ctx.stroke();ctx.restore()
         }
         // Labels no longer cover half the screen: show landmarks, nearby targets, or higher zoom only.
-        if(o.landmark||nearHero||z>=.86){
+        if((o.landmark&&z>=.72)||nearHero||z>=1.02){
           const text=label(o)+(o.owner==='player'?' ✓':''),yy=o.landmark?p.y-o.radius*.63:p.y+43;
           ctx.font='600 '+13/z+'px sans-serif';const w=Math.min(230/z,ctx.measureText(text).width+14/z);
           this.labelHits.push({id:o.id,x:p.x-w/2,y:yy-16/z,w,h:24/z});this.round(ctx,p.x-w/2,yy-16/z,w,24/z,7/z);ctx.fillStyle='rgba(5,9,7,.78)';ctx.fill();ctx.strokeStyle=border;ctx.lineWidth=.8/z;ctx.stroke();ctx.fillStyle='#f6e8c8';ctx.textAlign='center';ctx.fillText(text,p.x,yy+1/z)
