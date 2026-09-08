@@ -54,8 +54,10 @@
       this.screen='map';
       this.camera={
         x:0,y:0,zoom:.58
-      }
-      ;
+      };
+      // 9.1.1: independent aspect-correct dungeon camera. The canvas fills the phone,
+      // while the world keeps its native 13:10 geometry instead of being stretched.
+      this.dungeonCamera={x:0,y:0,zoom:.82,ready:false,dragging:false,pointerId:null,startX:0,startY:0,camX:0,camY:0,moved:false};
       this.frameId=null;
       this.ambientTimer=null;
       this.reduceMotion=!!env.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
@@ -205,7 +207,7 @@
         }
         ,onMessage:m=>this.toast(m),onEvent:event=>{
           if(event.type==='town'){this.screen='town';this.localModal=null}
-          if(event.type==='dungeonMap'){this.localModal=null;this.screen='dungeon';this.renderDungeonMap()}
+          if(event.type==='dungeonMap'){this.localModal=null;this.screen='dungeon';this.dungeonCamera.ready=false;this.centerDungeon();this.requestFrame()}
           if(event.type==='surfaceMap'){this.localModal=null;this.screen='map';this.resize();this.center()}
         }
       }
@@ -304,8 +306,17 @@
       on('musicToggle',()=>{this.engine.setMusic(!this.engine.s.settings.music);this.unlockAudio();this.updateMusic()});
       on('dungeonLeaveMap',()=>this.engine.leaveDungeon());
       on('dungeonEndDay',()=>this.engine.nextDay());
-      on('dungeonHint',()=>this.toast('Коснитесь пола для движения; объекта — чтобы подойти и взаимодействовать. Рудники дают ежедневный доход.'));
-      if(this.dungeonCanvas)this.dungeonCanvas.addEventListener('pointerup',e=>{if(!this.ready||this.screen!=='dungeon'||!this.engine.idle())return;this.unlockAudio();const r=this.dungeonCanvas.getBoundingClientRect(),x=(e.clientX-r.left)*this.dungeonCanvas.width/r.width,y=(e.clientY-r.top)*this.dungeonCanvas.height/r.height;this.dungeonTap(x,y)});
+      on('dungeonHint',()=>this.toast('Коснитесь пола или объекта для движения. Перетаскивайте карту пальцем; +/− меняют масштаб.'));
+      on('dungeonZoomIn',()=>{this.dungeonCamera.zoom=Math.min(1.55,this.dungeonCamera.zoom+.12);this.clampDungeon();this.requestFrame()});
+      on('dungeonZoomOut',()=>{this.dungeonCamera.zoom=Math.max(.52,this.dungeonCamera.zoom-.12);this.clampDungeon();this.requestFrame()});
+      on('dungeonCenter',()=>this.centerDungeon());
+      if(this.dungeonCanvas){
+        const dc=this.dungeonCamera;
+        this.dungeonCanvas.addEventListener('pointerdown',e=>{if(!this.ready||this.screen!=='dungeon')return;dc.pointerId=e.pointerId;dc.dragging=true;dc.moved=false;dc.startX=e.clientX;dc.startY=e.clientY;dc.camX=dc.x;dc.camY=dc.y;this.dungeonCanvas.setPointerCapture?.(e.pointerId)});
+        this.dungeonCanvas.addEventListener('pointermove',e=>{if(!dc.dragging||dc.pointerId!==e.pointerId)return;const dx=e.clientX-dc.startX,dy=e.clientY-dc.startY;if(Math.hypot(dx,dy)>6)dc.moved=true;dc.x=dc.camX-dx/dc.zoom;dc.y=dc.camY-dy/dc.zoom;this.clampDungeon();this.requestFrame()});
+        this.dungeonCanvas.addEventListener('pointerup',e=>{if(dc.pointerId!==e.pointerId)return;const wasTap=!dc.moved;dc.dragging=false;dc.pointerId=null;this.dungeonCanvas.releasePointerCapture?.(e.pointerId);if(!wasTap||!this.ready||this.screen!=='dungeon'||!this.engine.idle())return;this.unlockAudio();const r=this.dungeonCanvas.getBoundingClientRect(),sx=e.clientX-r.left,sy=e.clientY-r.top;this.dungeonTap(sx,sy)});
+        this.dungeonCanvas.addEventListener('pointercancel',()=>{dc.dragging=false;dc.pointerId=null});
+      }
       on('dungeonClose',()=>this.closeLocal());on('dungeonLeave',()=>this.closeLocal());on('dungeonExplore',()=>{const r=this.engine.dungeonEncounter(this.engine.s.activeHero);if(!r.ok)this.toast(r.reason||'Путь закрыт');this.renderDungeon()});
       on('centerHero',()=>{
         this.switchScreen('map');
@@ -572,24 +583,41 @@
       this.$('log').innerHTML=s.logs.map(t=>'<div>'+escape(t)+'</div>').join('')
     }
     dungeonZoneName(x,y){const z=D.dungeon.zones.find(z=>x>=z.x1&&x<=z.x2&&y>=z.y1&&y<=z.y2);return z?.name||'Глубинные переходы'}
-    renderDungeonMap(){
-      const c=this.dungeonCanvas,s=this.engine?.s;if(!c||!s?.dungeon)return;c.width=D.dungeon.WORLD_W;c.height=D.dungeon.WORLD_H;const ctx=c.getContext('2d'),d=s.dungeon,h=s.heroes[s.activeHero],seen=new Set(d.seen||[]),tile=100,now=Date.now()/1000;
-      // 9.1.0: художественная подземная сцена 1300×1000 служит геометрически согласованной подложкой; логическая сетка остаётся невидимой.
-      if(this.assets['abyss-map-v1.jpg'])ctx.drawImage(this.assets['abyss-map-v1.jpg'],0,0,c.width,c.height);else{const grd=ctx.createLinearGradient(0,0,c.width,c.height);grd.addColorStop(0,'#17130f');grd.addColorStop(.55,'#080a0b');grd.addColorStop(1,'#1b0b08');ctx.fillStyle=grd;ctx.fillRect(0,0,c.width,c.height)}
-      for(let y=0;y<D.dungeon.H;y++)for(let x=0;x<D.dungeon.W;x++){const k=x+','+y,t=D.dungeon.terrain[y][x],wall=t==='#';
-        if(!wall&&seen.has(k)){ctx.fillStyle='rgba(255,214,132,.018)';ctx.fillRect(x*tile,y*tile,tile,tile)}
-        if(t==='~'&&seen.has(k)){ctx.strokeStyle='rgba(84,185,220,.45)';ctx.lineWidth=2;for(let i=0;i<3;i++){const yy=y*tile+24+i*24+Math.sin(now*1.7+x+i)*3;ctx.beginPath();ctx.moveTo(x*tile+7,yy);ctx.bezierCurveTo(x*tile+35,yy-4,x*tile+66,yy+4,x*tile+93,yy);ctx.stroke()}}
-        if(t==='^'&&seen.has(k)){const pulse=.22+.16*Math.sin(now*3+x+y);ctx.fillStyle='rgba(255,79,20,'+pulse+')';ctx.fillRect(x*tile+7,y*tile+8,tile-14,tile-16)}
-        if(!seen.has(k)){const fog=ctx.createRadialGradient(x*tile+50,y*tile+50,10,x*tile+50,y*tile+50,78);fog.addColorStop(0,'rgba(0,0,0,.82)');fog.addColorStop(1,'rgba(0,0,0,.97)');ctx.fillStyle=fog;ctx.fillRect(x*tile,y*tile,tile,tile)}
-      }
-      // Animated torches illuminate only explored passages.
-      for(const q of D.dungeon.torches||[]){if(!seen.has(q.x+','+q.y))continue;const px=q.x*tile+50,py=q.y*tile+50,fl=7+3*Math.sin(now*8+q.x*2);const glow=ctx.createRadialGradient(px,py,2,px,py,46);glow.addColorStop(0,'rgba(255,190,82,.34)');glow.addColorStop(1,'rgba(255,110,30,0)');ctx.fillStyle=glow;ctx.beginPath();ctx.arc(px,py,46,0,Math.PI*2);ctx.fill();ctx.fillStyle='#ffb347';ctx.beginPath();ctx.moveTo(px,py-fl);ctx.quadraticCurveTo(px+9,py,px,py+8);ctx.quadraticCurveTo(px-8,py,px,py-fl);ctx.fill();ctx.fillStyle='#6e4a2c';ctx.fillRect(px-2,py+7,4,16)}
-      for(const o of D.dungeon.objects){const st=d.objects[o.id];if(!st||st.status!=='active'||!seen.has(o.x+','+o.y))continue;const px=o.x*tile+50,py=o.y*tile+50,border=st.owner==='player'?'#70b7ff':o.t==='enemy'?'#d95d54':'#d8b460';ctx.save();ctx.beginPath();ctx.arc(px,py,30,0,Math.PI*2);ctx.clip();this.image(ctx,o.img,px-30,py-30,60,60);ctx.restore();ctx.strokeStyle=border;ctx.lineWidth=4;ctx.beginPath();ctx.arc(px,py,31,0,Math.PI*2);ctx.stroke();ctx.font='600 18px sans-serif';ctx.textAlign='center';ctx.fillStyle='#f5e6c6';ctx.fillText(o.label||o.name,px,py+50)}
-      const px=d.x*tile+50,py=d.y*tile+50;ctx.save();ctx.beginPath();ctx.arc(px,py,34,0,Math.PI*2);ctx.clip();this.image(ctx,this.portraitSource(h.img),px-36,py-42,72,84);ctx.restore();ctx.strokeStyle='#efc75e';ctx.lineWidth=5;ctx.beginPath();ctx.arc(px,py,35,0,Math.PI*2);ctx.stroke();
+    drawDungeonFog(ctx,seen){
+      const off=this.dungeonFog||(this.dungeonFog=this.doc.createElement('canvas'));if(off.width!==D.dungeon.WORLD_W||off.height!==D.dungeon.WORLD_H){off.width=D.dungeon.WORLD_W;off.height=D.dungeon.WORLD_H}
+      const f=off.getContext('2d');f.clearRect(0,0,off.width,off.height);f.fillStyle='rgba(0,0,0,.94)';f.fillRect(0,0,off.width,off.height);f.globalCompositeOperation='destination-out';
+      for(const k of seen){const [x,y]=k.split(',').map(Number),px=x*100+50,py=y*100+50,g=f.createRadialGradient(px,py,36,px,py,128);g.addColorStop(0,'rgba(0,0,0,1)');g.addColorStop(.56,'rgba(0,0,0,.92)');g.addColorStop(1,'rgba(0,0,0,0)');f.fillStyle=g;f.beginPath();f.arc(px,py,128,0,Math.PI*2);f.fill()}
+      f.globalCompositeOperation='source-over';ctx.drawImage(off,0,0)
+    }
+    drawDungeonMarker(ctx,o,st,px,py,z,near,now){
+      const hostile=o.t==='enemy',owned=st.owner==='player',accent=owned?'#75bfff':hostile?'#ef6559':'#e5bc5d',pulse=1+Math.sin(now*2.3+px*.01)*.035;
+      ctx.save();ctx.translate(px,py);ctx.scale(pulse,pulse);ctx.shadowColor='rgba(0,0,0,.78)';ctx.shadowBlur=18/z;ctx.shadowOffsetY=10/z;
+      const size=hostile?58:52;ctx.beginPath();ctx.arc(0,0,size*.57,0,Math.PI*2);ctx.fillStyle='rgba(7,10,8,.68)';ctx.fill();ctx.shadowBlur=0;
+      ctx.save();ctx.beginPath();ctx.arc(0,0,size*.5,0,Math.PI*2);ctx.clip();this.image(ctx,o.img,-size/2,-size/2,size,size);ctx.restore();
+      ctx.lineWidth=(hostile?4:3)/z;ctx.strokeStyle=accent;ctx.beginPath();ctx.arc(0,0,size*.53,0,Math.PI*2);ctx.stroke();
+      if(hostile){ctx.strokeStyle='rgba(239,75,58,.24)';ctx.lineWidth=9/z;ctx.beginPath();ctx.arc(0,0,size*.67,0,Math.PI*2);ctx.stroke()}
+      ctx.restore();
+      if(near){const text=o.label||o.name,fs=14/z;ctx.font='700 '+fs+'px sans-serif';const w=Math.min(230/z,ctx.measureText(text).width+16/z),yy=py+40/z;this.round(ctx,px-w/2,yy-17/z,w,25/z,7/z);ctx.fillStyle='rgba(5,7,6,.84)';ctx.fill();ctx.strokeStyle=accent;ctx.lineWidth=1/z;ctx.stroke();ctx.fillStyle='#f6e7c7';ctx.textAlign='center';ctx.fillText(text,px,yy+1/z)}
+    }
+    renderDungeonMap(t=0){
+      const c=this.dungeonCanvas,s=this.engine?.s;if(!c||!s?.dungeon)return;const r=c.getBoundingClientRect();if(!r.width||!r.height)return;const dpr=Math.min(2,this.env.devicePixelRatio||1);const bw=Math.round(r.width*dpr),bh=Math.round(r.height*dpr);if(c.width!==bw||c.height!==bh){c.width=bw;c.height=bh}
+      if(!this.dungeonCamera.ready)this.centerDungeon();this.clampDungeon();const z=this.dungeonCamera.zoom,ctx=c.getContext('2d'),d=s.dungeon,h=s.heroes[s.activeHero],seen=new Set(d.seen||[]),tile=100,now=(t||performance.now())/1000;
+      ctx.setTransform(dpr,0,0,dpr,0,0);ctx.clearRect(0,0,r.width,r.height);ctx.fillStyle='#020302';ctx.fillRect(0,0,r.width,r.height);ctx.save();ctx.scale(z,z);ctx.translate(-this.dungeonCamera.x,-this.dungeonCamera.y);ctx.imageSmoothingEnabled=true;ctx.imageSmoothingQuality='high';
+      if(this.assets['abyss-map-v1.jpg'])ctx.drawImage(this.assets['abyss-map-v1.jpg'],0,0,D.dungeon.WORLD_W,D.dungeon.WORLD_H);else{const grd=ctx.createLinearGradient(0,0,D.dungeon.WORLD_W,D.dungeon.WORLD_H);grd.addColorStop(0,'#17130f');grd.addColorStop(.55,'#080a0b');grd.addColorStop(1,'#1b0b08');ctx.fillStyle=grd;ctx.fillRect(0,0,D.dungeon.WORLD_W,D.dungeon.WORLD_H)}
+      // Local animated layers: only terrain effects move, the painted map stays stable.
+      for(const q of D.dungeon.river||[]){if(!seen.has(q.x+','+q.y))continue;const x=q.x*tile,y=q.y*tile;ctx.strokeStyle='rgba(91,202,238,.38)';ctx.lineWidth=2.2/z;for(let i=0;i<3;i++){const yy=y+24+i*24+Math.sin(now*2.2+q.x+i)*4;ctx.beginPath();ctx.moveTo(x+7,yy);ctx.bezierCurveTo(x+34,yy-5,x+65,yy+5,x+93,yy);ctx.stroke()}}
+      for(const q of D.dungeon.lava||[]){if(!seen.has(q.x+','+q.y))continue;const px=q.x*tile+50,py=q.y*tile+50,rad=48+Math.sin(now*3+q.x)*8,g=ctx.createRadialGradient(px,py,8,px,py,rad);g.addColorStop(0,'rgba(255,177,55,.22)');g.addColorStop(.5,'rgba(255,72,12,.16)');g.addColorStop(1,'rgba(255,45,0,0)');ctx.fillStyle=g;ctx.beginPath();ctx.arc(px,py,rad,0,Math.PI*2);ctx.fill()}
+      for(const q of D.dungeon.torches||[]){if(!seen.has(q.x+','+q.y))continue;const px=q.x*tile+50,py=q.y*tile+50,rad=52+Math.sin(now*7+q.x)*8,g=ctx.createRadialGradient(px,py,2,px,py,rad);g.addColorStop(0,'rgba(255,206,111,.34)');g.addColorStop(1,'rgba(255,110,30,0)');ctx.fillStyle=g;ctx.beginPath();ctx.arc(px,py,rad,0,Math.PI*2);ctx.fill()}
+      // Soft fog is one continuous layer; no rectangular black tiles.
+      this.drawDungeonFog(ctx,seen);
+      for(const o of D.dungeon.objects){const st=d.objects[o.id];if(!st||st.status!=='active'||!seen.has(o.x+','+o.y))continue;const px=o.x*tile+50,py=o.y*tile+50,dist=Math.hypot(o.x-d.x,o.y-d.y);this.drawDungeonMarker(ctx,o,st,px,py,z,dist<=2.4,now)}
+      const px=d.x*tile+50,py=d.y*tile+50;ctx.save();ctx.globalAlpha=.38;ctx.fillStyle='#000';ctx.beginPath();ctx.ellipse(px,py+35,34,10,0,0,Math.PI*2);ctx.fill();ctx.restore();ctx.save();ctx.translate(px,py);const hs=this.assets['ivan-rider.png']?'ivan-rider.png':this.portraitSource(h.img);if(hs==='ivan-rider.png')this.image(ctx,hs,-45,-70,90,104);else{ctx.beginPath();ctx.arc(0,0,34,0,Math.PI*2);ctx.clip();this.image(ctx,hs,-36,-42,72,84)}ctx.restore();ctx.strokeStyle='#f1c75f';ctx.lineWidth=3/z;ctx.beginPath();ctx.ellipse(px,py+34,36,11,0,0,Math.PI*2);ctx.stroke();
+      // Subtle cave haze creates depth without covering gameplay objects.
+      ctx.save();ctx.globalAlpha=.08;ctx.fillStyle='#9fc7c4';for(let i=0;i<5;i++){const hx=((now*12+i*271)%1500)-100,hy=110+i*175+Math.sin(now*.45+i)*18;ctx.beginPath();ctx.ellipse(hx,hy,90,24,0,0,Math.PI*2);ctx.fill()}ctx.restore();ctx.restore();
       this.$('dungeonZone').textContent='🕯 '+this.dungeonZoneName(d.x,d.y);this.$('dungeonHud').textContent=h.name+' · движение '+h.moves+'/'+h.maxMoves+' · открыто '+seen.size+'/'+(D.dungeon.W*D.dungeon.H)+' клеток';this.updateMusic()
     }
-    dungeonTap(px,py){
-      const x=Math.floor(px/100),y=Math.floor(py/100),s=this.engine.s,d=s.dungeon;if(x<0||y<0||x>=D.dungeon.W||y>=D.dungeon.H)return;const o=D.dungeon.objects.find(o=>o.x===x&&o.y===y&&d.objects[o.id]?.status==='active');let r;if(o)r=this.engine.commandDungeonInteract(s.activeHero,o.id);else r=this.engine.commandDungeonMove(s.activeHero,x,y);if(!r.ok)this.toast(r.reason||'Путь недоступен');this.renderDungeonMap()
+    dungeonTap(sx,sy){
+      const x=Math.floor((sx/this.dungeonCamera.zoom+this.dungeonCamera.x)/100),y=Math.floor((sy/this.dungeonCamera.zoom+this.dungeonCamera.y)/100),s=this.engine.s,d=s.dungeon;if(x<0||y<0||x>=D.dungeon.W||y>=D.dungeon.H)return;const o=D.dungeon.objects.find(o=>o.x===x&&o.y===y&&d.objects[o.id]?.status==='active');let r;if(o)r=this.engine.commandDungeonInteract(s.activeHero,o.id);else r=this.engine.commandDungeonMove(s.activeHero,x,y);if(!r.ok)this.toast(r.reason||'Путь недоступен');this.requestFrame()
     }
     renderDungeon(){const s=this.engine.s;if(!this.$('dungeonStatus'))return;const lv=s.q.dungeonLevel||0,names=['Заброшенные шахты','Древний город','Сердце Бездны'],foes=['Костяной караул · пещерные волки','Некроманты древнего города','Хранитель Бездны · элитная нежить'];const next=Math.min(2,lv);this.$('dungeonDepth').textContent='Уровень '+['I','II','III'][next]+' · '+names[next];this.$('dungeonStatus').innerHTML=s.q.dungeonCleared?'<b>🔥 Сердце Бездны очищено</b><div class="small">Сила Некрополя ослаблена. Угроза снижена.</div>':'<b>'+names[next]+'</b><div class="small">Рекомендуемая сила армии: '+[85,150,235][next]+'. Награды растут с глубиной. На III уровне ждёт Хранитель Бездны.</div><div class="small" style="margin-top:6px">Очищено уровней: '+lv+'/3 · найдено сокровищ: '+(s.q.dungeonLoot||0)+'</div>';this.$('dungeonExplore').disabled=!!s.q.dungeonCleared}
     battleSnapshot(b){
@@ -890,13 +918,14 @@
         if(!this.ready||!this.engine||this.doc.hidden)return;
         const moving=this.motion.frame(t);
         if(this.screen==='map')this.drawMap(t);
+        if(this.screen==='dungeon')this.renderDungeonMap(t);
         if(moving)this.requestFrame();
-        else if(this.screen==='map'&&!this.reduceMotion)this.scheduleAmbientFrame()
+        else if((this.screen==='map'||this.screen==='dungeon')&&!this.reduceMotion)this.scheduleAmbientFrame()
       }
       )
     }
     scheduleAmbientFrame(){
-      if(this.ambientTimer!==null||this.doc.hidden||this.screen!=='map'||this.reduceMotion)return;
+      if(this.ambientTimer!==null||this.doc.hidden||!['map','dungeon'].includes(this.screen)||this.reduceMotion)return;
       this.ambientTimer=this.env.setTimeout(()=>{
         this.ambientTimer=null;
         this.requestFrame()
@@ -909,12 +938,24 @@
       this.canvas.height=Math.round(r.height*dpr);
       this.dpr=dpr;
       this.clamp();
+      if(this.screen==='dungeon'){this.clampDungeon();}
       this.requestFrame()
     }
     clamp(){
       const r=this.canvas.getBoundingClientRect(),vw=r.width/this.camera.zoom,vh=r.height/this.camera.zoom;
       this.camera.x=vw>D.WORLD_W?-(vw-D.WORLD_W)/2:Math.max(-160,Math.min(D.WORLD_W-vw+160,this.camera.x));
       this.camera.y=vh>D.WORLD_H?-(vh-D.WORLD_H)/2:Math.max(-120,Math.min(D.WORLD_H-vh+120,this.camera.y))
+    }
+    clampDungeon(){
+      const c=this.dungeonCanvas;if(!c)return;const r=c.getBoundingClientRect(),z=this.dungeonCamera.zoom;
+      if(!r.width||!r.height)return;const vw=r.width/z,vh=r.height/z,margin=70;
+      this.dungeonCamera.x=vw>=D.dungeon.WORLD_W?-(vw-D.dungeon.WORLD_W)/2:Math.max(-margin,Math.min(D.dungeon.WORLD_W-vw+margin,this.dungeonCamera.x));
+      this.dungeonCamera.y=vh>=D.dungeon.WORLD_H?-(vh-D.dungeon.WORLD_H)/2:Math.max(-margin,Math.min(D.dungeon.WORLD_H-vh+margin,this.dungeonCamera.y));
+    }
+    centerDungeon(){
+      if(!this.engine?.s?.dungeon||!this.dungeonCanvas)return;const r=this.dungeonCanvas.getBoundingClientRect(),d=this.engine.s.dungeon,z=this.dungeonCamera.zoom;
+      this.dungeonCamera.x=d.x*100+50-r.width/(2*z);this.dungeonCamera.y=d.y*100+50-r.height/(2*z);
+      this.dungeonCamera.ready=true;this.clampDungeon();this.requestFrame();
     }
     center(){
       if(!this.engine)return;
@@ -1028,6 +1069,8 @@
       this.image(ctx,'world-v6.jpg',0,0,D.WORLD_W,D.WORLD_H);
       this.drawAmbientWater(ctx,t);
       this.drawAmbientWorld(ctx,t);
+      // 9.1.1 depth pass: slow cloud shadows and light shafts move independently of terrain.
+      if(!this.reduceMotion){const phase=(t||performance.now())*.00012;ctx.save();ctx.globalCompositeOperation='multiply';ctx.globalAlpha=.10;for(let i=0;i<5;i++){const x=((phase*900+i*620)%3400)-400,y=120+i*390;const g=ctx.createRadialGradient(x,y,20,x,y,310);g.addColorStop(0,'rgba(18,25,20,.65)');g.addColorStop(1,'rgba(18,25,20,0)');ctx.fillStyle=g;ctx.beginPath();ctx.ellipse(x,y,360,150,.2,0,Math.PI*2);ctx.fill()}ctx.restore()}
       this.updateFog();
       ctx.drawImage(this.fog,0,0);
       this.labelHits=[];
@@ -1051,34 +1094,16 @@
         const p=this.objectPosition(o);
         if(p.x<this.camera.x-240||p.y<this.camera.y-180||p.x>this.camera.x+r.width/z+240||p.y>this.camera.y+r.height/z+180)continue;
         const border=o.owner==='player'?'#72b8ff':o.owner==='enemy'?'#e35d52':'#d7b35d';
+        const hx=s.heroes[s.activeHero]?.x??0,hy=s.heroes[s.activeHero]?.y??0,nearHero=Math.hypot(o.x-hx,o.y-hy)<=4.2;
         if(!o.landmark){
-          ctx.save();
-          this.round(ctx,p.x-34,p.y-34,68,68,10/z);
-          ctx.clip();
-          this.image(ctx,o.img,p.x-34,p.y-34,68,68);
-          ctx.restore();
-          this.round(ctx,p.x-34,p.y-34,68,68,10/z);
-          ctx.strokeStyle=border;
-          ctx.lineWidth=2/z;
-          ctx.stroke()
+          const bob=this.reduceMotion?0:Math.sin((t||0)*.002+o.x+o.y)*2.5;
+          ctx.save();ctx.translate(p.x,p.y+bob);ctx.shadowColor='rgba(0,0,0,.72)';ctx.shadowBlur=16/z;ctx.shadowOffsetY=8/z;ctx.beginPath();ctx.arc(0,0,31,0,Math.PI*2);ctx.fillStyle='rgba(7,11,8,.68)';ctx.fill();ctx.shadowBlur=0;ctx.save();ctx.beginPath();ctx.arc(0,0,28,0,Math.PI*2);ctx.clip();this.image(ctx,o.img,-29,-29,58,58);ctx.restore();ctx.strokeStyle=border;ctx.lineWidth=3/z;ctx.beginPath();ctx.arc(0,0,30,0,Math.PI*2);ctx.stroke();ctx.restore()
         }
-        if(o.landmark||o.label){
-          const text=label(o)+(o.owner==='player'?' ✓':''),yy=o.landmark?p.y-o.radius*.63:p.y+47;
-          ctx.font='600 '+14/z+'px sans-serif';
-          const w=ctx.measureText(text).width+16/z;
-          this.labelHits.push({
-            id:o.id,x:p.x-w/2,y:yy-17/z,w,h:26/z
-          }
-          );
-          this.round(ctx,p.x-w/2,yy-17/z,w,26/z,7/z);
-          ctx.fillStyle='rgba(5,10,7,.86)';
-          ctx.fill();
-          ctx.strokeStyle=border;
-          ctx.lineWidth=1/z;
-          ctx.stroke();
-          ctx.fillStyle='#f5e8c6';
-          ctx.textAlign='center';
-          ctx.fillText(text,p.x,yy+1/z)
+        // Labels no longer cover half the screen: show landmarks, nearby targets, or higher zoom only.
+        if(o.landmark||nearHero||z>=.86){
+          const text=label(o)+(o.owner==='player'?' ✓':''),yy=o.landmark?p.y-o.radius*.63:p.y+43;
+          ctx.font='600 '+13/z+'px sans-serif';const w=Math.min(230/z,ctx.measureText(text).width+14/z);
+          this.labelHits.push({id:o.id,x:p.x-w/2,y:yy-16/z,w,h:24/z});this.round(ctx,p.x-w/2,yy-16/z,w,24/z,7/z);ctx.fillStyle='rgba(5,9,7,.78)';ctx.fill();ctx.strokeStyle=border;ctx.lineWidth=.8/z;ctx.stroke();ctx.fillStyle='#f6e8c8';ctx.textAlign='center';ctx.fillText(text,p.x,yy+1/z)
         }
       }
       if(s.enemy.alive&&this.seen.has(C.key(s.enemy.x,s.enemy.y))){

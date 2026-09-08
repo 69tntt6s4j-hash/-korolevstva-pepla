@@ -8,7 +8,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Королевства Пепла">
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="icon-180.png">
-<title>Королевства Пепла 9.1.0 — Living World Visual Engine</title>
+<title>Королевства Пепла 9.1.1 — Living World Visual Engine</title>
 <style>
 :root{--gold:#ddb45c;--text:#f4ecd8;--muted:#b8af9c;--line:#735b29;--panel:#101611;--panel2:#192219}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
@@ -76,7 +76,7 @@ button{font:inherit;color:inherit;touch-action:manipulation}
 @media(max-width:430px){.heroSelect{grid-template-columns:1fr}.heroBtn{min-height:72px}.heroPane{grid-template-columns:84px minmax(0,1fr)}.heroPane img{width:84px;height:96px}#army{grid-template-columns:1fr 1fr}.unitcard{grid-template-columns:58px minmax(0,1fr);min-height:76px;padding:6px;gap:7px}.unitcard img{width:58px;height:58px}.unitcard .txt>b{font-size:13px}.unitcard .unitQty{font-size:19px}}
 @media(max-width:355px){#army{grid-template-columns:1fr}.unitcard{grid-template-columns:64px minmax(0,1fr)}.unitcard img{width:64px;height:64px}}
 
-/* 9.1.0 — Living World Visual Engine: псевдо-3D карта и тактический бой */
+/* 9.1.1 — Living World Visual Engine: псевдо-3D карта и тактический бой */
 #battleModal .dialog{background:linear-gradient(180deg,rgba(12,15,12,.96),rgba(4,6,5,.98));box-shadow:0 20px 70px #000;border-color:#96733a}
 #battleModal .battleArt{height:auto;aspect-ratio:16/9;isolation:isolate;background-image:url('battlefield.jpg');background-size:cover;background-position:center;box-shadow:inset 0 0 70px #000b,0 10px 30px #0008;perspective:780px}
 #battleModal[data-env="dungeon"] .battleArt{background-image:url('battle-cavern.jpg');background-position:center 52%}
@@ -212,6 +212,30 @@ img[src$="griffin-portrait.jpg"]{object-fit:cover!important;object-position:cent
 <style id="dungeon-901">
 #s-dungeon{padding:0;overflow:hidden;background:#050505}.dungeonMapWrap{position:relative;width:100%;height:100%}.dungeonCanvas{display:block;width:100%;height:100%;touch-action:none;background:#050505}.dungeonTop{position:absolute;left:10px;right:10px;top:10px;z-index:4;display:flex;justify-content:space-between;gap:8px;pointer-events:none}.dungeonTop .panel{pointer-events:auto;margin:0;padding:8px 10px;background:rgba(8,8,7,.91);backdrop-filter:blur(6px)}.dungeonBottom{position:absolute;left:10px;right:10px;bottom:10px;z-index:4;display:grid;grid-template-columns:1fr auto;gap:8px}.dungeonBottom .btn{background:rgba(16,13,10,.94)}.dungeonLegend{font-size:11px;color:#c8b58e}.dungeonZone{color:#e3c477;font-weight:800}.dungeonThreatSafe{opacity:.45}
 </style>
+
+<style id="visual-engine-911">
+/* 9.1.1 — Visual Engine Rebuild */
+#s-dungeon{background:#020302}
+.dungeonMapWrap{isolation:isolate}
+.dungeonCanvas{position:absolute;inset:0;width:100%;height:100%;display:block;background:#020302;touch-action:none}
+.dungeonTop{top:8px;left:8px;right:8px;align-items:flex-start}
+.dungeonTop .panel{max-width:min(68vw,460px);background:linear-gradient(180deg,rgba(9,13,10,.92),rgba(4,7,5,.82));border-color:#78602c;box-shadow:0 8px 26px rgba(0,0,0,.42)}
+.dungeonTopActions{display:flex;gap:6px;pointer-events:auto}
+.dungeonTool{width:42px;height:42px;border-radius:10px;border:1px solid #78602c;background:rgba(9,13,10,.9);font-size:20px;box-shadow:0 6px 18px rgba(0,0,0,.38)}
+#dungeonLeaveMap{min-height:42px;padding:7px 10px;background:rgba(15,19,14,.92);box-shadow:0 6px 18px rgba(0,0,0,.38)}
+.dungeonBottom{left:8px;right:8px;bottom:8px;grid-template-columns:minmax(0,1fr) auto}
+.dungeonBottom .btn{backdrop-filter:blur(8px);background:rgba(8,11,8,.86);border-color:#78602c;box-shadow:0 8px 24px rgba(0,0,0,.42)}
+#dungeonEndDay{min-width:88px}
+#s-map:after,#s-dungeon:after{content:"";position:absolute;inset:0;pointer-events:none;z-index:3;box-shadow:inset 0 0 70px rgba(0,0,0,.26)}
+#mapCanvas,#dungeonCanvas{image-rendering:auto}
+@media(max-width:430px){
+  .dungeonTop .panel{max-width:58vw;padding:7px 8px}
+  .dungeonZone{font-size:14px}.dungeonLegend{font-size:10px;line-height:1.2}
+  .dungeonTopActions{gap:4px}.dungeonTool{width:38px;height:38px;font-size:18px}
+  #dungeonLeaveMap{font-size:12px;padding:6px 8px}
+  .dungeonBottom{bottom:7px}.dungeonBottom .btn{font-size:13px;min-height:48px}
+}
+</style>
 </head>
 <body><main class="app">
 <div class="top"><span class="r">🪙 <b id="gold"></b></span><span class="r">🪵 <b id="wood"></b></span><span class="r">🪨 <b id="ore"></b></span><span class="r">💎 <b id="gems"></b></span><span class="r">🔮 <b id="crystal"></b></span><span class="grow"></span><span class="r">☀️ День <b id="day"></b> · Нед. <b id="week"></b> · Мес. <b id="month"></b></span></div>
@@ -226,7 +250,7 @@ img[src$="griffin-portrait.jpg"]{object-fit:cover!important;object-position:cent
 
 <section class="screen" id="s-dungeon"><div class="dungeonMapWrap">
 <canvas id="dungeonCanvas" class="dungeonCanvas" aria-label="Карта Пещеры Бездны"></canvas>
-<div class="dungeonTop"><div class="panel"><div class="dungeonZone" id="dungeonZone">Заброшенные шахты</div><div class="dungeonLegend" id="dungeonHud">Исследуйте тоннели, рудники и артефакты</div></div><button class="btn" id="dungeonLeaveMap">↩ Поверхность</button></div>
+<div class="dungeonTop"><div class="panel"><div class="dungeonZone" id="dungeonZone">Заброшенные шахты</div><div class="dungeonLegend" id="dungeonHud">Исследуйте тоннели, рудники и артефакты</div></div><div class="dungeonTopActions"><button class="dungeonTool" id="dungeonZoomOut" aria-label="Уменьшить карту подземелья">−</button><button class="dungeonTool" id="dungeonZoomIn" aria-label="Увеличить карту подземелья">＋</button><button class="dungeonTool" id="dungeonCenter" aria-label="Центрировать героя">◎</button><button class="btn" id="dungeonLeaveMap">↩ Поверхность</button></div></div>
 <div class="dungeonBottom"><button class="btn" id="dungeonHint">Коснитесь клетки или объекта, чтобы идти к нему</button><button class="btn gold" id="dungeonEndDay">⌛ День</button></div>
 </div></section>
 
@@ -266,6 +290,6 @@ img[src$="griffin-portrait.jpg"]{object-fit:cover!important;object-position:cent
 <div class="modal hidden" id="objectPreviewModal"><div class="dialog"><div class="objectPreviewGrid"><img id="objectPreviewImg" alt=""><div class="objectMeta"><h2 id="objectPreviewName" style="margin:0"></h2><span class="tag" id="objectPreviewType"></span><div class="small" id="objectPreviewDesc"></div><div class="small" id="objectPreviewReward"></div></div></div><div class="objectActions"><button class="btn" id="objectPreviewGo">Подойти</button><button class="btn" id="objectPreviewClose">Отмена</button></div></div></div>
 <div class="modal hidden" id="objectListModal"><div class="dialog"><h2>Разведанные объекты</h2><div class="objectList" id="knownObjects"></div><button class="btn" id="objectListClose">Закрыть</button></div></div>
 <div class="modal hidden" id="dungeonModal"><div class="dialog dungeonDialog"><div class="row"><div><h2 style="margin:0">🕯 Пещера Бездны</h2><div class="small">Подземелье живёт в том же времени, что и поверхность.</div></div><button class="miniBtn" id="dungeonClose">✕</button></div><div class="dungeonArt"><div id="dungeonDepth">Уровень I · Заброшенные шахты</div></div><div id="dungeonStatus" class="panel"></div><div class="grid g2"><button class="btn red" id="dungeonExplore">⚔️ Продвинуться глубже</button><button class="btn" id="dungeonLeave">Вернуться на поверхность</button></div></div></div>
-<div class="modal" id="startupModal"><div class="dialog"><h2>Королевства Пепла 9.1.0</h2><p id="startupMessage" role="status">Загрузка игры…</p><button class="btn" id="retryLoad" hidden>Повторить загрузку</button><button class="btn" id="recoveryImport" hidden>Импортировать сохранение</button><button class="btn red" id="recoveryNew" hidden>Начать новую игру</button></div></div>
+<div class="modal" id="startupModal"><div class="dialog"><h2>Королевства Пепла 9.1.1</h2><p id="startupMessage" role="status">Загрузка игры…</p><button class="btn" id="retryLoad" hidden>Повторить загрузку</button><button class="btn" id="recoveryImport" hidden>Импортировать сохранение</button><button class="btn red" id="recoveryNew" hidden>Начать новую игру</button></div></div>
 <script src="game-data.js"></script><script src="game-core.js"></script><script src="game-controls.js"></script><script src="game-ui.js"></script>
 </body></html>

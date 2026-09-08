@@ -1,0 +1,12 @@
+{
+  "version": "9.1.1",
+  "name": "Visual Engine Rebuild",
+  "changes": [
+    "Dungeon renders with aspect-correct camera instead of stretched canvas",
+    "Touch drag/pan and dungeon zoom controls",
+    "Soft radial fog of war instead of rectangular tiles",
+    "Dungeon objects are independent layered markers with reduced label clutter",
+    "Animated water, lava, torch light and cave atmosphere",
+    "Surface world gets live cloud shadows, local light, improved markers and label decluttering"
+  ]
+}
