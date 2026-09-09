@@ -58,6 +58,13 @@
       return !!this.engine.state.movement&&this.engine.idle()&&this.engine.state.heroes[m.heroId].moves>0
     }
   }
+  class DungeonMotionDriver{
+    constructor(engine,duration=280){this.engine=engine;this.duration=duration;this.route=null;this.step=null;this.serial=0}
+    reset(){this.route=null;this.step=null;this.serial++}
+    command(tx,ty,targetId=null){const s=this.engine.s,d=s.dungeon;if(!d.inside||!this.engine.idle())return {ok:false,reason:'Сначала завершите действие'};if(!d.seen.includes(tx+','+ty))return {ok:false,reason:'Сначала разведайте область'};const path=this.engine.dungeonPath(tx,ty,!!targetId);if(!path)return {ok:false,reason:'Нет доступного подхода'};if(path.length&&s.heroes[d.inside].moves<=0)return {ok:false,reason:'Движение закончилось'};this.reset();this.route={id:this.serial,heroId:d.inside,day:s.day,path,targetId};if(!path.length){this.route=null;return targetId?this.engine.commandDungeonInteract(d.inside,targetId):{ok:true}}return {ok:true}}
+    frame(now){const s=this.engine.s,d=s.dungeon,r=this.route;if(!r)return false;if(d.inside!==r.heroId||s.activeHero!==r.heroId||r.day!==s.day||!this.engine.idle()||(r.path.length&&s.heroes[r.heroId].moves<=0)){this.reset();return false}if(!r.path.length){const target=r.targetId;this.reset();if(target)this.engine.commandDungeonInteract(r.heroId,target);return false}if(!this.step)this.step={from:{x:d.x,y:d.y},to:{x:r.path[0][0],y:r.path[0][1]},start:now,progress:0};this.step.progress=Math.max(0,Math.min(1,(now-this.step.start)/this.duration));if(this.step.progress>=1){const to=this.step.to;if(Math.abs(to.x-d.x)+Math.abs(to.y-d.y)!==1||this.engine.dungeonObjectAt(to.x,to.y)){this.reset();return false}const ok=this.engine.commandDungeonMove(r.heroId,to.x,to.y).ok;if(!ok){this.reset();return false}r.path.shift();this.step=null}return !!this.route}
+    position(){const d=this.engine.s.dungeon,j=this.step;if(!j)return {x:d.x*100+50,y:d.y*100+50,moving:false};const t=j.progress*j.progress*(3-2*j.progress);return {x:(j.from.x+(j.to.x-j.from.x)*t)*100+50,y:(j.from.y+(j.to.y-j.from.y)*t)*100+50,moving:true}}
+  }
   class PointerController{
     constructor(camera,{
       onTap=()=>{
@@ -154,7 +161,7 @@
     }
   }
   return {
-    MotionDriver,PointerController
+    MotionDriver,DungeonMotionDriver,PointerController
   }
   ;
 }

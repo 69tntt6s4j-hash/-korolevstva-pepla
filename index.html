@@ -2,240 +2,31 @@
 <html lang="ru">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,maximum-scale=1,user-scalable=no">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
 <meta name="theme-color" content="#090c09">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Королевства Пепла">
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="icon-180.png">
-<title>Королевства Пепла 9.1.2 — Living World Visual Engine</title>
-<style>
-:root{--gold:#ddb45c;--text:#f4ecd8;--muted:#b8af9c;--line:#735b29;--panel:#101611;--panel2:#192219}
-*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-html,body{margin:0;background:#050705;color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;overflow:hidden}
-button{font:inherit;color:inherit;touch-action:manipulation}
-.app{height:100dvh;max-width:1100px;margin:auto;background:#070a07;display:flex;flex-direction:column}
-.top{display:flex;gap:4px;align-items:center;overflow:auto;padding:calc(6px + env(safe-area-inset-top)) 6px 6px;background:linear-gradient(#171d17,#0c100d);border-bottom:1px solid var(--line);z-index:20;flex:0 0 auto}
-.r{white-space:nowrap;border:1px solid #5f502c;background:#171d17;border-radius:6px;padding:5px 7px;font-size:12px}.grow{flex:1}
-.main{position:relative;flex:1;min-height:0;overflow:hidden}.screen{position:absolute;inset:0;display:none;overflow:auto;background:#080b08}.screen.active{display:block}
-#s-map{overflow:hidden;background:#050705}
-#mapCanvas{position:absolute;inset:0;width:100%;height:100%;touch-action:none;background:#000}
-.mapHud{position:absolute;left:8px;right:8px;bottom:8px;display:flex;gap:7px;align-items:flex-end;pointer-events:none;z-index:8}
-.heroCard{pointer-events:auto;background:rgba(8,12,9,.91);border:1px solid var(--line);border-radius:10px;padding:7px;display:grid;grid-template-columns:44px 1fr;gap:7px;min-width:205px;box-shadow:0 7px 22px #0008;backdrop-filter:blur(6px)}
-.heroCard img{width:44px;height:44px;border-radius:7px;object-fit:cover;border:1px solid #8e7130}.small{font-size:12px;color:var(--muted)}
-.progress{height:5px;background:#050705;border-radius:5px;overflow:hidden;margin-top:4px}.progress i{display:block;height:100%;background:var(--gold)}
-.mapBtns{margin-left:auto;display:grid;gap:6px;pointer-events:auto}.roundBtn{width:44px;height:44px;border-radius:9px;border:1px solid var(--line);background:#182018;font-size:21px}
-.nextDay{position:absolute;right:8px;bottom:72px;z-index:9;min-height:48px;padding:9px 14px;border:1px solid #a9863b;border-radius:10px;background:linear-gradient(#695124,#453514);font-weight:800;color:#fff1c5;box-shadow:0 6px 18px #0009;touch-action:manipulation}
-.zoom{position:absolute;left:8px;top:8px;z-index:9;display:flex;gap:5px}.zoom button{width:40px;height:40px;border:1px solid var(--line);border-radius:9px;background:#101710de;font-size:20px}
-.panel{margin:7px;border:1px solid var(--line);background:linear-gradient(#1b241b,#0e140f);border-radius:10px;padding:10px}.title{font-size:19px;font-weight:800;margin-bottom:8px}.row{display:flex;justify-content:space-between;gap:8px}.grid{display:grid;gap:7px}.g2{grid-template-columns:repeat(2,1fr)}.g3{grid-template-columns:repeat(3,1fr)}
-.btn{min-height:44px;border:1px solid var(--line);background:#1b241b;border-radius:8px;padding:8px}.btn.gold{background:#57431d}.btn.red{background:#4b2924}.btn.blue{background:#233f55}.btn:disabled{opacity:.42}
-.heroSelect{display:grid;grid-template-columns:repeat(2,1fr);gap:7px}.heroBtn{display:grid;grid-template-columns:52px 1fr;gap:8px;align-items:center;text-align:left}.heroBtn img{width:52px;height:62px;object-fit:cover;border-radius:7px}.heroBtn.active{border-color:var(--gold);background:#302918}
-.heroPane{display:grid;grid-template-columns:110px 1fr;gap:10px}.heroPane img{width:110px;height:150px;object-fit:cover;border-radius:8px;border:1px solid var(--line)}
-.unitcard{border:1px solid #3c473a;border-radius:8px;overflow:hidden;background:#151d16}.unitcard img{width:100%;height:104px;object-fit:cover;object-position:center top;display:block}.unitcard .txt{padding:6px;text-align:center}.unitcard b{display:block;font-size:17px}
-.cityArt{width:100%;height:auto;aspect-ratio:11/7;border:1px solid var(--line);border-radius:8px;background:url('city.jpg') center/100% 100% no-repeat}.building{position:relative;text-align:left}.built{border-color:#b48f43;background:#332b1b}.lock{position:absolute;right:6px;top:5px}
-.skill{border-left:3px solid var(--gold);padding-left:8px;margin:7px 0}.quest{border:1px solid #3c473a;border-radius:7px;padding:8px;margin-bottom:6px}.quest.done{opacity:.6}.log{max-height:230px;overflow:auto;font-size:12px;line-height:1.45}
-.nav{display:grid;grid-template-columns:repeat(6,1fr);background:#0e130f;border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom);flex:0 0 auto;z-index:20}
-.nav button{min-height:59px;border:0;border-right:1px solid #2c342b;background:#111711;font-size:10px;padding:6px 2px}.nav b{display:block;font-size:20px}.nav button.active{background:#312817;color:#f0ca72}
-.modal{position:fixed;inset:0;z-index:40;background:#000d;display:flex;align-items:center;justify-content:center;padding:10px}.modal.hidden{display:none}.dialog{width:min(850px,100%);max-height:94vh;overflow:auto;border:1px solid var(--line);border-radius:10px;background:#0d120e;padding:10px}
-.battleArt{position:relative;height:255px;border-radius:8px;overflow:hidden;background:url('battlefield.jpg') center/cover no-repeat;border:1px solid var(--line)}.bgrid{position:absolute;inset:8px;display:grid;grid-template-columns:repeat(8,1fr);grid-template-rows:repeat(5,1fr);gap:3px}.cell{position:relative;border:1px solid rgba(226,201,111,.28);border-radius:9px;background:rgba(35,49,29,.16)}.cell.move{background:rgba(74,115,64,.32);border-color:#739267}.cell.attack{background:rgba(129,55,45,.33);border-color:#a66050}.cell.rangedAttack{box-shadow:inset 0 0 0 2px rgba(226,201,111,.48)}.cell.meleeAttack{box-shadow:inset 0 0 0 2px rgba(196,82,65,.55)}.cell.sel{outline:2px solid var(--gold)}
-.stack{position:absolute;inset:2px;border-radius:8px;background-size:cover;background-position:center;border:1px solid #0009}.stack.player{box-shadow:0 0 0 2px #557d9b}.stack.enemy{box-shadow:0 0 0 2px #9b554b}.stack .qty{position:absolute;right:1px;bottom:1px;background:#050705e8;border-radius:4px;padding:1px 4px;font-size:10px}
-.turnbar{display:flex;gap:5px;overflow:auto;margin:8px 0}.turnchip{min-width:44px;border:1px solid #3c473a;background:#161d17;border-radius:7px;padding:4px;text-align:center;font-size:10px}.turnchip.active{border-color:var(--gold)}
-.toast{position:fixed;z-index:70;left:50%;top:calc(env(safe-area-inset-top) + 12px);transform:translateX(-50%);max-width:92%;background:#121812ef;border:1px solid var(--gold);border-radius:9px;padding:9px 12px;box-shadow:0 6px 18px #0009;opacity:0;pointer-events:none;transition:opacity .18s}.toast.show{opacity:1}
-
-/* 7.0 Kingdom Edition — iPhone-first visual pass */
-.top{padding:calc(4px + env(safe-area-inset-top)) 5px 5px;gap:3px;background:linear-gradient(180deg,#101811 0%,#070b08 100%);box-shadow:0 2px 12px #000a}.r{padding:5px 6px;font-size:11px;border-color:#665126;background:rgba(16,23,17,.92)}
-#s-map:after{content:"";position:absolute;inset:0;pointer-events:none;box-shadow:inset 0 0 110px rgba(0,0,0,.72);z-index:2}.zoom{top:10px;left:10px;gap:7px}.zoom button{width:38px;height:38px;border-radius:12px;background:rgba(10,16,11,.82);backdrop-filter:blur(8px);box-shadow:0 3px 12px #0008}
-.nextDay{right:10px;bottom:78px;min-height:46px;padding:8px 13px;border-radius:13px;background:linear-gradient(180deg,#7c6026,#493612);font-size:15px;box-shadow:0 6px 24px #000b, inset 0 1px #f0cf7a55}.mapHud{left:10px;right:10px;bottom:9px}.heroCard{min-width:0;width:205px;padding:6px;border-radius:13px;background:rgba(7,12,8,.86);box-shadow:0 7px 24px #000b}.heroCard img{width:42px;height:42px}.mapBtns{grid-template-columns:repeat(2,42px);gap:7px}.roundBtn{width:42px;height:42px;border-radius:12px;background:rgba(11,18,12,.86);backdrop-filter:blur(8px)}
-.nav{background:#09100b;box-shadow:0 -3px 18px #000b}.nav button{min-height:56px;background:#0d150f;font-size:9px}.nav b{font-size:19px}.nav button.active{background:linear-gradient(#44361c,#2c2415);color:#f4cf78}
-.panel{border-radius:14px;background:linear-gradient(180deg,#18231a,#0b120d);box-shadow:0 7px 24px #0006}.btn,.unitcard,.quest{border-radius:11px}.toast{top:calc(env(safe-area-inset-top) + 54px);border-radius:12px;background:rgba(12,19,13,.94);backdrop-filter:blur(8px)}
-@media(max-width:430px){.top .r{font-size:10px}.heroCard{width:190px}.nextDay{font-size:14px}.nav button{font-size:9px}}
-
-.objectInfo{position:absolute;left:50%;top:58px;transform:translateX(-50%);z-index:12;min-width:210px;max-width:86%;padding:8px 11px;border:1px solid var(--line);border-radius:9px;background:rgba(7,11,8,.92);box-shadow:0 6px 18px #0008;text-align:center;pointer-events:none}
-.objectInfo.hidden{display:none}.objectInfo b{display:block;color:#f3d27a}.objectInfo .small{line-height:1.25}
-
-.econGrid{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}.econCard{border:1px solid #3c473a;border-radius:8px;background:#121912;padding:8px;text-align:center}.econCard b{display:block;font-size:17px}
-.transferGrid{display:grid;grid-template-columns:1fr auto 1fr;gap:7px;align-items:center}.transferHero{border:1px solid #3c473a;border-radius:8px;padding:7px;background:#131a14}.transferHero img{width:48px;height:58px;object-fit:cover;border-radius:6px;vertical-align:middle;margin-right:6px}.transferRow{display:grid;grid-template-columns:1fr auto auto;gap:6px;align-items:center;padding:6px 0;border-top:1px solid #293129}.miniBtn{min-width:40px;min-height:36px;border:1px solid var(--line);border-radius:7px;background:#1b241b}
-.garrisonRow{display:grid;grid-template-columns:1fr auto auto;gap:6px;align-items:center;padding:7px 0;border-bottom:1px solid #293129}
-.spellChoice{display:grid;grid-template-columns:repeat(2,1fr);gap:6px;margin-top:8px}.spellChoice button{min-height:54px}
-.battleStatus{margin-top:6px;padding:7px;border:1px solid #3c473a;border-radius:7px;background:#111711}
-
-.storyCard{border:1px solid #4a5a46;border-radius:11px;padding:9px;margin:7px 0;background:linear-gradient(180deg,#162019,#0e140f)}
-.storyCard b{color:#f1cf79}.storyCard .reward{margin-top:5px;color:#a9d8a4}
-.regionTag{display:inline-block;padding:3px 7px;border:1px solid #58664e;border-radius:999px;font-size:10px;margin:2px;background:#121a13}
-
-/* 8.8.5 Living Water II */
-.stack{transform-origin:50% 65%;will-change:transform,filter}.cell.sel .stack{animation:stackIdle 1.6s ease-in-out infinite}.damageFloat{position:absolute;z-index:8;left:50%;top:30%;pointer-events:none;font:800 clamp(12px,3.6vw,20px)/1 sans-serif;color:#ffe0b0;text-shadow:0 2px 4px #000,0 0 8px #8b190f}.deathBurst{position:absolute;z-index:7;left:50%;top:50%;width:48%;aspect-ratio:1;border-radius:50%;pointer-events:none;background:radial-gradient(circle,#fff3 0 12%,#e39b5f66 30%,#1110 70%)}
-@keyframes stackIdle{0%,100%{transform:translateY(0) scale(1)}50%{transform:translateY(-1.5px) scale(1.018)}}
-@media(prefers-reduced-motion:reduce){.cell.sel .stack{animation:none}.stack{transition:none}}
-
-/* 9.0.0: unified clean portrait cards; source artwork labels are never shown in cards. */
-.heroBtn{grid-template-columns:58px minmax(0,1fr);min-height:78px;padding:8px;gap:10px}.heroBtn img{width:58px;height:58px;border-radius:10px;object-fit:cover;border:1px solid #665b3e}.heroBtn span{min-width:0}.heroBtn b{display:block;font-size:16px;line-height:1.15}.heroBtn small{display:block;margin-top:4px;color:var(--muted);font-size:12px}
-.heroPane{grid-template-columns:96px minmax(0,1fr);align-items:center}.heroPane img{width:96px;height:112px;object-fit:cover;object-position:center;border-radius:11px}
-#army{grid-template-columns:repeat(2,minmax(0,1fr))}.unitcard{display:grid;grid-template-columns:72px minmax(0,1fr);align-items:center;min-height:88px;padding:7px;gap:9px;overflow:hidden}.unitcard img{width:72px;height:72px;border-radius:9px;object-fit:cover;border:1px solid #59634f}.unitcard .txt{padding:0;text-align:left;min-width:0}.unitcard .txt>b{font-size:14px;line-height:1.15;white-space:normal}.unitcard .unitQty{display:block;color:#f1cf79;font-size:22px;font-weight:850;line-height:1.1;margin-top:3px}.unitcard .small{display:block;margin-top:2px;font-size:11px}
-.upgradeCard img,.recruitCard img{object-position:center}
-@media(max-width:430px){.heroSelect{grid-template-columns:1fr}.heroBtn{min-height:72px}.heroPane{grid-template-columns:84px minmax(0,1fr)}.heroPane img{width:84px;height:96px}#army{grid-template-columns:1fr 1fr}.unitcard{grid-template-columns:58px minmax(0,1fr);min-height:76px;padding:6px;gap:7px}.unitcard img{width:58px;height:58px}.unitcard .txt>b{font-size:13px}.unitcard .unitQty{font-size:19px}}
-@media(max-width:355px){#army{grid-template-columns:1fr}.unitcard{grid-template-columns:64px minmax(0,1fr)}.unitcard img{width:64px;height:64px}}
-
-/* 9.1.2 — Living World Visual Engine: псевдо-3D карта и тактический бой */
-#battleModal .dialog{background:linear-gradient(180deg,rgba(12,15,12,.96),rgba(4,6,5,.98));box-shadow:0 20px 70px #000;border-color:#96733a}
-#battleModal .battleArt{height:auto;aspect-ratio:16/9;isolation:isolate;background-image:url('battlefield.jpg');background-size:cover;background-position:center;box-shadow:inset 0 0 70px #000b,0 10px 30px #0008;perspective:780px}
-#battleModal[data-env="dungeon"] .battleArt{background-image:url('battle-cavern.jpg');background-position:center 52%}
-#battleModal .battleArt:before{content:"";position:absolute;inset:0;z-index:0;background:linear-gradient(180deg,rgba(0,0,0,.04),rgba(0,0,0,.18) 55%,rgba(0,0,0,.50)),radial-gradient(circle at 18% 22%,rgba(90,150,210,.16),transparent 32%),radial-gradient(circle at 82% 62%,rgba(255,82,20,.15),transparent 32%);pointer-events:none}
-#battleModal .battleVignette{position:absolute;inset:0;z-index:4;pointer-events:none;box-shadow:inset 0 0 65px 18px rgba(0,0,0,.66)}
-#battleModal .bgrid{z-index:2;inset:8% 4% 6%;gap:2px;transform:rotateX(5deg);transform-origin:50% 100%;filter:drop-shadow(0 12px 10px #0008)}
-#battleModal .cell{overflow:visible;border-radius:14px;border-color:rgba(233,206,125,.17);background:linear-gradient(180deg,rgba(85,99,71,.08),rgba(16,20,15,.08));box-shadow:inset 0 1px rgba(255,255,255,.025);transition:background .14s,border-color .14s,filter .14s}
-#battleModal .cell:disabled{opacity:1}
-#battleModal .cell.move{background:radial-gradient(circle,rgba(78,142,82,.32),rgba(27,71,37,.10));border-color:rgba(118,184,109,.52)}
-#battleModal .cell.attack{background:radial-gradient(circle,rgba(180,54,36,.37),rgba(91,28,20,.12));border-color:rgba(239,112,76,.62)}
-#battleModal .cell.sel{outline:2px solid #f0c866;filter:drop-shadow(0 0 7px rgba(240,200,102,.8))}
-#battleModal .stack{inset:-9% 4% 1%;border:0;border-radius:45% 45% 38% 38%;background-size:cover;background-position:center 22%;box-shadow:none;transform:rotateX(-5deg);transform-origin:50% 100%;filter:drop-shadow(0 8px 5px rgba(0,0,0,.75)) saturate(1.1);animation:unitIdle 2.8s ease-in-out infinite;overflow:visible}
-#battleModal .stack:before{content:"";position:absolute;left:10%;right:10%;bottom:-7%;height:16%;border-radius:50%;background:rgba(0,0,0,.58);filter:blur(3px);z-index:-1}
-#battleModal .stack:after{content:"";position:absolute;inset:-7%;border-radius:50%;pointer-events:none;opacity:.7}
-#battleModal .stack.player:after{box-shadow:inset 0 0 0 2px rgba(75,153,238,.7),0 0 16px rgba(54,129,223,.28)}
-#battleModal .stack.enemy:after{box-shadow:inset 0 0 0 2px rgba(224,73,55,.76),0 0 17px rgba(224,58,43,.32)}
-#battleModal .stack .qty{right:-4px;bottom:-3px;min-width:23px;text-align:center;font-weight:800;font-size:12px;padding:2px 5px;border:1px solid #d8b55f;background:linear-gradient(#171b16,#080a08);box-shadow:0 2px 7px #000}
-#battleModal .turnbar{padding:3px 0;scrollbar-width:none}.turnchip{background:linear-gradient(#1b211b,#0c100d);box-shadow:inset 0 1px rgba(255,255,255,.04)}.turnchip.active{box-shadow:0 0 12px rgba(221,180,92,.28),inset 0 0 0 1px #ddb45c}
-#battleModal .battleStatus{background:linear-gradient(90deg,rgba(18,25,19,.96),rgba(33,24,16,.94));border-color:#6e5930}
-.battleAtmosphere{position:absolute;inset:0;z-index:1;overflow:hidden;pointer-events:none}.battleAtmosphere i{position:absolute;width:4px;height:4px;border-radius:50%;background:#efc56c;box-shadow:0 0 9px #ff9b43;opacity:0;animation:emberRise 4.5s linear infinite}.battleAtmosphere i:nth-child(1){left:15%;bottom:8%;animation-delay:.2s}.battleAtmosphere i:nth-child(2){left:32%;bottom:2%;animation-delay:1.1s}.battleAtmosphere i:nth-child(3){left:48%;bottom:10%;animation-delay:2.3s}.battleAtmosphere i:nth-child(4){left:68%;bottom:5%;animation-delay:.7s}.battleAtmosphere i:nth-child(5){left:84%;bottom:13%;animation-delay:1.8s}.battleAtmosphere i:nth-child(6){left:93%;bottom:4%;animation-delay:3s}
-#battleModal[data-env="surface"] .battleAtmosphere i{background:#b8d1c0;box-shadow:0 0 7px rgba(183,218,192,.6);animation-duration:6.8s}
-.damageFloat{position:absolute;left:50%;top:20%;z-index:9;color:#fff0c2;font-weight:900;font-size:18px;text-shadow:0 2px 4px #000,0 0 7px #d83b28;pointer-events:none}.deathBurst{position:absolute;left:50%;top:50%;z-index:8;width:70%;aspect-ratio:1;border-radius:50%;background:radial-gradient(circle,#fff2a9 0,#e95a2b 22%,rgba(95,15,10,.6) 52%,transparent 72%);filter:blur(1px);pointer-events:none}
-@keyframes unitIdle{0%,100%{transform:rotateX(-5deg) translateY(0) scale(1)}50%{transform:rotateX(-5deg) translateY(-2.5%) scale(1.018)}}
-@keyframes emberRise{0%{transform:translate(0,15px) scale(.55);opacity:0}15%{opacity:.75}75%{opacity:.45}100%{transform:translate(15px,-170px) scale(1.2);opacity:0}}
-@media(max-width:600px){#battleModal .battleArt{aspect-ratio:16/10.2}#battleModal .bgrid{inset:10% 2% 5%;gap:1px}#battleModal .cell{border-radius:9px}#battleModal .stack{inset:-7% 1% 0;background-position:center 24%}#battleModal .stack .qty{font-size:11px}}
-@media(prefers-reduced-motion:reduce){#battleModal .stack,.battleAtmosphere i{animation:none!important}}
-
-</style>
+<title>Королевства Пепла 9.2.0 — Living World Engine</title>
 
 
-<style>
-.skillChoices{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:16px}
-.skillChoice{min-height:88px;border:1px solid #9b7428;border-radius:16px;background:#152319;color:#f6efd9;padding:14px;text-align:left;font:inherit}
-.skillChoice b{display:block;font-size:18px;margin-bottom:7px;color:#f0c65c}
-.skillChoice span{display:block;font-size:14px;opacity:.78;line-height:1.25}
-@media(max-width:520px){.skillChoices{grid-template-columns:1fr}.skillChoice{min-height:72px}}
-
-/* 9.0.0: unified clean portrait cards; source artwork labels are never shown in cards. */
-.heroBtn{grid-template-columns:58px minmax(0,1fr);min-height:78px;padding:8px;gap:10px}.heroBtn img{width:58px;height:58px;border-radius:10px;object-fit:cover;border:1px solid #665b3e}.heroBtn span{min-width:0}.heroBtn b{display:block;font-size:16px;line-height:1.15}.heroBtn small{display:block;margin-top:4px;color:var(--muted);font-size:12px}
-.heroPane{grid-template-columns:96px minmax(0,1fr);align-items:center}.heroPane img{width:96px;height:112px;object-fit:cover;object-position:center;border-radius:11px}
-#army{grid-template-columns:repeat(2,minmax(0,1fr))}.unitcard{display:grid;grid-template-columns:72px minmax(0,1fr);align-items:center;min-height:88px;padding:7px;gap:9px;overflow:hidden}.unitcard img{width:72px;height:72px;border-radius:9px;object-fit:cover;border:1px solid #59634f}.unitcard .txt{padding:0;text-align:left;min-width:0}.unitcard .txt>b{font-size:14px;line-height:1.15;white-space:normal}.unitcard .unitQty{display:block;color:#f1cf79;font-size:22px;font-weight:850;line-height:1.1;margin-top:3px}.unitcard .small{display:block;margin-top:2px;font-size:11px}
-.upgradeCard img,.recruitCard img{object-position:center}
-@media(max-width:430px){.heroSelect{grid-template-columns:1fr}.heroBtn{min-height:72px}.heroPane{grid-template-columns:84px minmax(0,1fr)}.heroPane img{width:84px;height:96px}#army{grid-template-columns:1fr 1fr}.unitcard{grid-template-columns:58px minmax(0,1fr);min-height:76px;padding:6px;gap:7px}.unitcard img{width:58px;height:58px}.unitcard .txt>b{font-size:13px}.unitcard .unitQty{font-size:19px}}
-@media(max-width:355px){#army{grid-template-columns:1fr}.unitcard{grid-template-columns:64px minmax(0,1fr)}.unitcard img{width:64px;height:64px}}
-</style>
 
 
-<style>
-.app{height:100vh;height:100dvh}.main{isolation:isolate}.top .r{font-size:11px}.nav button{font-size:11px}
-button:focus-visible,[tabindex]:focus-visible{outline:3px solid #f5d47b;outline-offset:2px}button:disabled{cursor:not-allowed;opacity:.48}
-/* 8.7.2: tactical cells may be disabled as controls but their occupants must remain fully visible. */
-.bgrid .cell:disabled{opacity:1;cursor:default}.stack{filter:saturate(1.08) contrast(1.06);}
-.zoom button,.roundBtn{width:44px;height:44px}.mapBtns{grid-template-columns:repeat(2,44px)}.miniBtn{min-height:44px;min-width:44px}
-.mapObjectList{position:absolute;top:10px;right:10px;z-index:9;background:#101710de;max-width:55%;min-height:44px}
-.mapHud{align-items:flex-end}.heroCard{width:205px;max-width:calc(100% - 106px)}.heroCard b{font-size:14px}.heroCard .small{font-size:11px}
-.nextDay{bottom:94px}.objectInfo{top:65px}.modal{padding:calc(10px + env(safe-area-inset-top)) max(10px,env(safe-area-inset-right)) calc(10px + env(safe-area-inset-bottom)) max(10px,env(safe-area-inset-left))}
-.dialog{max-height:calc(100dvh - 24px - env(safe-area-inset-top) - env(safe-area-inset-bottom));overscroll-behavior:contain}.battleViewport{overflow:hidden;overscroll-behavior:contain;width:100%}.battleArt{width:100%;min-width:0;height:auto;aspect-ratio:8/5}.bgrid{inset:4px;gap:2px;grid-template-columns:repeat(8,minmax(0,1fr));grid-template-rows:repeat(5,minmax(0,1fr))}.cell{min-width:0;min-height:0;padding:0}.stack .qty{font-size:12px}.turnchip{font-size:12px;min-width:48px}
-#persistentStatus{position:fixed;left:6px;right:6px;top:calc(env(safe-area-inset-top) + 44px);z-index:75;background:#47291e;color:#fff1d2;padding:8px;border:1px solid #bd9460;border-radius:8px;font-size:12px}
-.objectList{display:grid;gap:7px}.objectList .btn{text-align:left}.dialog h2{font-size:20px;margin:0 0 10px}.dialog .btn{margin-top:5px}.skillChoices{grid-template-columns:1fr}
-@media(max-width:350px){.heroCard{grid-template-columns:32px 1fr;gap:4px;padding:5px}.heroCard img{width:32px;height:38px}.heroCard b{font-size:12px}.heroCard .small{font-size:10px}.nav button{font-size:10px}.econGrid{grid-template-columns:repeat(2,1fr)}.heroPane{grid-template-columns:90px 1fr}.heroPane img{width:90px;height:130px}}
 
-@media(max-width:600px){#battleModal{padding:calc(2px + env(safe-area-inset-top)) max(2px,env(safe-area-inset-right)) calc(2px + env(safe-area-inset-bottom)) max(2px,env(safe-area-inset-left));align-items:center}#battleModal .dialog{width:100%;max-width:none;max-height:calc(100dvh - 4px - env(safe-area-inset-top) - env(safe-area-inset-bottom));padding:5px;border-radius:8px}#battleModal .battleArt{width:100%;aspect-ratio:8/5}#battleModal .bgrid{inset:2px;gap:1px}#battleModal .turnbar{margin:5px 0}#battleModal .battleStatus{margin-top:4px;padding:5px}#battleModal .grid.g2{gap:5px;margin-top:5px!important}#battleModal .btn{min-height:42px;padding:6px;font-size:13px}#battleModal .title{font-size:17px;margin-bottom:4px}#battleModal .small{font-size:11px}}
-@media(max-height:560px) and (orientation:landscape){#battleModal{align-items:flex-start}#battleModal .dialog{max-height:100dvh;overflow:auto}#battleModal .battleArt{aspect-ratio:8/4.25}#battleModal .turnbar{display:none}#battleModal .battleStatus{font-size:11px}#battleModal .btn{min-height:36px;padding:4px}}
-.buildingWrap{position:relative}.buildingWrap .building{width:100%;height:100%;padding-right:48px}.helpBtn{position:absolute;right:7px;top:7px;z-index:2;border:1px solid #9c8246;border-radius:50%;width:34px;height:34px;min-width:34px;padding:0;background:#111a12;color:#f5d47b;font-weight:900;font-size:18px}
-.upgradeCard,.recruitCard{position:relative;text-align:left;display:grid;grid-template-columns:78px minmax(0,1fr);gap:11px;align-items:center;min-height:104px;padding:9px;background:linear-gradient(145deg,#172219,#101711);border:1px solid #526047;box-shadow:inset 0 1px 0 rgba(255,255,255,.025)}
-.upgradeCard img,.recruitCard img{width:78px;height:78px;object-fit:cover;object-position:center 18%;border-radius:9px;border:1px solid #5e694f;display:block;background:#08100b;box-shadow:0 3px 10px #0007}
-.troopCardBody{min-width:0;display:flex;flex-direction:column;gap:4px}.troopCardTitle{font-size:17px;font-weight:850;line-height:1.1;color:#f5ecd9}.troopCardLevel{display:inline-flex;align-items:center;align-self:flex-start;padding:2px 7px;border:1px solid #80642e;border-radius:999px;background:#2e2818;color:#f1cf79;font-size:12px;font-weight:800}.troopCardMeta{font-size:12px;line-height:1.3;color:var(--muted)}.troopCardCost{display:flex;flex-wrap:wrap;gap:4px 7px;align-items:center}.troopCardCost span{white-space:nowrap}.upgradeCard:disabled,.recruitCard:disabled{filter:saturate(.7)}.upgradeCard:disabled img,.recruitCard:disabled img{opacity:.72}
-@media(prefers-reduced-motion:reduce){.toast{transition:none}}
-@media(max-width:600px){
-  #upgrades,#recruits{grid-template-columns:1fr}
-  .upgradeCard,.recruitCard{grid-template-columns:72px minmax(0,1fr);min-height:94px;padding:8px;gap:10px}
-  .upgradeCard img,.recruitCard img{width:72px;height:72px}
-  .troopCardTitle{font-size:16px}
-  .cityArt{aspect-ratio:11/7;background-size:100% 100%}
-}
-html,body,.app{touch-action:manipulation}
-#mapCanvas{touch-action:none}
-#buildingInfoModal{cursor:pointer}
-#buildingInfoModal .dialog{cursor:default}
 
-/* 9.0.0: unified clean portrait cards; source artwork labels are never shown in cards. */
-.heroBtn{grid-template-columns:58px minmax(0,1fr);min-height:78px;padding:8px;gap:10px}.heroBtn img{width:58px;height:58px;border-radius:10px;object-fit:cover;border:1px solid #665b3e}.heroBtn span{min-width:0}.heroBtn b{display:block;font-size:16px;line-height:1.15}.heroBtn small{display:block;margin-top:4px;color:var(--muted);font-size:12px}
-.heroPane{grid-template-columns:96px minmax(0,1fr);align-items:center}.heroPane img{width:96px;height:112px;object-fit:cover;object-position:center;border-radius:11px}
-#army{grid-template-columns:repeat(2,minmax(0,1fr))}.unitcard{display:grid;grid-template-columns:72px minmax(0,1fr);align-items:center;min-height:88px;padding:7px;gap:9px;overflow:hidden}.unitcard img{width:72px;height:72px;border-radius:9px;object-fit:cover;border:1px solid #59634f}.unitcard .txt{padding:0;text-align:left;min-width:0}.unitcard .txt>b{font-size:14px;line-height:1.15;white-space:normal}.unitcard .unitQty{display:block;color:#f1cf79;font-size:22px;font-weight:850;line-height:1.1;margin-top:3px}.unitcard .small{display:block;margin-top:2px;font-size:11px}
-.upgradeCard img,.recruitCard img{object-position:center}
-@media(max-width:430px){.heroSelect{grid-template-columns:1fr}.heroBtn{min-height:72px}.heroPane{grid-template-columns:84px minmax(0,1fr)}.heroPane img{width:84px;height:96px}#army{grid-template-columns:1fr 1fr}.unitcard{grid-template-columns:58px minmax(0,1fr);min-height:76px;padding:6px;gap:7px}.unitcard img{width:58px;height:58px}.unitcard .txt>b{font-size:13px}.unitcard .unitQty{font-size:19px}}
-@media(max-width:355px){#army{grid-template-columns:1fr}.unitcard{grid-template-columns:64px minmax(0,1fr)}.unitcard img{width:64px;height:64px}}
-</style>
 
-<style id="cards-894-fix">
-/* 9.0.0 definitive card layout — intentionally last in cascade */
-.heroSelect{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:8px!important}
-.heroBtn{grid-template-columns:54px minmax(0,1fr)!important;min-height:72px!important;padding:8px!important;gap:9px!important;overflow:hidden!important}
-.heroBtn img{width:54px!important;height:54px!important;object-fit:cover!important;object-position:center!important;border:1px solid #665b3e!important;border-radius:9px!important}
-.heroBtn b{font-size:15px!important;white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important}
-.heroPane{grid-template-columns:92px minmax(0,1fr)!important;gap:14px!important;align-items:center!important}
-.heroPane img{width:92px!important;height:92px!important;object-fit:cover!important;object-position:center!important;border-radius:12px!important}
-#army{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:8px!important}
-.unitcard{grid-template-columns:64px minmax(0,1fr)!important;min-height:82px!important;padding:8px!important;gap:9px!important;overflow:hidden!important}
-.unitcard img{width:64px!important;height:64px!important;object-fit:cover!important;object-position:center!important;border-radius:10px!important}
-.unitcard .txt{min-width:0!important;text-align:left!important;padding:0!important}
-.unitcard .txt>b{font-size:13px!important;line-height:1.1!important}
-.unitcard .unitQty{font-size:20px!important;line-height:1.05!important;margin-top:3px!important}
-.unitcard .small{font-size:11px!important;line-height:1.2!important;margin-top:3px!important}
-@media(max-width:380px){.heroBtn{grid-template-columns:46px minmax(0,1fr)!important}.heroBtn img{width:46px!important;height:46px!important}.unitcard{grid-template-columns:54px minmax(0,1fr)!important}.unitcard img{width:54px!important;height:54px!important}}
-</style>
 
-<style id="cards-8100">
-/* 9.0.0 — single card system across Town and Hero screens. */
-#recruits{grid-template-columns:1fr!important;gap:8px!important}
-.recruitCard{grid-template-columns:76px minmax(0,1fr)!important;min-height:96px!important;padding:9px!important;gap:12px!important;border-radius:14px!important}
-.recruitCard img{width:76px!important;height:76px!important;border-radius:10px!important;object-fit:cover!important;object-position:center!important}
-.recruitCard .troopCardTitle{font-size:17px!important}.recruitCard .troopCardMeta{font-size:13px!important}
-#upgrades{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:8px!important}
-.upgradeCard{grid-template-columns:60px minmax(0,1fr)!important;min-height:86px!important;padding:8px!important;gap:8px!important;border-radius:13px!important}
-.upgradeCard img{width:60px!important;height:60px!important;border-radius:9px!important;object-fit:cover!important;object-position:center!important}
-.upgradeCard .troopCardTitle{font-size:14px!important}.upgradeCard .troopCardLevel{font-size:11px!important}.upgradeCard .troopCardMeta{font-size:11px!important}
-.heroSelect{grid-template-columns:repeat(2,minmax(0,1fr))!important}
-.heroBtn,.unitcard,.upgradeCard,.recruitCard{box-shadow:inset 0 1px 0 rgba(255,255,255,.035)!important}
-/* Griffin artwork needs more breathing room than humanoid portraits. */
-img[src$="griffin-portrait.jpg"]{object-fit:cover!important;object-position:center!important}
-@media(max-width:380px){#upgrades{grid-template-columns:1fr!important}.upgradeCard{grid-template-columns:64px minmax(0,1fr)!important}.upgradeCard img{width:64px!important;height:64px!important}}
-</style>
 
-<style id="quality-depth-8100">
-.heroSummary{display:grid;grid-template-columns:88px 1fr;gap:12px;align-items:center}.heroSummary img{width:88px;height:88px;object-fit:cover;border-radius:13px;border:1px solid var(--line)}
-.heroStats{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-top:8px}.heroStat{background:#0c160f;border:1px solid #344437;border-radius:10px;padding:7px 4px;text-align:center}.heroStat b{display:block;font-size:18px;color:#f0d078}.xpTrack{height:8px;background:#050806;border-radius:999px;overflow:hidden;margin-top:7px}.xpTrack i{display:block;height:100%;background:linear-gradient(90deg,#b48631,#e6c469)}
-.unitAbility{margin-top:4px;color:#d8c78d;font-size:10.5px;line-height:1.25}.unitcard{align-items:center}.unitcard img[src$="griffin-portrait.jpg"],.recruitCard img[src$="griffin-portrait.jpg"],.upgradeCard img[src$="griffin-portrait.jpg"]{object-fit:contain!important;background:#16251b!important;padding:2px!important}
-.objectPreviewGrid{display:grid;grid-template-columns:82px 1fr;gap:12px;align-items:start}.objectPreviewGrid img{width:82px;height:82px;object-fit:cover;border-radius:11px;border:1px solid var(--line)}.objectMeta{display:grid;gap:5px}.objectMeta .tag{display:inline-block;width:max-content;padding:3px 7px;border:1px solid #665b3e;border-radius:999px;font-size:11px;color:#d8c78d}.objectActions{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}
-.threatHud{position:absolute;z-index:8;top:calc(39px + env(safe-area-inset-top));left:50%;transform:translateX(-50%);background:rgba(12,7,8,.9);border:1px solid #763b3b;border-radius:999px;padding:5px 10px;color:#e7c9b2;font-size:11px;pointer-events:none}.threatHud b{color:#ff8a78}.threatHud .siege{color:#ff5f52;margin-left:7px;font-weight:800}.dungeonDialog{background:linear-gradient(#10100e,#050605);border-color:#6b4c2a}.dungeonArt{height:150px;margin:10px 0;border-radius:12px;border:1px solid #5a4329;background:radial-gradient(circle at 28% 62%,rgba(236,117,38,.28),transparent 12%),radial-gradient(circle at 72% 45%,rgba(91,75,180,.22),transparent 18%),linear-gradient(160deg,#171510,#050505 65%);display:flex;align-items:end;padding:12px;color:#e4c58a;font-weight:800;text-shadow:0 2px 4px #000}.enemyFlag{font-size:18px}.threatHigh{animation:pulseThreat 1.4s infinite}@keyframes pulseThreat{50%{box-shadow:0 0 14px rgba(255,70,50,.45)}}
-</style>
 
-<style id="dungeon-901">
-#s-dungeon{padding:0;overflow:hidden;background:#050505}.dungeonMapWrap{position:relative;width:100%;height:100%}.dungeonCanvas{display:block;width:100%;height:100%;touch-action:none;background:#050505}.dungeonTop{position:absolute;left:10px;right:10px;top:10px;z-index:4;display:flex;justify-content:space-between;gap:8px;pointer-events:none}.dungeonTop .panel{pointer-events:auto;margin:0;padding:8px 10px;background:rgba(8,8,7,.91);backdrop-filter:blur(6px)}.dungeonBottom{position:absolute;left:10px;right:10px;bottom:10px;z-index:4;display:grid;grid-template-columns:1fr auto;gap:8px}.dungeonBottom .btn{background:rgba(16,13,10,.94)}.dungeonLegend{font-size:11px;color:#c8b58e}.dungeonZone{color:#e3c477;font-weight:800}.dungeonThreatSafe{opacity:.45}
-</style>
 
-<style id="visual-engine-911">
-/* 9.1.2 — Visual Engine Rebuild */
-#s-dungeon{background:#020302}
-.dungeonMapWrap{isolation:isolate}
-.dungeonCanvas{position:absolute;inset:0;width:100%;height:100%;display:block;background:#020302;touch-action:none}
-.dungeonTop{top:8px;left:8px;right:8px;align-items:flex-start}
-.dungeonTop .panel{max-width:min(68vw,460px);background:linear-gradient(180deg,rgba(9,13,10,.92),rgba(4,7,5,.82));border-color:#78602c;box-shadow:0 8px 26px rgba(0,0,0,.42)}
-.dungeonTopActions{display:flex;gap:6px;pointer-events:auto}
-.dungeonTool{width:42px;height:42px;border-radius:10px;border:1px solid #78602c;background:rgba(9,13,10,.9);font-size:20px;box-shadow:0 6px 18px rgba(0,0,0,.38)}
-#dungeonLeaveMap{min-height:42px;padding:7px 10px;background:rgba(15,19,14,.92);box-shadow:0 6px 18px rgba(0,0,0,.38)}
-.dungeonBottom{left:8px;right:8px;bottom:8px;grid-template-columns:minmax(0,1fr) auto}
-.dungeonBottom .btn{backdrop-filter:blur(8px);background:rgba(8,11,8,.86);border-color:#78602c;box-shadow:0 8px 24px rgba(0,0,0,.42)}
-#dungeonEndDay{min-width:88px}
-#s-map:after,#s-dungeon:after{content:"";position:absolute;inset:0;pointer-events:none;z-index:3;box-shadow:inset 0 0 70px rgba(0,0,0,.26)}
-#mapCanvas,#dungeonCanvas{image-rendering:auto}
-@media(max-width:430px){
-  .dungeonTop .panel{max-width:58vw;padding:7px 8px}
-  .dungeonZone{font-size:14px}.dungeonLegend{font-size:10px;line-height:1.2}
-  .dungeonTopActions{gap:4px}.dungeonTool{width:38px;height:38px;font-size:18px}
-  #dungeonLeaveMap{font-size:12px;padding:6px 8px}
-  .dungeonBottom{bottom:7px}.dungeonBottom .btn{font-size:13px;min-height:48px}
-}
-</style>
+
+
+
+
+
+
+<link rel="stylesheet" href="game.css">
 </head>
 <body><main class="app">
 <div class="top"><span class="r">🪙 <b id="gold"></b></span><span class="r">🪵 <b id="wood"></b></span><span class="r">🪨 <b id="ore"></b></span><span class="r">💎 <b id="gems"></b></span><span class="r">🔮 <b id="crystal"></b></span><span class="grow"></span><span class="r">☀️ День <b id="day"></b> · Нед. <b id="week"></b> · Мес. <b id="month"></b></span></div>
@@ -262,7 +53,7 @@ img[src$="griffin-portrait.jpg"]{object-fit:cover!important;object-position:cent
 
 <section class="screen" id="s-quests"><div class="panel"><div class="title">Кампания: Пепельный Север</div><div class="small" id="worldStats" style="margin-bottom:8px"></div><div id="storyProgress"></div><div id="quests"></div></div><div class="panel"><div class="title">Журнал</div><div class="log" id="log"></div></div></section>
 
-<section class="screen" id="s-settings"><div class="panel"><div class="title">Настройки</div><div class="grid"><button class="btn" id="soundToggle"></button><button class="btn" id="musicToggle"></button><button class="btn" id="centerHero">🎯 Центрировать карту</button><button class="btn gold" id="manualSave">💾 Сохранить игру</button><button class="btn" id="exportSave">Экспорт сохранения</button><button class="btn" id="importSave">Импорт сохранения</button><input id="saveFile" type="file" accept=".json,application/json" hidden><div id="storageStatus" class="small" role="status"></div><div id="offlineStatus" class="small" role="status"></div><button class="btn red" id="newGame">♻️ Новая игра</button></div></div></section>
+<section class="screen" id="s-settings"><div class="panel"><div class="title">Настройки</div><div class="grid"><button class="btn" id="soundToggle"></button><button class="btn" id="musicToggle"></button><label class="musicVolume">Громкость музыки<input id="musicVolume" type="range" min="0" max="1" step="0.05" value="0.32"></label><button class="btn" id="centerHero">🎯 Центрировать карту</button><button class="btn gold" id="manualSave">💾 Сохранить игру</button><button class="btn" id="exportSave">Экспорт сохранения</button><button class="btn" id="importSave">Импорт сохранения</button><input id="saveFile" type="file" accept=".json,application/json" hidden><div id="storageStatus" class="small" role="status"></div><div id="offlineStatus" class="small" role="status"></div><button class="btn red" id="newGame">♻️ Новая игра</button></div></div></section>
 </div>
 <nav class="nav"><button data-s="map" class="active"><b>🗺️</b>Карта</button><button data-s="hero"><b>🛡️</b>Герои</button><button data-s="town"><b>🏰</b>Город</button><button data-s="magic"><b>📖</b>Магия</button><button data-s="quests"><b>📜</b>Кампания</button><button data-s="settings"><b>⚙️</b>Опции</button></nav>
 </main>
@@ -280,7 +71,7 @@ img[src$="griffin-portrait.jpg"]{object-fit:cover!important;object-position:cent
 <button class="btn red" id="enemyAttackBtn">⚔️ Напасть</button>
 <button class="btn" id="enemyCancelBtn">Отмена</button>
 </div></div></div>
-<div class="modal hidden" id="battleModal"><div class="dialog"><div class="row"><div class="title">Битва: <span id="battleName"></span></div><div class="small" id="battleRound"></div></div><div class="turnbar" id="turnbar"></div><div class="battleViewport" tabindex="0" aria-label="Поле боя, прокрутка по горизонтали"><div class="battleArt"><div class="battleAtmosphere" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i></div><div class="battleVignette" aria-hidden="true"></div><div class="bgrid" id="bgrid" role="group" aria-label="Клетки поля боя"></div></div></div><div class="small" id="battleHint" style="margin-top:6px"></div><div class="battleStatus" id="battleStatus"></div><div class="grid g2" style="margin-top:8px"><button class="btn gold" id="waitBtn">⏳ Пропустить ход</button><button class="btn" id="defBtn">🛡️ Оборона</button><button class="btn blue" id="spellBtn">📖 Магия</button><button class="btn red" id="retreatBtn">Отступить</button></div></div></div>
+<div class="modal hidden" id="battleModal"><div class="dialog"><div class="row"><div class="title">Битва: <span id="battleName"></span></div><div class="small" id="battleRound"></div></div><div class="turnbar" id="turnbar"></div><div class="battleViewport"><div class="battleArt"><canvas id="battleCanvas" aria-label="Тактическое поле боя. Доступные команды также находятся в списке ниже."></canvas></div></div><details class="battleCommands"><summary>Список клеток и целей</summary><div class="bgrid" id="bgrid" role="group" aria-label="Клетки поля боя"></div></details><div class="small" id="battleHint" style="margin-top:6px"></div><div class="battleStatus" id="battleStatus"></div><div class="grid g2" style="margin-top:8px"><button class="btn gold" id="waitBtn">⏳ Пропустить ход</button><button class="btn" id="defBtn">🛡️ Оборона</button><button class="btn blue" id="spellBtn">📖 Магия</button><button class="btn red" id="retreatBtn">Отступить</button></div></div></div>
 <div class="modal hidden" id="levelModal"><div class="dialog"><div class="title">Новый уровень</div><div class="small">Выбери навык</div><div class="grid" id="levelChoices" style="margin-top:8px"></div></div></div>
 <div class="modal hidden" id="spellModal"><div class="dialog"><div class="title">Книга боя</div><div class="small">Выбери заклинание для текущего хода героя.</div><div class="spellChoice" id="spellChoices"></div><button class="btn" id="spellCancel" style="margin-top:8px">Отмена</button></div></div><div class="modal hidden" id="victoryModal"><div class="dialog"><div class="title">🏆 Победа</div><div>Морвейн повержен. Северные земли освобождены.</div><button class="btn gold" id="victoryClose" style="margin-top:10px">Продолжить</button></div></div>
 
@@ -289,7 +80,6 @@ img[src$="griffin-portrait.jpg"]{object-fit:cover!important;object-position:cent
 <div class="modal hidden" id="buildingInfoModal"><div class="dialog"><div class="row"><h2 id="buildingInfoName">Постройка</h2><button class="miniBtn" id="buildingInfoClose">✕</button></div><div id="buildingInfoBody"></div><button class="btn" id="buildingInfoClose2">Закрыть</button></div></div>
 <div class="modal hidden" id="objectPreviewModal"><div class="dialog"><div class="objectPreviewGrid"><img id="objectPreviewImg" alt=""><div class="objectMeta"><h2 id="objectPreviewName" style="margin:0"></h2><span class="tag" id="objectPreviewType"></span><div class="small" id="objectPreviewDesc"></div><div class="small" id="objectPreviewReward"></div></div></div><div class="objectActions"><button class="btn" id="objectPreviewGo">Подойти</button><button class="btn" id="objectPreviewClose">Отмена</button></div></div></div>
 <div class="modal hidden" id="objectListModal"><div class="dialog"><h2>Разведанные объекты</h2><div class="objectList" id="knownObjects"></div><button class="btn" id="objectListClose">Закрыть</button></div></div>
-<div class="modal hidden" id="dungeonModal"><div class="dialog dungeonDialog"><div class="row"><div><h2 style="margin:0">🕯 Пещера Бездны</h2><div class="small">Подземелье живёт в том же времени, что и поверхность.</div></div><button class="miniBtn" id="dungeonClose">✕</button></div><div class="dungeonArt"><div id="dungeonDepth">Уровень I · Заброшенные шахты</div></div><div id="dungeonStatus" class="panel"></div><div class="grid g2"><button class="btn red" id="dungeonExplore">⚔️ Продвинуться глубже</button><button class="btn" id="dungeonLeave">Вернуться на поверхность</button></div></div></div>
-<div class="modal" id="startupModal"><div class="dialog"><h2>Королевства Пепла 9.1.2</h2><p id="startupMessage" role="status">Загрузка игры…</p><button class="btn" id="retryLoad" hidden>Повторить загрузку</button><button class="btn" id="recoveryImport" hidden>Импортировать сохранение</button><button class="btn red" id="recoveryNew" hidden>Начать новую игру</button></div></div>
-<script src="game-data.js"></script><script src="game-core.js"></script><script src="game-controls.js"></script><script src="game-ui.js"></script>
+<div class="modal" id="startupModal"><div class="dialog"><h2>Королевства Пепла 9.2.0</h2><p id="startupMessage" role="status">Загрузка игры…</p><button class="btn" id="retryLoad" hidden>Повторить загрузку</button><button class="btn" id="recoveryImport" hidden>Импортировать сохранение</button><button class="btn red" id="recoveryNew" hidden>Начать новую игру</button></div></div>
+<script src="release-920.js"></script><script src="game-data.js"></script><script src="game-core.js"></script><script src="game-controls.js"></script><script src="scene-camera.js"></script><script src="scene-renderer.js"></script><script src="scene-battle.js"></script><script src="music-engine.js"></script><script src="game-ui.js"></script>
 </body></html>

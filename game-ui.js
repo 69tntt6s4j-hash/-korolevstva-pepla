@@ -1,12 +1,12 @@
 /* Browser adapter. Render is read-only; engine commits own persistence boundaries. */
 (function(root,factory){
-  if(typeof module==='object'&&module.exports)module.exports=factory(require('./game-core.js'),require('./game-controls.js'));
+  if(typeof module==='object'&&module.exports)module.exports=factory(require('./game-core.js'),require('./game-controls.js'),require('./scene-camera.js'),require('./scene-renderer.js'),require('./scene-battle.js'),require('./music-engine.js'));
   else{
-    root.AshUI=factory(root.AshCore,root.AshControls);
-    root.AshUI.boot(root);
+    root.AshUI=factory(root.AshCore,root.AshControls,root.AshCamera,root.AshScene,root.AshBattleScene,root.AshMusic);
+    root.AshUI.app=root.AshUI.boot(root);
   }
 }
-)(typeof globalThis!=='undefined'?globalThis:this,function(C,Controls){
+)(typeof globalThis!=='undefined'?globalThis:this,function(C,Controls,CameraModule,Scenes,Battles,Music){
   'use strict';
   const D=C.D;
   const escape=s=>String(s).replace(/[&<>"']/g,c=>({
@@ -32,7 +32,7 @@
       }
       ;
       const timer=env.setTimeout(()=>finish(false),15000);
-      image.onload=()=>finish(true);
+      image.onload=()=>{if(typeof image.decode==='function')image.decode().then(()=>finish(true),()=>finish(false));else finish(true)};
       image.onerror=()=>finish(false);
       image.src=name
     }
@@ -52,14 +52,13 @@
       }
       ;
       this.screen='map';
-      this.camera={
-        x:0,y:0,zoom:.58
-      };
-      // 9.1.2: independent aspect-correct dungeon camera. The canvas fills the phone,
-      // while the world keeps its native 13:10 geometry instead of being stretched.
-      this.dungeonCamera={x:0,y:0,zoom:.82,ready:false,dragging:false,pointerId:null,startX:0,startY:0,camX:0,camY:0,moved:false};
+      this.camera=new CameraModule.Camera();
+      this.dungeonCamera=new CameraModule.Camera({zoom:.85});
+      this.cameraPreferences={surface:.72,dungeon:.85};
+      try{if(!env.ASH_QA)Object.assign(this.cameraPreferences,JSON.parse(env.localStorage.getItem('ash-camera-920')||'{}'))}catch(e){}
+      this.camera.zoom=this.cameraPreferences.surface;this.dungeonCamera.zoom=this.cameraPreferences.dungeon;
+      this.manualPanUntil=0;
       this.frameId=null;
-      this.ambientTimer=null;
       this.reduceMotion=!!env.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
       this.motion=null;
       this.localModal=null;
@@ -67,34 +66,20 @@
       this.selectionTimer=null;
       this.lastModal=null;
       this.previousFocus=null;
-      this.fogKey='';
-      this.seenKey='';
-      this.seen=new Set();
       this.toastTimer=null;
       this.dayBusy=false;
       this.audio=null;
       this.loading=false;
       this.bootGeneration=0;
-      this.labelHits=[];
-      this.battleVisual=null;
-      this.battleFxTimer=null;
+      const qaStorage=new Map();
       this.repository=new C.SaveRepository({
-        getItem:k=>env.localStorage.getItem(k),setItem:(k,v)=>env.localStorage.setItem(k,v)
+        getItem:k=>env.ASH_QA?qaStorage.get(k)||null:env.localStorage.getItem(k),setItem:(k,v)=>env.ASH_QA?qaStorage.set(k,v):env.localStorage.setItem(k,v)
       }
       );
       this.canvas=this.$('mapCanvas');
       this.dungeonCanvas=this.$('dungeonCanvas');
-      this.fog=this.doc.createElement('canvas');
-      this.fog.width=D.WORLD_W;
-      this.fog.height=D.WORLD_H;
-      this.waterFx=this.doc.createElement('canvas');
-      this.waterFx.width=D.WORLD_W;
-      this.waterFx.height=D.WORLD_H;
-      this.foamFx=this.doc.createElement('canvas');
-      this.foamFx.width=D.WORLD_W;
-      this.foamFx.height=D.WORLD_H;
       this.pointer=new Controls.PointerController(this.camera,{
-        onTap:(x,y)=>this.mapTap(x,y),onChange:()=>this.requestFrame(),clamp:()=>this.clamp()
+        onTap:(x,y)=>this.mapTap(x,y),onChange:()=>{this.camera.target=null;this.manualPanUntil=this.now()+4000;this.saveCamera();this.requestFrame()},clamp:()=>this.clamp()
       }
       );
       this.configureAccessibility();
@@ -153,12 +138,13 @@
       if(generation!==this.bootGeneration)return;
       this.assets=loaded.assets;
       this.loading=false;
-      const required=['world-v7.jpg','hero.jpg','mage.jpg','necromancer.jpg','battlefield.jpg','city.jpg'];
+      const required=['assets/world-sprites.png','assets/actors-v2.png','assets/terrain-materials.png','hero.jpg','mage.jpg','necromancer.jpg','city.jpg'];
       const missing=loaded.missing.filter(n=>required.includes(n));
       if(missing.length){
         this.showStartup('Не удалось загрузить: '+missing.join(', ')+'. Проверьте, что архив полностью распакован.',true);
         return
       }
+      this.initScenes();
       const saved=this.repository.load();
       if(saved.status==='error'){
         this.showStartup(saved.error,true,true);
@@ -189,6 +175,8 @@
     }
     installEngine(state){
       if(this.engine)this.engine.cancelTimer();
+      for(const scene of [this.worldScene,this.dungeonScene])if(scene){scene.lastCapture.clear();scene.captureFx=[];scene.dungeonTrack=null;scene.lastDungeon=null;scene.lastEnemy=null;scene.enemyTrack=null}
+      if(this.battleScene){this.battleScene.timeline=new Battles.BattleTimeline();this.battleScene.last=null}
       let audibleState=state;
       this.engine=new C.Engine({
         state,scheduler:{
@@ -198,6 +186,8 @@
           const current=this.engine.export();
           if(current.day!==audibleState.day)this.sound(520,.09);
           else if(Object.keys(current.heroes).some(id=>current.heroes[id].x!==audibleState.heroes[id].x||current.heroes[id].y!==audibleState.heroes[id].y))this.sound(300,.03);
+          this.worldScene?.observe(current,this.now());this.dungeonScene?.observe(current,this.now());
+          this.battleScene?.observe(current.battle,this.now(),current.battle?current.heroes[current.battle.heroId].mana:0);
           audibleState=current;
           const result=this.repository.save(this.engine.export());
           if(!result.ok)this.reportError(result.error);
@@ -206,6 +196,7 @@
           this.requestFrame()
         }
         ,onMessage:m=>this.toast(m),onEvent:event=>{
+          if(event.type==='battleEnd')this.battleScene?.observe(event.battle,this.now(),event.mana);
           if(event.type==='town'){this.screen='town';this.localModal=null}
           if(event.type==='dungeonMap'){this.localModal=null;this.screen='dungeon';this.dungeonCamera.ready=false;this.centerDungeon();this.requestFrame()}
           if(event.type==='surfaceMap'){this.localModal=null;this.screen='map';this.resize();this.center()}
@@ -213,6 +204,8 @@
       }
       );
       this.motion=new Controls.MotionDriver(this.engine,this.env.matchMedia?.('(prefers-reduced-motion: reduce)').matches?1:330);
+      this.dungeonMotion=new Controls.DungeonMotionDriver(this.engine,this.reduceMotion?1:280);if(this.dungeonScene)this.dungeonScene.dungeonMotion=this.dungeonMotion;
+      if(this.engine.s.dungeon?.inside)this.screen='dungeon';
       this.engine.resume()
     }
     unlockAudio(){
@@ -221,7 +214,7 @@
         const Audio=this.env.AudioContext||this.env.webkitAudioContext;
         if(!Audio)return;
         this.audio=this.audio||new Audio();
-        if(this.audio.state==='suspended')this.audio.resume()?.catch(()=>{});this.updateMusic();
+        if(this.audio.state==='suspended')this.audio.resume()?.then(()=>this.updateMusic()).catch(()=>{});else this.updateMusic();
       }catch(e){ /* Audio support is optional and never blocks a game command. */ }
     }
     sound(frequency,duration){
@@ -237,29 +230,16 @@
         oscillator.stop(this.audio.currentTime+duration);
       }catch(e){ /* Audio failure must not interrupt movement or persistence. */ }
     }
-    musicMode(){if(this.engine?.s.battle)return 'battle';if(this.screen==='dungeon')return 'dungeon';if((this.engine?.s.q.threat||0)>=70)return 'danger';if(this.screen==='town')return 'town';return 'world'}
-    updateMusic(){
-      if(!this.audio||this.audio.state!=='running'||!this.engine?.s.settings.music){if(this.musicTimer){this.env.clearTimeout(this.musicTimer);this.musicTimer=null}return}
-      const mode=this.musicMode();if(this.musicModeActive===mode&&this.musicTimer)return;this.musicModeActive=mode;if(this.musicTimer)this.env.clearTimeout(this.musicTimer);
-      const scores={
-        world:{tempo:560,mel:[196,220,247,294,277,247,220,196,247,277,330,294,247,220,196,185],bass:[98,110,123,98],wave:'triangle'},
-        town:{tempo:600,mel:[220,247,277,330,294,277,247,220,277,330,370,330,294,247,220,247],bass:[110,123,138,110],wave:'sine'},
-        danger:{tempo:440,mel:[165,196,220,233,196,175,165,147,196,220,247,233,196,175,165,147],bass:[82,82,98,73],wave:'triangle'},
-        battle:{tempo:320,mel:[147,196,220,247,220,196,165,196,147,220,247,294,247,220,196,165],bass:[73,82,73,98],wave:'sawtooth'},
-        dungeon:{tempo:620,mel:[110,131,147,165,147,131,123,110,131,165,196,175,147,131,117,110,98,117,131,147],bass:[55,65,49,58],wave:'sine'}
-      };
-      const score=scores[mode],vol=()=>Math.max(.05,this.engine?.s.settings.musicVolume||.32);let i=0;
-      const note=(freq,when,dur,gain,wave)=>{try{const o=this.audio.createOscillator(),g=this.audio.createGain();o.type=wave;o.frequency.setValueAtTime(freq,when);g.gain.setValueAtTime(.0001,when);g.gain.exponentialRampToValueAtTime(gain*vol(),when+.04);g.gain.exponentialRampToValueAtTime(.0001,when+dur);o.connect(g);g.connect(this.audio.destination);o.start(when);o.stop(when+dur+.04)}catch(e){}};
-      const tick=()=>{if(!this.engine?.s.settings.music||!this.audio)return;const t=this.audio.currentTime+.02,m=score.mel[i%score.mel.length],b=score.bass[Math.floor(i/4)%score.bass.length];note(m,t,score.tempo/1000*.82,.022,score.wave);note(b,t,score.tempo/1000*1.6,.010,'sine');if(i%2===0)note(m*1.5,t+.08,score.tempo/1000*.52,.006,'sine');if(mode==='dungeon'&&i%5===0)note(m*.5,t+.16,1.2,.005,'triangle');i++};
-      tick();const loop=()=>{tick();this.musicTimer=this.env.setTimeout(loop,score.tempo)};this.musicTimer=this.env.setTimeout(loop,score.tempo)
-    }
+    musicMode(){const s=this.engine?.s;if(s?.q.siege||s?.battle?.boss)return 'siege';if(s?.battle)return 'battle';if(this.screen==='dungeon')return 'abyss';if((s?.q.threat||0)>=70)return 'danger';if(this.screen==='town')return 'city';return 'world'}
+    updateMusic(){if(!this.audio)return;if(!this.music)this.music=new Music.MusicEngine(this.audio,{set:(fn,ms)=>this.env.setTimeout(fn,ms),clear:id=>this.env.clearTimeout(id)});this.music.set(this.musicMode(),!!this.engine?.s.settings.music&&!this.doc.hidden,this.engine?.s.settings.musicVolume??.32)}
     imageSource(name,fallback='hero.jpg'){
       return this.assets[name]?name:fallback;
     }
     portraitSource(name){
       const map={'hero.jpg':'hero-portrait.jpg','mage.jpg':'mage-portrait.jpg','pikeman.jpg':'pikeman-portrait.jpg','archer.jpg':'archer-portrait.jpg','cavalier.jpg':'cavalier-portrait.jpg','griffin.jpg':'griffin-portrait.jpg'};
-      if(!this.assets[name])return 'hero-portrait.jpg';
-      return map[name]||name;
+      if(this.assets[map[name]])return map[name];
+      if(this.assets[name])return name;
+      return this.assets['hero-portrait.jpg']?'hero-portrait.jpg':'hero.jpg';
     }
     bind(){
       const on=(id,fn)=>{
@@ -274,13 +254,13 @@
       on('recoveryImport',()=>this.$('saveFile').click());
       on('recoveryNew',()=>this.newGame());
       on('zoomIn',()=>{
-        this.camera.zoom=Math.min(1.8,this.camera.zoom+.15);
+        this.camera.zoomAt(this.camera.zoom+.15);this.saveCamera();
         this.clamp();
         this.requestFrame()
       }
       );
       on('zoomOut',()=>{
-        this.camera.zoom=Math.max(.38,this.camera.zoom-.15);
+        this.camera.zoomAt(this.camera.zoom-.15);this.saveCamera();
         this.clamp();
         this.requestFrame()
       }
@@ -307,17 +287,15 @@
       on('dungeonLeaveMap',()=>this.engine.leaveDungeon());
       on('dungeonEndDay',()=>this.engine.nextDay());
       on('dungeonHint',()=>this.toast('Коснитесь пола или объекта для движения. Перетаскивайте карту пальцем; +/− меняют масштаб.'));
-      on('dungeonZoomIn',()=>{this.dungeonCamera.zoom=Math.min(1.55,this.dungeonCamera.zoom+.12);this.clampDungeon();this.requestFrame()});
-      on('dungeonZoomOut',()=>{this.dungeonCamera.zoom=Math.max(.52,this.dungeonCamera.zoom-.12);this.clampDungeon();this.requestFrame()});
+      on('dungeonZoomIn',()=>{this.dungeonCamera.zoomAt(this.dungeonCamera.zoom+.12);this.saveCamera();this.clampDungeon();this.requestFrame()});
+      on('dungeonZoomOut',()=>{this.dungeonCamera.zoomAt(this.dungeonCamera.zoom-.12);this.saveCamera();this.clampDungeon();this.requestFrame()});
       on('dungeonCenter',()=>this.centerDungeon());
       if(this.dungeonCanvas){
-        const dc=this.dungeonCamera;
-        this.dungeonCanvas.addEventListener('pointerdown',e=>{if(!this.ready||this.screen!=='dungeon')return;dc.pointerId=e.pointerId;dc.dragging=true;dc.moved=false;dc.startX=e.clientX;dc.startY=e.clientY;dc.camX=dc.x;dc.camY=dc.y;this.dungeonCanvas.setPointerCapture?.(e.pointerId)});
-        this.dungeonCanvas.addEventListener('pointermove',e=>{if(!dc.dragging||dc.pointerId!==e.pointerId)return;const dx=e.clientX-dc.startX,dy=e.clientY-dc.startY;if(Math.hypot(dx,dy)>6)dc.moved=true;dc.x=dc.camX-dx/dc.zoom;dc.y=dc.camY-dy/dc.zoom;this.clampDungeon();this.requestFrame()});
-        this.dungeonCanvas.addEventListener('pointerup',e=>{if(dc.pointerId!==e.pointerId)return;const wasTap=!dc.moved;dc.dragging=false;dc.pointerId=null;this.dungeonCanvas.releasePointerCapture?.(e.pointerId);if(!wasTap||!this.ready||this.screen!=='dungeon'||!this.engine.idle())return;this.unlockAudio();const r=this.dungeonCanvas.getBoundingClientRect(),sx=e.clientX-r.left,sy=e.clientY-r.top;this.dungeonTap(sx,sy)});
-        this.dungeonCanvas.addEventListener('pointercancel',()=>{dc.dragging=false;dc.pointerId=null});
+        this.dungeonPointer=new Controls.PointerController(this.dungeonCamera,{onTap:(x,y)=>this.dungeonTap(x,y),onChange:()=>{this.dungeonCamera.target=null;this.manualPanUntil=this.now()+4000;this.saveCamera();this.requestFrame()},clamp:()=>this.clampDungeon()});
+        const canvas=this.dungeonCanvas,ptr=this.dungeonPointer;
+        for(const kind of ['pointerdown','pointermove','pointerup'])canvas.addEventListener(kind,e=>{if(!this.ready||this.screen!=='dungeon'||this.localModal)return;const r=canvas.getBoundingClientRect(),x=e.clientX-r.left,y=e.clientY-r.top;if(kind==='pointerdown'){this.unlockAudio();ptr.down(e.pointerId,x,y);canvas.setPointerCapture?.(e.pointerId)}else if(kind==='pointermove')ptr.move(e.pointerId,x,y);else{ptr.up(e.pointerId,x,y);if(canvas.hasPointerCapture?.(e.pointerId))canvas.releasePointerCapture(e.pointerId)}});
+        canvas.addEventListener('pointercancel',()=>ptr.cancel());canvas.addEventListener('lostpointercapture',()=>{if(ptr.points.size)ptr.cancel()});
       }
-      on('dungeonClose',()=>this.closeLocal());on('dungeonLeave',()=>this.closeLocal());on('dungeonExplore',()=>{const r=this.engine.dungeonEncounter(this.engine.s.activeHero);if(!r.ok)this.toast(r.reason||'Путь закрыт');this.renderDungeon()});
       on('centerHero',()=>{
         this.switchScreen('map');
         this.center()
@@ -415,11 +393,13 @@
       );
       this.env.addEventListener('resize',()=>this.resize());
       this.doc.addEventListener('visibilitychange',()=>{
-        this.motion?.reset();
-        this.pointer.cancel();
-        if(!this.doc.hidden)this.requestFrame()
-      }
-      );
+        this.motion?.reset();if(this.dungeonMotion)this.dungeonMotion.step=null;this.pointer.cancel();this.dungeonPointer?.cancel();this.battlePointer?.cancel();
+        if(this.doc.hidden){if(this.frameId!==null)this.env.cancelAnimationFrame?.(this.frameId);this.frameId=null;this.music?.stop();this.audio?.suspend?.().catch(()=>{});}
+        else{this.audio?.resume?.().then(()=>this.updateMusic()).catch(()=>{});this.dungeonScene?.observe(this.engine.s,this.now());this.requestFrame()}
+      });
+      this.doc.addEventListener('gesturestart',e=>e.preventDefault(),{passive:false});
+      this.doc.addEventListener('gesturechange',e=>e.preventDefault(),{passive:false});
+      if(this.$('musicVolume'))this.$('musicVolume').oninput=e=>{this.engine.setMusicVolume(Number(e.target.value));this.updateMusic()};
       this.doc.addEventListener('keydown',e=>this.modalKey(e));
     }
     pointerPosition(e){
@@ -447,16 +427,15 @@
       }
       this.clearSelection();
       this.screen=name;
-      if(name!=='map'&&this.ambientTimer!==null){
-        this.env.clearTimeout(this.ambientTimer);
-        this.ambientTimer=null
-      }
+      this.camera.target=null;this.dungeonCamera.target=null;
+      if(name!=='dungeon')this.dungeonMotion?.reset();
       if(name==='town')this.engine.visitTown();
       this.render();
       if(name==='map')this.resize()
     }
     render(){
       if(!this.engine)return;
+      this.$('threatHud').hidden=!['map','dungeon'].includes(this.screen);
       const s=this.engine.s,h=s.heroes[s.activeHero];
       for(const k of ['gold','wood','ore','gems','crystal','day','week','month'])this.$(k).textContent=s[k];
       this.$('hudName').textContent=h.name;
@@ -481,7 +460,7 @@
       if(this.screen==='town')this.renderTown();
       if(this.screen==='magic')this.renderMagic();
       if(this.screen==='quests')this.renderQuests();
-      if(this.screen==='settings'){this.$('soundToggle').textContent='Звуки: '+(s.settings.sound?'вкл':'выкл');this.$('musicToggle').textContent='Музыка: '+(s.settings.music?'вкл':'выкл')}
+      if(this.screen==='settings'){if(this.$('musicVolume'))this.$('musicVolume').value=s.settings.musicVolume;this.$('soundToggle').textContent='Звуки: '+(s.settings.sound?'вкл':'выкл');this.$('musicToggle').textContent='Музыка: '+(s.settings.music?'вкл':'выкл')}
       this.$('threatValue').textContent=(s.q.threat||0)+'%';this.$('siegeState').innerHTML=s.q.siege?'<span class="siege">⚠ ОСАДА</span>':'';this.$('threatHud').classList.toggle('threatHigh',(s.q.threat||0)>=70);this.updateMusic();
       if(s.battle)this.renderBattle();
       else this.battleVisual=null;
@@ -579,87 +558,19 @@
         ivan:'Иван — Наследие Стального Холма',varvara:'Варвара — Тайна Пепельной магии',world:'Мировые события'
       }
       )[k]+'</b><div class="small">Этап '+s.story[k]+'/2</div></div>').join('');
-      this.$('quests').innerHTML=[['Сделать первый ход героем',s.q.tutorialMove],['Открыть экран города',s.q.tutorialTown],['Захватить лесопилку',s.q.wood],['Захватить железную шахту',s.q.ore],['Захватить шахту самоцветов',s.q.gems],['Использовать Алтарь магии',s.q.altar],['Активировать сторожевую башню',s.q.obelisk],['Завершить цепочку Ивана',s.story.ivan>=2],['Завершить цепочку Варвары',s.story.varvara>=2],['Помочь 2 поселениям',s.q.villages>=2],['Исследовать 2 руины',s.q.ruins>=2],['Найти 2 артефакта',s.q.artifacts>=2],['Исследовать Пещеру Бездны',s.q.dungeonLevel>=1],['Победить Хранителя Бездны',s.q.dungeonCleared],[(!s.enemy.alive&&!D.objects.some(o=>o.t==='enemy'&&s.objects[o.id]?.status==='active')?'Угроза осады Стального Холма устранена':'Отбить осаду Стального Холма'),s.q.siegeWins>=1||(!s.enemy.alive&&!D.objects.some(o=>o.t==='enemy'&&s.objects[o.id]?.status==='active'))],['Победить гарнизон Морвейна в Некрополе',s.q.boss]].map(([text,done])=>'<div class="quest '+(done?'done':'')+'">'+(done?'✅ ':'⬜ ')+text+'</div>').join('');
+      this.$('quests').innerHTML=[['Сделать первый ход героем',s.q.tutorialMove],['Открыть экран города',s.q.tutorialTown],['Захватить лесопилку',s.q.wood],['Захватить железную шахту',s.q.ore],['Захватить шахту самоцветов',s.q.gems],['Использовать Алтарь магии',s.q.altar],['Активировать сторожевую башню',s.q.obelisk],['Завершить цепочку Ивана',s.story.ivan>=2],['Завершить цепочку Варвары',s.story.varvara>=2],['Помочь 2 поселениям',s.q.villages>=2],['Исследовать 2 руины',s.q.ruins>=2],['Найти 2 артефакта',s.q.artifacts>=2],['Исследовать Пещеру Бездны',s.q.dungeonLevel>=1],['Победить Хранителя Бездны',s.q.dungeonCleared],[(!s.enemy.alive?'Угроза осады Стального Холма устранена':'Отбить осаду Стального Холма'),s.q.siegeWins>=1||s.q.siegeResolved],['Победить гарнизон Морвейна в Некрополе',s.q.boss]].map(([text,done])=>'<div class="quest '+(done?'done':'')+'">'+(done?'✅ ':'⬜ ')+text+'</div>').join('');
       this.$('log').innerHTML=s.logs.map(t=>'<div>'+escape(t)+'</div>').join('')
     }
     dungeonZoneName(x,y){const z=D.dungeon.zones.find(z=>x>=z.x1&&x<=z.x2&&y>=z.y1&&y<=z.y2);return z?.name||'Глубинные переходы'}
-    drawDungeonFog(ctx,seen){
-      const off=this.dungeonFog||(this.dungeonFog=this.doc.createElement('canvas'));if(off.width!==D.dungeon.WORLD_W||off.height!==D.dungeon.WORLD_H){off.width=D.dungeon.WORLD_W;off.height=D.dungeon.WORLD_H}
-      const f=off.getContext('2d');f.clearRect(0,0,off.width,off.height);f.fillStyle='rgba(0,0,0,.94)';f.fillRect(0,0,off.width,off.height);f.globalCompositeOperation='destination-out';
-      for(const k of seen){const [x,y]=k.split(',').map(Number),px=x*100+50,py=y*100+50,g=f.createRadialGradient(px,py,36,px,py,128);g.addColorStop(0,'rgba(0,0,0,1)');g.addColorStop(.56,'rgba(0,0,0,.92)');g.addColorStop(1,'rgba(0,0,0,0)');f.fillStyle=g;f.beginPath();f.arc(px,py,128,0,Math.PI*2);f.fill()}
-      f.globalCompositeOperation='source-over';ctx.drawImage(off,0,0)
-    }
-    drawDungeonMarker(ctx,o,st,px,py,z,near,now){
-      const hostile=o.t==='enemy',owned=st.owner==='player',accent=owned?'#75bfff':hostile?'#ef6559':'#e5bc5d',pulse=1+Math.sin(now*2.3+px*.01)*.035;
-      ctx.save();ctx.translate(px,py);ctx.scale(pulse,pulse);ctx.shadowColor='rgba(0,0,0,.78)';ctx.shadowBlur=18/z;ctx.shadowOffsetY=10/z;
-      const size=hostile?58:52;ctx.beginPath();ctx.arc(0,0,size*.57,0,Math.PI*2);ctx.fillStyle='rgba(7,10,8,.68)';ctx.fill();ctx.shadowBlur=0;
-      ctx.save();ctx.beginPath();ctx.arc(0,0,size*.5,0,Math.PI*2);ctx.clip();this.image(ctx,o.img,-size/2,-size/2,size,size);ctx.restore();
-      ctx.lineWidth=(hostile?4:3)/z;ctx.strokeStyle=accent;ctx.beginPath();ctx.arc(0,0,size*.53,0,Math.PI*2);ctx.stroke();
-      if(hostile){ctx.strokeStyle='rgba(239,75,58,.24)';ctx.lineWidth=9/z;ctx.beginPath();ctx.arc(0,0,size*.67,0,Math.PI*2);ctx.stroke()}
-      ctx.restore();
-      if(near){const text=o.label||o.name,fs=14/z;ctx.font='700 '+fs+'px sans-serif';const w=Math.min(230/z,ctx.measureText(text).width+16/z),yy=py+40/z;this.round(ctx,px-w/2,yy-17/z,w,25/z,7/z);ctx.fillStyle='rgba(5,7,6,.84)';ctx.fill();ctx.strokeStyle=accent;ctx.lineWidth=1/z;ctx.stroke();ctx.fillStyle='#f6e7c7';ctx.textAlign='center';ctx.fillText(text,px,yy+1/z)}
-    }
-    renderDungeonMap(t=0){
-      const c=this.dungeonCanvas,s=this.engine?.s;if(!c||!s?.dungeon)return;const r=c.getBoundingClientRect();if(!r.width||!r.height)return;const dpr=Math.min(2,this.env.devicePixelRatio||1);const bw=Math.round(r.width*dpr),bh=Math.round(r.height*dpr);if(c.width!==bw||c.height!==bh){c.width=bw;c.height=bh}
-      if(!this.dungeonCamera.ready)this.centerDungeon();this.clampDungeon();const z=this.dungeonCamera.zoom,ctx=c.getContext('2d'),d=s.dungeon,h=s.heroes[s.activeHero],seen=new Set(d.seen||[]),tile=100,now=(t||performance.now())/1000;
-      ctx.setTransform(dpr,0,0,dpr,0,0);ctx.clearRect(0,0,r.width,r.height);ctx.fillStyle='#020302';ctx.fillRect(0,0,r.width,r.height);ctx.save();ctx.scale(z,z);ctx.translate(-this.dungeonCamera.x,-this.dungeonCamera.y);ctx.imageSmoothingEnabled=true;ctx.imageSmoothingQuality='high';
-      if(this.assets['abyss-map-v1.jpg'])ctx.drawImage(this.assets['abyss-map-v1.jpg'],0,0,D.dungeon.WORLD_W,D.dungeon.WORLD_H);else{const grd=ctx.createLinearGradient(0,0,D.dungeon.WORLD_W,D.dungeon.WORLD_H);grd.addColorStop(0,'#17130f');grd.addColorStop(.55,'#080a0b');grd.addColorStop(1,'#1b0b08');ctx.fillStyle=grd;ctx.fillRect(0,0,D.dungeon.WORLD_W,D.dungeon.WORLD_H)}
-      // Local animated layers: only terrain effects move, the painted map stays stable.
-      for(const q of D.dungeon.river||[]){if(!seen.has(q.x+','+q.y))continue;const x=q.x*tile,y=q.y*tile;ctx.strokeStyle='rgba(91,202,238,.38)';ctx.lineWidth=2.2/z;for(let i=0;i<3;i++){const yy=y+24+i*24+Math.sin(now*2.2+q.x+i)*4;ctx.beginPath();ctx.moveTo(x+7,yy);ctx.bezierCurveTo(x+34,yy-5,x+65,yy+5,x+93,yy);ctx.stroke()}}
-      for(const q of D.dungeon.lava||[]){if(!seen.has(q.x+','+q.y))continue;const px=q.x*tile+50,py=q.y*tile+50,rad=48+Math.sin(now*3+q.x)*8,g=ctx.createRadialGradient(px,py,8,px,py,rad);g.addColorStop(0,'rgba(255,177,55,.22)');g.addColorStop(.5,'rgba(255,72,12,.16)');g.addColorStop(1,'rgba(255,45,0,0)');ctx.fillStyle=g;ctx.beginPath();ctx.arc(px,py,rad,0,Math.PI*2);ctx.fill()}
-      for(const q of D.dungeon.torches||[]){if(!seen.has(q.x+','+q.y))continue;const px=q.x*tile+50,py=q.y*tile+50,rad=52+Math.sin(now*7+q.x)*8,g=ctx.createRadialGradient(px,py,2,px,py,rad);g.addColorStop(0,'rgba(255,206,111,.34)');g.addColorStop(1,'rgba(255,110,30,0)');ctx.fillStyle=g;ctx.beginPath();ctx.arc(px,py,rad,0,Math.PI*2);ctx.fill()}
-      // Soft fog is one continuous layer; no rectangular black tiles.
-      this.drawDungeonFog(ctx,seen);
-      for(const o of D.dungeon.objects){const st=d.objects[o.id];if(!st||st.status!=='active'||!seen.has(o.x+','+o.y))continue;const px=o.x*tile+50,py=o.y*tile+50,dist=Math.hypot(o.x-d.x,o.y-d.y);this.drawDungeonMarker(ctx,o,st,px,py,z,dist<=2.4,now)}
-      const px=d.x*tile+50,py=d.y*tile+50;ctx.save();ctx.globalAlpha=.38;ctx.fillStyle='#000';ctx.beginPath();ctx.ellipse(px,py+35,34,10,0,0,Math.PI*2);ctx.fill();ctx.restore();ctx.save();ctx.translate(px,py);const hs=this.assets['ivan-rider.png']?'ivan-rider.png':this.portraitSource(h.img);if(hs==='ivan-rider.png')this.image(ctx,hs,-45,-70,90,104);else{ctx.beginPath();ctx.arc(0,0,34,0,Math.PI*2);ctx.clip();this.image(ctx,hs,-36,-42,72,84)}ctx.restore();ctx.strokeStyle='#f1c75f';ctx.lineWidth=3/z;ctx.beginPath();ctx.ellipse(px,py+34,36,11,0,0,Math.PI*2);ctx.stroke();
-      // Subtle cave haze creates depth without covering gameplay objects.
-      ctx.save();ctx.globalAlpha=.08;ctx.fillStyle='#9fc7c4';for(let i=0;i<5;i++){const hx=((now*12+i*271)%1500)-100,hy=110+i*175+Math.sin(now*.45+i)*18;ctx.beginPath();ctx.ellipse(hx,hy,90,24,0,0,Math.PI*2);ctx.fill()}ctx.restore();ctx.restore();
-      this.$('dungeonZone').textContent='🕯 '+this.dungeonZoneName(d.x,d.y);this.$('dungeonHud').textContent=h.name+' · движение '+h.moves+'/'+h.maxMoves+' · открыто '+seen.size+'/'+(D.dungeon.W*D.dungeon.H)+' клеток';this.updateMusic()
-    }
-    dungeonTap(sx,sy){
-      const x=Math.floor((sx/this.dungeonCamera.zoom+this.dungeonCamera.x)/100),y=Math.floor((sy/this.dungeonCamera.zoom+this.dungeonCamera.y)/100),s=this.engine.s,d=s.dungeon;if(x<0||y<0||x>=D.dungeon.W||y>=D.dungeon.H)return;const o=D.dungeon.objects.find(o=>o.x===x&&o.y===y&&d.objects[o.id]?.status==='active');let r;if(o)r=this.engine.commandDungeonInteract(s.activeHero,o.id);else r=this.engine.commandDungeonMove(s.activeHero,x,y);if(!r.ok)this.toast(r.reason||'Путь недоступен');this.requestFrame()
-    }
-    renderDungeon(){const s=this.engine.s;if(!this.$('dungeonStatus'))return;const lv=s.q.dungeonLevel||0,names=['Заброшенные шахты','Древний город','Сердце Бездны'],foes=['Костяной караул · пещерные волки','Некроманты древнего города','Хранитель Бездны · элитная нежить'];const next=Math.min(2,lv);this.$('dungeonDepth').textContent='Уровень '+['I','II','III'][next]+' · '+names[next];this.$('dungeonStatus').innerHTML=s.q.dungeonCleared?'<b>🔥 Сердце Бездны очищено</b><div class="small">Сила Некрополя ослаблена. Угроза снижена.</div>':'<b>'+names[next]+'</b><div class="small">Рекомендуемая сила армии: '+[85,150,235][next]+'. Награды растут с глубиной. На III уровне ждёт Хранитель Бездны.</div><div class="small" style="margin-top:6px">Очищено уровней: '+lv+'/3 · найдено сокровищ: '+(s.q.dungeonLoot||0)+'</div>';this.$('dungeonExplore').disabled=!!s.q.dungeonCleared}
-    battleSnapshot(b){
-      return b?{id:b.id,selectedId:b.selectedId,stacks:Object.fromEntries(b.stacks.map(st=>[st.id,{x:st.x,y:st.y,hp:st.hp,qty:st.qty,side:st.side,type:st.type}]))}:null
-    }
-    animateBattle(previous,current,board){
-      if(!previous||previous.id!==current.id||this.env.matchMedia?.('(prefers-reduced-motion: reduce)').matches)return;
-      const cells=[...board.querySelectorAll('.cell')],cellAt=(x,y)=>cells[y*8+x];
-      const currentById=Object.fromEntries(current.stacks.map(st=>[st.id,st]));
-      for(const [id,old] of Object.entries(previous.stacks)){
-        const now=currentById[id],node=now&&cellAt(now.x,now.y)?.querySelector('.stack');
-        if(now&&node&&(old.x!==now.x||old.y!==now.y)){
-          const from=cellAt(old.x,old.y)?.getBoundingClientRect(),to=cellAt(now.x,now.y)?.getBoundingClientRect();
-          if(from&&to&&typeof node.animate==='function')node.animate([{transform:`translate(${from.left-to.left}px,${from.top-to.top}px) scale(.96)`},{transform:'translate(0,0) scale(1.04)',offset:.82},{transform:'translate(0,0) scale(1)'}],{duration:360,easing:'cubic-bezier(.2,.75,.25,1)'});
-        }
-        if(now&&node&&now.hp<old.hp){
-          const loss=old.hp-now.hp;
-          if(typeof node.animate==='function')node.animate([{transform:'translateX(0)',filter:'brightness(1.65) saturate(1.35)'},{transform:'translateX(-5px)',offset:.25},{transform:'translateX(4px)',offset:.5},{transform:'translateX(-2px)',offset:.72},{transform:'translateX(0)',filter:'brightness(1) saturate(1.08)'}],{duration:300,easing:'ease-out'});
-          const cell=cellAt(now.x,now.y),fx=this.doc.createElement('span');
-          fx.className='damageFloat';fx.textContent='−'+loss;cell.appendChild(fx);
-          if(typeof fx.animate==='function')fx.animate([{opacity:0,transform:'translate(-50%,4px) scale(.8)'},{opacity:1,offset:.18,transform:'translate(-50%,-5px) scale(1.08)'},{opacity:0,transform:'translate(-50%,-28px) scale(1)'}],{duration:720,easing:'ease-out'}).onfinish=()=>fx.remove();
-        }
-        if(!now){
-          const cell=cellAt(old.x,old.y);if(cell){const ghost=this.doc.createElement('span');ghost.className='deathBurst';cell.appendChild(ghost);if(typeof ghost.animate==='function')ghost.animate([{opacity:.9,transform:'translate(-50%,-50%) scale(.55)'},{opacity:0,transform:'translate(-50%,-50%) scale(1.65)'}],{duration:420,easing:'ease-out'}).onfinish=()=>ghost.remove()}
-        }
-      }
-      const oldSelected=previous.stacks[previous.selectedId],newSelected=currentById[previous.selectedId];
-      if(oldSelected&&newSelected&&oldSelected.x===newSelected.x&&oldSelected.y===newSelected.y){
-        const damaged=Object.entries(previous.stacks).find(([id,st])=>currentById[id]&&currentById[id].hp<st.hp);
-        if(damaged){
-          const target=currentById[damaged[0]],attacker=cellAt(newSelected.x,newSelected.y)?.querySelector('.stack');
-          if(attacker&&target&&typeof attacker.animate==='function'){const dist=Math.abs(target.x-newSelected.x)+Math.abs(target.y-newSelected.y),dx=(target.x-newSelected.x)*(dist>1?7:18),dy=(target.y-newSelected.y)*(dist>1?7:18);attacker.animate([{transform:'rotateX(-8deg) translate(0,0)'},{transform:`rotateX(-8deg) translate(${dx}px,${dy}px) scale(${dist>1?'1.04':'1.14'})`,offset:.48},{transform:'rotateX(-8deg) translate(0,0)'}],{duration:dist>1?360:300,easing:'cubic-bezier(.2,.8,.3,1)'})}
-        }
-      }
-    }
+    renderDungeonMap(t=0){if(!this.dungeonScene||!this.engine.s.dungeon.inside)return;if(!this.dungeonCamera.ready)this.centerDungeon();this.dungeonScene.draw(this.engine.s,this.motion,this.selection,t);const d=this.engine.s.dungeon,h=this.engine.s.heroes[d.inside];this.$('dungeonZone').textContent=this.dungeonZoneName(d.x,d.y);this.$('dungeonHud').textContent=h.name+' · движение '+h.moves+'/'+h.maxMoves;}
+    dungeonTap(sx,sy){if(!this.dungeonScene||!this.engine.idle())return;const hit=this.dungeonScene.hit(sx,sy),cell=this.dungeonScene.cellAt(sx,sy),d=this.engine.s.dungeon;if(!d.seen.includes(cell.x+','+cell.y)&&!hit)return;const object=hit?this.engine.dungeonObject(hit):null;const result=object?this.dungeonMotion.command(object.x,object.y,hit):this.dungeonMotion.command(cell.x,cell.y);if(!result.ok)this.toast(result.reason||'Путь закрыт');this.requestFrame()}
     renderBattle(){
-      const b=this.engine.s.battle,previous=this.battleVisual,a=C.selectedStack(b),player=b.phase==='player';
+      const b=this.engine.s.battle||this.battleScene?.timeline.snapshot;if(!b)return;const a=C.selectedStack(b),player=!!this.engine.s.battle&&b.phase==='player'&&!this.battleScene?.timeline.busy(this.now());
       this.$('battleName').textContent=b.name;
       const battleModal=this.$('battleModal');
       if(battleModal)battleModal.dataset.env=(b.source?.kind==='dungeon'?'dungeon':'surface');
       this.$('battleRound').textContent='Раунд '+b.round;
-      this.$('battleHint').textContent=player?'Выберите доступную клетку или цель. Поле можно прокрутить.':b.phase==='enemy'?'Ход противника…':'Действие выполняется…';
+      this.$('battleHint').textContent=player?'Выберите доступную клетку или цель. ':b.phase==='enemy'?'Ход противника…':'Действие выполняется…';
       const h=this.engine.s.heroes[b.heroId];
       this.$('battleStatus').textContent='Мана '+h.mana+'/'+h.manaMax+' · '+(a?C.stackDef(a).n+' · Инициатива '+(C.stackDef(a).init??C.stackDef(a).spd):'Завершение хода');
       this.$('turnbar').innerHTML=b.order.map(id=>b.stacks.find(st=>st.id===id&&st.hp>0)).filter(Boolean).map(st=>'<div class="turnchip '+(st.id===b.selectedId?'active':'')+'" title="'+escape(C.stackDef(st).traitText||'')+'">'+(st.side==='p'?'🟦 ':'🟥 ')+C.stackDef(st).n+' · ⚡'+(C.stackDef(st).init??C.stackDef(st).spd)+'</div>').join('');
@@ -680,17 +591,7 @@
         if(canMove)cell.classList.add('move');
         if(occ?.id===b.selectedId)cell.classList.add('sel');
         cell.setAttribute('aria-label','Клетка '+(x+1)+','+(y+1)+(occ?': '+C.stackDef(occ).n+', '+occ.qty+', '+occ.hp+' HP'+(occ.side==='p'?', союзники':', противник'):canMove?', переместиться':', недоступна'));
-        if(occ){
-          const st=this.doc.createElement('span');
-          st.className='stack '+(occ.side==='p'?'player':'enemy')+' unit-'+occ.type;
-          st.dataset.stackId=occ.id;
-          st.style.backgroundImage="url('"+this.imageSource(C.stackDef(occ).img,occ.side==='e'?'necromancer.jpg':'hero.jpg')+"')";
-          const q=this.doc.createElement('span');
-          q.className='qty';
-          q.textContent=occ.qty;
-          st.appendChild(q);
-          cell.appendChild(st)
-        }
+        cell.textContent=occ?C.stackDef(occ).n+' ×'+occ.qty:'Клетка '+(x+1)+','+(y+1);
         cell.onclick=()=>this.engine.battleAction(canAttack?{
           type:'attack',targetId:occ.id
         }
@@ -713,8 +614,7 @@
       this.$('retreatBtn').onclick=()=>{
         if(this.engine.s.battle?.id===battleId)this.engine.finishBattle('retreat')
       }
-      this.animateBattle(previous,b,board);
-      this.battleVisual=this.battleSnapshot(b);
+      this.battleScene?.draw(b,this.now());
       ;
     }
     renderLevel(){
@@ -812,59 +712,20 @@
       }
     }
     mapTap(sx,sy){
-      if(!this.ready||!this.engine.idle()||this.localModal)return;
-      const s=this.engine.s,wx=sx/this.camera.zoom+this.camera.x,wy=sy/this.camera.zoom+this.camera.y;
-      let chosen=null;
-      const hit=this.labelHits.find(r=>wx>=r.x&&wx<=r.x+r.w&&wy>=r.y&&wy<=r.y+r.h&&C.worldObject(s,r.id)&&C.isSeen(s,C.worldObject(s,r.id)));
-      if(hit)chosen={
-        o:C.worldObject(s,hit.id),dist:-1
-      }
-      ;
-      for(const o of this.entities()){
-        if(!C.isSeen(s,o))continue;
-        const p=this.objectPosition(o),dist=Math.hypot(wx-p.x,wy-p.y);
-        if(dist<=Math.max(o.radius,22/this.camera.zoom)&&(!chosen||dist<chosen.dist))chosen={
-          o,dist
-        }
-      }
-      const tx=Math.floor(wx/100),ty=Math.floor(wy/100);
-      if(!chosen){
-        const o=C.objectAt(s,tx,ty);
-        if(o&&C.isSeen(s,o))chosen={
-          o
-        }
-      }
-      if(chosen){
-        const o=chosen.o;
-        if(this.selection!==o.id){
-          this.selection=o.id;
-          this.$('objectInfo').textContent=label(o)+(o.owner==='player'?' · ваш объект':'')+'. Нажмите ещё раз для подхода.';
-          this.$('objectInfo').classList.remove('hidden');
-          this.env.clearTimeout(this.selectionTimer);
-          this.selectionTimer=this.env.setTimeout(()=>this.clearSelection(),2600);
-          return
-        }
-        this.clearSelection();
-        this.openObjectPreview(o.id)
-        return
-      }
-      this.clearSelection();
-      this.engine.commandMove(s.activeHero,tx,ty)
+      if(!this.ready||!this.engine.idle()||this.localModal||!this.worldScene)return;
+      const s=this.engine.s,id=this.worldScene.hit(sx,sy),cell=this.worldScene.cellAt(sx,sy);
+      if(id){const o=C.worldObject(s,id);if(!o||!C.isSeen(s,o))return;if(this.selection!==id){this.selection=id;this.$('objectInfo').textContent=label(o)+' · нажмите ещё раз для подхода';this.$('objectInfo').classList.remove('hidden');this.requestFrame();return}this.clearSelection();if(o.t==='enemy')this.openEnemy(id);else this.engine.commandInteract(s.activeHero,id)}else{this.clearSelection();this.engine.commandMove(s.activeHero,cell.x,cell.y)}this.requestFrame()
     }
     entities(){
       const s=this.engine.s;
       return [...C.allObjects(s),...(s.enemy.alive?[C.worldObject(s,s.enemy.id)]:[])]
     }
-    objectPosition(o){
-      return {
-        x:o.x*100+50+(o.offset?.[0]||0),y:o.y*100+50+(o.offset?.[1]||0)
-      }
-    }
+    objectPosition(o){return this.worldScene?this.worldScene.projection.cell(o.x,o.y):{x:o.x*100+50,y:o.y*100+50}}
     syncModal(){
       const s=this.engine?.s;
       let active=this.localModal;
       if(!active&&s){
-        if(s.battle)active='battleModal';
+        if(s.battle||this.battleScene?.timeline.holdUntil>this.now())active='battleModal';
         else if(s.levelChoices.length)active='levelModal';
         else if(s.victoryPending)active='victoryModal'
       }
@@ -911,60 +772,36 @@
         nodes[0].focus()
       }
     }
+    now(){return this.env.performance?.now?.()??performance.now()}
+    saveCamera(){try{if(!this.env.ASH_QA)this.env.localStorage.setItem('ash-camera-920',JSON.stringify({surface:this.camera.zoom,dungeon:this.dungeonCamera.zoom}))}catch(e){}}
+    initScenes(){
+      this.worldScene=new Scenes.WorldScene({canvas:this.canvas,doc:this.doc,assets:this.assets});
+      this.dungeonScene=new Scenes.WorldScene({canvas:this.dungeonCanvas,doc:this.doc,assets:this.assets,dungeon:true});
+      for(const [scene,cam]of [[this.worldScene,this.camera],[this.dungeonScene,this.dungeonCamera]]){cam.worldWidth=scene.projection.worldWidth;cam.worldHeight=scene.projection.worldHeight;scene.camera=cam;scene.resize()}
+      try{const debug=new URLSearchParams(this.env.location.search||'').get('debug-nav')==='1';this.worldScene.debug=debug;this.dungeonScene.debug=debug}catch(e){}
+      this.battleScene=new Battles.BattleScene(this.$('battleCanvas'),this.doc,this.assets);
+      const bc=this.$('battleCanvas');this.battlePointer=new Controls.PointerController({x:0,y:0,zoom:1},{onTap:(x,y)=>{const hit=this.battleScene.hit(x,y);if(hit&&!this.battleScene.timeline.busy(this.now()))this.engine.battleAction(hit.action,hit.battleId,hit.turnId)}});
+      for(const [event,method]of [['pointerdown','down'],['pointermove','move'],['pointerup','up']])bc.addEventListener(event,e=>{e.preventDefault();const r=bc.getBoundingClientRect();if(event==='pointerdown')bc.setPointerCapture?.(e.pointerId);this.battlePointer[method](e.pointerId,e.clientX-r.left,e.clientY-r.top)});
+      for(const event of ['pointercancel','lostpointercapture'])bc.addEventListener(event,()=>this.battlePointer.cancel());
+    }
     requestFrame(){
       if(this.frameId!==null||this.doc.hidden)return;
       this.frameId=this.env.requestAnimationFrame(t=>{
-        this.frameId=null;
-        if(!this.ready||!this.engine||this.doc.hidden)return;
-        const moving=this.motion.frame(t);
+        this.frameId=null;if(!this.ready||!this.engine||this.doc.hidden)return;
+        const moving=this.motion.frame(t),dungeonMoving=this.dungeonMotion?.frame(t);
+        if(moving&&t>this.manualPanUntil&&!this.pointer.points.size&&this.worldScene){const q=this.motion.position(this.engine.s.activeHero);this.camera.animateTo(this.worldScene.projection.project(q.x,q.y))}
         if(this.screen==='map')this.drawMap(t);
+        if(dungeonMoving&&t>this.manualPanUntil&&!this.dungeonPointer.points.size){const q=this.dungeonMotion.position();this.dungeonCamera.animateTo(this.dungeonScene.projection.project(q.x,q.y))}
         if(this.screen==='dungeon')this.renderDungeonMap(t);
-        if(moving)this.requestFrame();
-        else if((this.screen==='map'||this.screen==='dungeon')&&!this.reduceMotion)this.scheduleAmbientFrame()
-      }
-      )
+        const wasBusy=this.battleWasBusy,busy=this.battleScene?.timeline.busy(t);if(this.engine.s.battle||busy)this.battleScene?.draw(this.engine.s.battle,t);if(wasBusy&&!busy){if(this.engine.s.battle)this.renderBattle();this.syncModal()}this.battleWasBusy=busy;
+        if(moving||dungeonMoving||busy||this.camera.target||this.dungeonCamera.target||(!this.reduceMotion&&['map','dungeon'].includes(this.screen)))this.requestFrame();
+      });
     }
-    scheduleAmbientFrame(){
-      if(this.ambientTimer!==null||this.doc.hidden||!['map','dungeon'].includes(this.screen)||this.reduceMotion)return;
-      this.ambientTimer=this.env.setTimeout(()=>{
-        this.ambientTimer=null;
-        this.requestFrame()
-      },100)
-    }
-    resize(){
-      const r=this.canvas.getBoundingClientRect(),dpr=Math.min(2,this.env.devicePixelRatio||1);
-      if(!r.width||!r.height)return;
-      this.canvas.width=Math.round(r.width*dpr);
-      this.canvas.height=Math.round(r.height*dpr);
-      this.dpr=dpr;
-      this.clamp();
-      if(this.screen==='dungeon'){this.clampDungeon();}
-      this.requestFrame()
-    }
-    clamp(){
-      const r=this.canvas.getBoundingClientRect(),vw=r.width/this.camera.zoom,vh=r.height/this.camera.zoom;
-      this.camera.x=vw>D.WORLD_W?-(vw-D.WORLD_W)/2:Math.max(-160,Math.min(D.WORLD_W-vw+160,this.camera.x));
-      this.camera.y=vh>D.WORLD_H?-(vh-D.WORLD_H)/2:Math.max(-120,Math.min(D.WORLD_H-vh+120,this.camera.y))
-    }
-    clampDungeon(){
-      const c=this.dungeonCanvas;if(!c)return;const r=c.getBoundingClientRect(),z=this.dungeonCamera.zoom;
-      if(!r.width||!r.height)return;const vw=r.width/z,vh=r.height/z,margin=70;
-      this.dungeonCamera.x=vw>=D.dungeon.WORLD_W?-(vw-D.dungeon.WORLD_W)/2:Math.max(-margin,Math.min(D.dungeon.WORLD_W-vw+margin,this.dungeonCamera.x));
-      this.dungeonCamera.y=vh>=D.dungeon.WORLD_H?-(vh-D.dungeon.WORLD_H)/2:Math.max(-margin,Math.min(D.dungeon.WORLD_H-vh+margin,this.dungeonCamera.y));
-    }
-    centerDungeon(){
-      if(!this.engine?.s?.dungeon||!this.dungeonCanvas)return;const r=this.dungeonCanvas.getBoundingClientRect(),d=this.engine.s.dungeon,z=this.dungeonCamera.zoom;
-      this.dungeonCamera.x=d.x*100+50-r.width/(2*z);this.dungeonCamera.y=d.y*100+50-r.height/(2*z);
-      this.dungeonCamera.ready=true;this.clampDungeon();this.requestFrame();
-    }
-    center(){
-      if(!this.engine)return;
-      const p=this.motion.position(this.engine.s.activeHero),r=this.canvas.getBoundingClientRect();
-      this.camera.x=p.x-r.width/(2*this.camera.zoom);
-      this.camera.y=p.y-r.height/(2*this.camera.zoom)-60/this.camera.zoom;
-      this.clamp();
-      this.requestFrame()
-    }
+    resize(){this.worldScene?.resize();this.dungeonScene?.resize();this.requestFrame()}
+    clamp(){this.camera.clamp()}
+    clampDungeon(){this.dungeonCamera.clamp()}
+    centerDungeon(){if(!this.engine||!this.dungeonScene)return;const d=this.engine.s.dungeon;this.dungeonScene.resize();this.dungeonCamera.centerOn(this.dungeonScene.projection.cell(d.x,d.y));this.requestFrame()}
+    center(){if(!this.engine||!this.worldScene)return;const h=this.engine.s.heroes[this.engine.s.activeHero];this.worldScene.resize();this.camera.centerOn(this.worldScene.projection.cell(h.x,h.y));this.requestFrame()}
     image(ctx,name,x,y,w,h){
       const image=this.assets[name];
       if(image)ctx.drawImage(image,x,y,w,h);
@@ -981,175 +818,7 @@
       if(ctx.roundRect)ctx.roundRect(x,y,w,h,r);
       else ctx.rect(x,y,w,h)
     }
-    updateFog(){
-      const s=this.engine.s,signature=s.seen.join('|');
-      if(signature===this.fogKey)return;
-      this.fogKey=signature;
-      this.seen=new Set(s.seen);
-      const ctx=this.fog.getContext('2d');
-      ctx.clearRect(0,0,D.WORLD_W,D.WORLD_H);
-      ctx.fillStyle='rgba(2,6,4,.55)';
-      ctx.fillRect(0,0,D.WORLD_W,D.WORLD_H);
-      for(const k of this.seen){
-        const [x,y]=k.split(',').map(Number);
-        ctx.clearRect(x*100,y*100,100,100);
-        ctx.fillStyle='rgba(2,6,4,.08)';
-        ctx.fillRect(x*100,y*100,100,100)
-      }
-    }
-    drawAmbientWater(ctx,t=0){
-      if(this.reduceMotion)return;
-      const world=this.assets['world-v7.jpg'],mask=this.assets['water-mask.png'],foamMask=this.assets['foam-mask.png'];
-      if(!world||!mask)return;
-      const phase=(t||performance.now())*.001;
-
-      // Important: water-mask.png is a real RGBA alpha mask. Black/transparent land must not
-      // participate in compositing; otherwise Safari blends a shifted copy of the WHOLE map
-      // and the result looks like global flicker instead of moving water.
-      const wx=Math.sin(phase*.92)*4.2;
-      const wy=Math.sin(phase*.61+1.1)*2.0;
-      const wctx=this.waterFx.getContext('2d');
-      wctx.setTransform(1,0,0,1,0,0);
-      wctx.clearRect(0,0,D.WORLD_W,D.WORLD_H);
-      wctx.globalCompositeOperation='source-over';
-      wctx.globalAlpha=1;
-      wctx.drawImage(world,wx,wy,D.WORLD_W,D.WORLD_H);
-      wctx.globalCompositeOperation='destination-in';
-      wctx.drawImage(mask,0,0,D.WORLD_W,D.WORLD_H);
-      wctx.globalCompositeOperation='source-over';
-      ctx.save();
-      ctx.globalAlpha=.72;
-      ctx.drawImage(this.waterFx,0,0);
-      ctx.restore();
-
-      // Waterfalls/foam: a second masked copy moves primarily vertically. Because the mask
-      // itself is stationary, banks, trees and roads never move; only pixels inside foam areas do.
-      if(foamMask){
-        const fy=Math.sin(phase*2.35)*5.5;
-        const fx=Math.sin(phase*.8)*.8;
-        const fctx=this.foamFx.getContext('2d');
-        fctx.setTransform(1,0,0,1,0,0);
-        fctx.clearRect(0,0,D.WORLD_W,D.WORLD_H);
-        fctx.globalCompositeOperation='source-over';
-        fctx.globalAlpha=1;
-        fctx.drawImage(world,fx,fy,D.WORLD_W,D.WORLD_H);
-        fctx.globalCompositeOperation='destination-in';
-        fctx.drawImage(foamMask,0,0,D.WORLD_W,D.WORLD_H);
-        fctx.globalCompositeOperation='source-over';
-        ctx.save();
-        ctx.globalCompositeOperation='screen';
-        ctx.globalAlpha=.26;
-        ctx.drawImage(this.foamFx,0,0);
-        ctx.restore();
-      }
-    }
-
-    drawAmbientWorld(ctx,t=0){
-      if(this.reduceMotion)return; const phase=(t||performance.now())*.001;
-      ctx.save();
-      // city smoke
-      for(let i=0;i<4;i++){const a=phase*.55+i*1.4,x=1260+Math.sin(a)*8,y=665-((phase*18+i*23)%80);ctx.fillStyle='rgba(220,225,214,'+(0.16-i*.02)+')';ctx.beginPath();ctx.arc(x,y,7+i*2,0,Math.PI*2);ctx.fill()}
-      // warm mine torch / magical glows
-      const glows=[[2050,650,'rgba(255,157,57,.22)'],[1550,1450,'rgba(91,157,255,.18)']];
-      for(const [x,y,c] of glows){const r=22+Math.sin(phase*2+x)*7,g=ctx.createRadialGradient(x,y,2,x,y,r);g.addColorStop(0,c);g.addColorStop(1,'rgba(0,0,0,0)');ctx.fillStyle=g;ctx.beginPath();ctx.arc(x,y,r,0,Math.PI*2);ctx.fill()}
-      // distant birds
-      ctx.strokeStyle='rgba(235,235,220,.45)';ctx.lineWidth=1.5;for(let i=0;i<3;i++){const x=(phase*28+i*130)%520+900,y=300+i*20+Math.sin(phase*1.8+i)*8;ctx.beginPath();ctx.arc(x-5,y,6,Math.PI*1.05,Math.PI*1.85);ctx.arc(x+5,y,6,Math.PI*1.15,Math.PI*1.95);ctx.stroke()}
-      ctx.restore();
-    }
-    drawMap(t=0){
-      if(!this.engine||!this.ready)return;
-      const s=this.engine.s,ctx=this.canvas.getContext('2d'),r=this.canvas.getBoundingClientRect(),z=this.camera.zoom;
-      ctx.setTransform(this.dpr||1,0,0,this.dpr||1,0,0);
-      ctx.clearRect(0,0,r.width,r.height);
-      ctx.fillStyle='#050705';
-      ctx.fillRect(0,0,r.width,r.height);
-      ctx.save();
-      ctx.scale(z,z);
-      ctx.translate(-this.camera.x,-this.camera.y);
-      this.image(ctx,'world-v7.jpg',0,0,D.WORLD_W,D.WORLD_H);
-      // 9.1.2 renderer: the illustrated terrain is the scene base; gameplay entities remain independent.
-      if(!this.reduceMotion){const ph=(t||performance.now())*.00025;ctx.save();ctx.globalAlpha=.055;ctx.translate(Math.sin(ph)*12,Math.cos(ph*.7)*7);ctx.fillStyle='rgba(255,224,160,.025)';ctx.fillRect(-30,-30,D.WORLD_W+60,D.WORLD_H+60);ctx.restore();}
-      this.drawAmbientWater(ctx,t);
-      this.drawAmbientWorld(ctx,t);
-      // 9.1.2 depth pass: slow cloud shadows and light shafts move independently of terrain.
-      if(!this.reduceMotion){const phase=(t||performance.now())*.00012;ctx.save();ctx.globalCompositeOperation='multiply';ctx.globalAlpha=.10;for(let i=0;i<5;i++){const x=((phase*900+i*620)%3400)-400,y=120+i*390;const g=ctx.createRadialGradient(x,y,20,x,y,310);g.addColorStop(0,'rgba(18,25,20,.65)');g.addColorStop(1,'rgba(18,25,20,0)');ctx.fillStyle=g;ctx.beginPath();ctx.ellipse(x,y,360,150,.2,0,Math.PI*2);ctx.fill()}ctx.restore()}
-      this.updateFog();
-      ctx.drawImage(this.fog,0,0);
-      this.labelHits=[];
-      const m=s.movement;
-      if(m){
-        let p=this.motion.position(m.heroId);
-        ctx.lineWidth=3/z;
-        ctx.setLineDash([8/z,8/z]);
-        for(const [i,[x,y]]of m.path.entries()){
-          ctx.beginPath();
-          ctx.moveTo(p.x,p.y);
-          p={x:x*100+50,y:y*100+50};
-          ctx.lineTo(p.x,p.y);
-          ctx.strokeStyle=i<s.heroes[m.heroId].moves?'#92e48d':'#9a9c97';
-          ctx.stroke();
-        }
-        ctx.setLineDash([])
-      }
-      for(const o of C.allObjects(s)){
-        if(!C.isSeen(s,o))continue;
-        const p=this.objectPosition(o);
-        if(p.x<this.camera.x-240||p.y<this.camera.y-180||p.x>this.camera.x+r.width/z+240||p.y>this.camera.y+r.height/z+180)continue;
-        const border=o.owner==='player'?'#72b8ff':o.owner==='enemy'?'#e35d52':'#d7b35d';
-        const hx=s.heroes[s.activeHero]?.x??0,hy=s.heroes[s.activeHero]?.y??0,nearHero=Math.hypot(o.x-hx,o.y-hy)<=4.2;
-        if(!o.landmark){
-          const bob=this.reduceMotion?0:Math.sin((t||0)*.002+o.x+o.y)*2.5;
-          ctx.save();ctx.translate(p.x,p.y+bob);ctx.shadowColor='rgba(0,0,0,.72)';ctx.shadowBlur=16/z;ctx.shadowOffsetY=8/z;ctx.beginPath();ctx.arc(0,0,31,0,Math.PI*2);ctx.fillStyle='rgba(7,11,8,.68)';ctx.fill();ctx.shadowBlur=0;ctx.save();ctx.beginPath();ctx.arc(0,0,28,0,Math.PI*2);ctx.clip();this.image(ctx,o.img,-29,-29,58,58);ctx.restore();ctx.strokeStyle=border;ctx.lineWidth=3/z;ctx.beginPath();ctx.arc(0,0,30,0,Math.PI*2);ctx.stroke();ctx.restore()
-        }
-        // Labels no longer cover half the screen: show landmarks, nearby targets, or higher zoom only.
-        if((o.landmark&&z>=.72)||nearHero||z>=1.02){
-          const text=label(o)+(o.owner==='player'?' ✓':''),yy=o.landmark?p.y-o.radius*.63:p.y+43;
-          ctx.font='600 '+13/z+'px sans-serif';const w=Math.min(230/z,ctx.measureText(text).width+14/z);
-          this.labelHits.push({id:o.id,x:p.x-w/2,y:yy-16/z,w,h:24/z});this.round(ctx,p.x-w/2,yy-16/z,w,24/z,7/z);ctx.fillStyle='rgba(5,9,7,.78)';ctx.fill();ctx.strokeStyle=border;ctx.lineWidth=.8/z;ctx.stroke();ctx.fillStyle='#f6e8c8';ctx.textAlign='center';ctx.fillText(text,p.x,yy+1/z)
-        }
-      }
-      if(s.enemy.alive&&this.seen.has(C.key(s.enemy.x,s.enemy.y))){
-        const x=s.enemy.x*100+50,y=s.enemy.y*100+50;
-        ctx.save();
-        ctx.beginPath();
-        ctx.arc(x,y,32,0,Math.PI*2);
-        ctx.clip();
-        this.image(ctx,'necromancer.jpg',x-32,y-32,64,64);
-        ctx.restore();
-        ctx.beginPath();
-        ctx.arc(x,y,32,0,Math.PI*2);
-        ctx.strokeStyle='#e36b61';
-        ctx.lineWidth=3/z;
-        ctx.stroke()
-      }
-      for(const id of ['arden','lyra']){
-        const h=s.heroes[id],p=this.motion.position(id),pose=this.motion.pose(id),active=id===s.activeHero;
-        const gait=pose.moving?Math.sin(pose.progress*Math.PI*4):0,bob=pose.moving?Math.abs(gait)*3:0,lean=pose.moving?gait*.018:0;
-        ctx.save();
-        ctx.globalAlpha=.34;
-        ctx.fillStyle='#000';
-        ctx.beginPath();ctx.ellipse(p.x,p.y+38,pose.moving?34:31,pose.moving?9:8,0,0,Math.PI*2);ctx.fill();ctx.restore();
-        ctx.save();
-        ctx.translate(p.x,p.y-bob);
-        if(pose.dir==='left')ctx.scale(-1,1);
-        if(pose.moving)ctx.rotate(lean);
-        const sprite=id==='arden'?'ivan-rider.png':'varvara-map-v2.png';
-        if(id==='arden')this.image(ctx,this.assets[sprite]?sprite:h.img,-64,-84,128,147);
-        else this.image(ctx,this.assets[sprite]?sprite:h.img,-34,-54,68,72);
-        ctx.restore();
-        if(pose.moving&&Math.abs(gait)>.82){
-          ctx.save();ctx.globalAlpha=.16;ctx.fillStyle='#d8c7a0';ctx.beginPath();ctx.arc(p.x-pose.dx*.05,p.y+38,3.5,0,Math.PI*2);ctx.fill();ctx.restore()
-        }
-        if(active){
-          ctx.beginPath();
-          ctx.ellipse(p.x,p.y+35,id==='arden'?36:27,id==='arden'?11:8,0,0,Math.PI*2);
-          ctx.strokeStyle='#f0c55e';
-          ctx.lineWidth=3/z;
-          ctx.stroke()
-        }
-      }
-      ctx.restore();
-    }
+    drawMap(t=0){this.worldScene?.draw(this.engine.s,this.motion,this.selection,t)}
     async importFile(event){
       const file=event.target.files?.[0];
       event.target.value='';
@@ -1206,6 +875,7 @@
       this.center()
     }
     async offlineSetup(){
+      if(this.env.ASH_QA)return;
       const node=this.$('offlineStatus');
       if(this.env.location.protocol==='file:'){
         node.textContent='Локальная версия: храните все файлы рядом. Для установки приложения откройте игру по HTTPS.';
@@ -1226,7 +896,7 @@
   }
   function boot(env){
     const app=new App(env);
-    app.boot().catch(e=>app.showStartup('Ошибка запуска: '+e.message,true,true));
+    app.readyPromise=app.boot().catch(e=>app.showStartup('Ошибка запуска: '+e.message,true,true));
     return app
   }
   return {

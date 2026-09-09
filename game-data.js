@@ -1,4 +1,4 @@
-/* 8.10.0: Cache-safe GitHub Pages release + Mobile UI/Card fixes. */
+/* Living World Engine 9.2.0: content and navigation catalog derived from 9.1.2. */
 (function(root,factory){
   const data=factory();
   if(typeof module==='object'&&module.exports)module.exports=data;
@@ -250,7 +250,7 @@
     }
   }
   ;
-  const VERSION='9.1.2', SCHEMA=1, W=26,H=20,WORLD_W=2600,WORLD_H=2000;
+  const VERSION='9.2.0', SCHEMA=1, W=26,H=20,WORLD_W=2600,WORLD_H=2000;
   const skills={
     logistics:{
       name:'Логистика',description:'+2 движения за ранг',max:3
@@ -272,7 +272,7 @@
     }
   }
   ;
-  // Hand-reviewed coarse terrain layer over the unchanged 26×20 painted continent.
+  // Authoritative 26×20 navigation terrain used by the Canvas landscape.
   // Forest/swamp/desert are walkable. Water and mountain interiors are not.
   const mountainRows=[ [0,1,2,3,4,5,6,7,12,18,23,24,25], [0,1,2,5,6,7,11,12,19,22,23], [0,1,5,6,7,20,22,23,25], [0,3,6,7,22,24,25], [4,5,7,18,21,22,23,24,25], [20,21,23,24,25], [21,23,24,25], [18,21,24,25], [23,25], [25], [6,25], [6,7,19,25], [0,1,6,7,25], [0,1,5,6,20,25], [5,6,7,8,16,17], [6,7,8,9,18], [10,11,13,15,16], [10,11,12,13,14,15,16], [11,12,13,14,15,16,17], [12,13,14,15,16,17,18,19,20] ];
   const waterRows=[ [22],[8,9,15,16,17],[11,13,15,16,17], [2,12,13,14,15,16,17],[1,2,8,9,12,16], [2,3,8,9,10,16,17],[4,5,6], [6,8],[8,9,10,17,18,19,20,21,22], [11,12,13,14,15,16],[13,14,15], [17,18],[18,20,21,23], [2,3,4,21,22,23,24],[0,1,2,3,24,25], [0,1,2],[0,1,2,3,4,5,6,7,8], [0,1,2,3,4,5,6,7,8,9],[0,1,2,3,4,5,6,7,8,9,10], [0,1,2,3,4,5,6,7,8,9,10,11] ];
@@ -288,6 +288,8 @@
   // Entrances and a coastal pass in mixed rock/road cells, reviewed against the painting.
   const passes=[[22,3],[21,6],[5,14],[6,14],[6,13]];
   for(const [x,y]of passes)terrain[y][x]='land';
+  // A narrow pass bypasses the ore-mine footprint without walking through its building.
+  terrain[5][20]='land';
   // Only generic icons that lay in water/solid mountains are relocated; landmarks stay fixed.
   const relocations={
     '4,6':[4,7],'15,9':[14,8],'9,18':[10,14],'7,11':[7,10], '2,13':[2,12],'4,16':[4,15],'6,18':[3,15],'11,16':[11,15], '13,17':[13,15],'12,18':[10,15],'20,12':[19,12],'23,12':[22,12]
@@ -355,9 +357,9 @@
       '#############',
       '#...#..rr...#',
       '#...#.~=~...#',
-      '#.....~#~...#',
+      '#.....~=~...#',
       '#.###.~=~...#',
-      '#.....###^^.#',
+      '#.....#=#^^.#',
       '#....rr..^^.#',
       '#..#.....r..#',
       '#...........#',
@@ -367,7 +369,7 @@
     ruins:[{x:7,y:1},{x:8,y:1},{x:5,y:6},{x:6,y:6},{x:9,y:7}],
     lava:[{x:9,y:5},{x:10,y:5},{x:9,y:6},{x:10,y:6}],
     river:[{x:6,y:2},{x:8,y:2},{x:6,y:3},{x:8,y:3},{x:6,y:4},{x:8,y:4}],
-    bridges:[{x:7,y:2},{x:7,y:4}],
+    bridges:[{x:7,y:2},{x:7,y:3},{x:7,y:4},{x:7,y:5}],
     zones:[
       {name:'Заброшенные шахты',x1:1,y1:5,x2:5,y2:8},
       {name:'Затопленные галереи',x1:1,y1:1,x2:6,y2:4},
@@ -386,7 +388,7 @@
     ]
   };
 
-  const imageFiles=['water-mask.png','foam-mask.png','ivan-rider.png','varvara-map.png','varvara-map-v2.png','world-v7.jpg','hero.jpg','mage.jpg','castle.jpg','mine.jpg','sawmill.jpg','chest.jpg','portal.jpg','orc.jpg','wolf.jpg','necromancer.jpg','pikeman.jpg','archer.jpg','cavalier.jpg','griffin.jpg','skeleton.jpg','battlefield.jpg','battle-cavern.jpg','abyss-map-v1.jpg','city.jpg'];
+  const imageFiles=['hero-portrait.jpg','mage-portrait.jpg','pikeman-portrait.jpg','archer-portrait.jpg','cavalier-portrait.jpg','griffin-portrait.jpg','assets/world-sprites.png','assets/actors-v2.png','assets/terrain-materials.png','hero.jpg','mage.jpg','castle.jpg','mine.jpg','sawmill.jpg','chest.jpg','portal.jpg','orc.jpg','wolf.jpg','necromancer.jpg','pikeman.jpg','archer.jpg','cavalier.jpg','griffin.jpg','skeleton.jpg','city.jpg'];
   const byId=Object.fromEntries(objects.map(o=>[o.id,o]));
   const cellKey=(x,y)=>x+','+y;
   const cells=new Set();
