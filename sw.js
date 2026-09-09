@@ -1,10 +1,10 @@
 /* Scope-specific cache only. Cache-safe GitHub Pages release. */
 'use strict';
-const VERSION='9.1.2';
+const VERSION='9.2.0';
 const SCOPE=self.registration.scope;
 const PREFIX='ash-full-fix:'+SCOPE+':';
 const CACHE=PREFIX+VERSION;
-const FILES=['water-mask.png','foam-mask.png','index.html','game-data.js','game-core.js','game-controls.js','game-ui.js','manifest.webmanifest','icon-180.png','icon-512.png','ivan-rider.png','varvara-map.png','varvara-map-v2.png','world-v7.jpg','hero.jpg','hero-portrait.jpg','mage-portrait.jpg','pikeman-portrait.jpg','archer-portrait.jpg','cavalier-portrait.jpg','griffin-portrait.jpg','mage.jpg','castle.jpg','mine.jpg','sawmill.jpg','chest.jpg','portal.jpg','orc.jpg','wolf.jpg','necromancer.jpg','pikeman.jpg','archer.jpg','cavalier.jpg','griffin.jpg','skeleton.jpg','battlefield.jpg','battle-cavern.jpg','abyss-map-v1.jpg','city.jpg'];
+const FILES=['game.css','scene-camera.js','scene-renderer.js','scene-battle.js','music-engine.js','assets/world-sprites.png','assets/actors-v2.png','assets/terrain-materials.png','release-920.js','index.html','game-data.js','game-core.js','game-controls.js','game-ui.js','manifest.webmanifest','icon-180.png','icon-512.png','hero.jpg','hero-portrait.jpg','mage-portrait.jpg','pikeman-portrait.jpg','archer-portrait.jpg','cavalier-portrait.jpg','griffin-portrait.jpg','mage.jpg','castle.jpg','mine.jpg','sawmill.jpg','chest.jpg','portal.jpg','orc.jpg','wolf.jpg','necromancer.jpg','pikeman.jpg','archer.jpg','cavalier.jpg','griffin.jpg','skeleton.jpg','city.jpg'];
 const URLS=new Set(FILES.map(f=>new URL(f,SCOPE).href));
 const INDEX=new URL('index.html',SCOPE).href;
 
@@ -23,8 +23,9 @@ self.addEventListener('activate',event=>event.waitUntil((async()=>{
 self.addEventListener('fetch',event=>{
   if(event.request.method!=='GET')return;
   const original=new URL(event.request.url);
+  if(original.searchParams.has('qa'))return;
   const clean=new URL(original.href); clean.search=''; clean.hash='';
-  const isNavigation=event.request.mode==='navigate'||clean.href===SCOPE||clean.href===INDEX;
+  const isNavigation=clean.href===SCOPE||clean.href===INDEX;
   if(!isNavigation&&!URLS.has(clean.href))return;
 
   if(isNavigation){

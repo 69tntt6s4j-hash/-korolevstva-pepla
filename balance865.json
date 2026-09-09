@@ -1,0 +1,292 @@
+{
+  "units": {
+    "pikes": {
+      "n": "Копейщики",
+      "img": "pikeman.jpg",
+      "p": 1.25,
+      "hp": 9,
+      "spd": 3,
+      "range": 1,
+      "cost": 360,
+      "qty": 8,
+      "req": "barracks"
+    },
+    "bows": {
+      "n": "Стрелки",
+      "img": "archer.jpg",
+      "p": 2.45,
+      "hp": 7,
+      "spd": 3,
+      "range": 4,
+      "cost": 540,
+      "qty": 5,
+      "req": "range"
+    },
+    "cavs": {
+      "n": "Рыцари",
+      "img": "cavalier.jpg",
+      "p": 5.4,
+      "hp": 18,
+      "spd": 5,
+      "range": 1,
+      "cost": 980,
+      "qty": 2,
+      "req": "stable"
+    },
+    "griffins": {
+      "n": "Грифоны",
+      "img": "griffin.jpg",
+      "p": 8.8,
+      "hp": 28,
+      "spd": 6,
+      "range": 1,
+      "cost": 1450,
+      "qty": 1,
+      "req": "griffin"
+    },
+    "mages": {
+      "n": "Маги",
+      "img": "mage.jpg",
+      "p": 10.2,
+      "hp": 20,
+      "spd": 4,
+      "range": 5,
+      "cost": 1650,
+      "qty": 1,
+      "req": "mage"
+    }
+  },
+  "enemies": {
+    "orcs": {
+      "n": "Орки",
+      "img": "orc.jpg",
+      "p": 3.2,
+      "hp": 14,
+      "spd": 3,
+      "range": 1
+    },
+    "wolves": {
+      "n": "Волки",
+      "img": "wolf.jpg",
+      "p": 4,
+      "hp": 13,
+      "spd": 5,
+      "range": 1
+    },
+    "skeletons": {
+      "n": "Скелеты",
+      "img": "skeleton.jpg",
+      "p": 2.7,
+      "hp": 10,
+      "spd": 3,
+      "range": 1
+    },
+    "necros": {
+      "n": "Некроманты",
+      "img": "necromancer.jpg",
+      "p": 9.5,
+      "hp": 24,
+      "spd": 3,
+      "range": 5
+    }
+  },
+  "builds": {
+    "barracks": {
+      "n": "Казармы",
+      "cost": [
+        800,
+        3,
+        0
+      ],
+      "req": null
+    },
+    "range": {
+      "n": "Стрельбище",
+      "cost": [
+        1000,
+        4,
+        0
+      ],
+      "req": "barracks"
+    },
+    "stable": {
+      "n": "Конюшни",
+      "cost": [
+        1500,
+        3,
+        3
+      ],
+      "req": "barracks"
+    },
+    "griffin": {
+      "n": "Башня грифонов",
+      "cost": [
+        2200,
+        5,
+        4
+      ],
+      "req": "stable"
+    },
+    "mage": {
+      "n": "Гильдия магов",
+      "cost": [
+        1800,
+        4,
+        3
+      ],
+      "req": "range"
+    },
+    "market": {
+      "n": "Рынок",
+      "cost": [
+        1200,
+        2,
+        2
+      ],
+      "req": null
+    },
+    "citadel": {
+      "n": "Цитадель",
+      "cost": [
+        2600,
+        6,
+        6
+      ],
+      "req": "barracks"
+    }
+  },
+  "artifactDefs": {
+    "sword": {
+      "n": "Меч Стража",
+      "icon": "🗡️",
+      "stat": "atk",
+      "v": 2
+    },
+    "shield": {
+      "n": "Щит Серого Льва",
+      "icon": "🛡️",
+      "stat": "def",
+      "v": 2
+    },
+    "crown": {
+      "n": "Корона Мудрых",
+      "icon": "👑",
+      "stat": "magic",
+      "v": 2
+    }
+  },
+  "enemySources": {
+    "8,3": {
+      "stacks": [
+        [
+          "orcs",
+          12
+        ],
+        [
+          "wolves",
+          5
+        ]
+      ],
+      "reward": 700,
+      "xp": 65
+    },
+    "22,11": {
+      "stacks": [
+        [
+          "skeletons",
+          30
+        ],
+        [
+          "necros",
+          8
+        ]
+      ],
+      "reward": 1850,
+      "xp": 175
+    },
+    "23,3": {
+      "stacks": [
+        [
+          "necros",
+          6
+        ],
+        [
+          "skeletons",
+          22
+        ],
+        [
+          "orcs",
+          10
+        ]
+      ],
+      "reward": 2400,
+      "xp": 220
+    },
+    "18,3": {
+      "stacks": [
+        [
+          "orcs",
+          18
+        ],
+        [
+          "wolves",
+          8
+        ]
+      ],
+      "reward": 1200,
+      "xp": 110
+    },
+    "22,14": {
+      "stacks": [
+        [
+          "skeletons",
+          28
+        ],
+        [
+          "necros",
+          5
+        ]
+      ],
+      "reward": 1700,
+      "xp": 155
+    },
+    "14,15": {
+      "stacks": [
+        [
+          "wolves",
+          20
+        ]
+      ],
+      "reward": 1050,
+      "xp": 95
+    },
+    "4,16": {
+      "stacks": [
+        [
+          "orcs",
+          22
+        ],
+        [
+          "wolves",
+          10
+        ]
+      ],
+      "reward": 1450,
+      "xp": 130
+    },
+    "19,18": {
+      "stacks": [
+        [
+          "necros",
+          8
+        ],
+        [
+          "skeletons",
+          35
+        ]
+      ],
+      "reward": 2600,
+      "xp": 240
+    }
+  }
+}

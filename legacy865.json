@@ -1,0 +1,539 @@
+{
+  "gold": 2800,
+  "wood": 12,
+  "ore": 10,
+  "gems": 3,
+  "crystal": 2,
+  "day": 1,
+  "week": 1,
+  "month": 1,
+  "activeHero": "arden",
+  "heroes": {
+    "arden": {
+      "name": "Иван",
+      "cls": "Рыцарь",
+      "img": "hero.jpg",
+      "x": 12,
+      "y": 9,
+      "px": 1250,
+      "py": 950,
+      "moves": 12,
+      "maxMoves": 12,
+      "atk": 2,
+      "def": 2,
+      "magic": 1,
+      "knowledge": 1,
+      "level": 1,
+      "xp": 0,
+      "mana": 14,
+      "manaMax": 14,
+      "skills": {},
+      "artifacts": [],
+      "army": {
+        "pikes": 24,
+        "bows": 10,
+        "cavs": 0,
+        "griffins": 0,
+        "mages": 0
+      },
+      "route": []
+    },
+    "lyra": {
+      "name": "Варвара",
+      "cls": "Боевой маг",
+      "img": "mage.jpg",
+      "x": 14,
+      "y": 10,
+      "px": 1450,
+      "py": 1050,
+      "moves": 12,
+      "maxMoves": 12,
+      "atk": 1,
+      "def": 1,
+      "magic": 3,
+      "knowledge": 2,
+      "level": 1,
+      "xp": 0,
+      "mana": 14,
+      "manaMax": 14,
+      "skills": {},
+      "artifacts": [],
+      "army": {
+        "pikes": 10,
+        "bows": 7,
+        "cavs": 0,
+        "griffins": 0,
+        "mages": 2
+      },
+      "route": []
+    }
+  },
+  "enemy": {
+    "x": 15,
+    "y": 11,
+    "power": 1,
+    "alive": true
+  },
+  "seen": [
+    "9,6",
+    "10,6",
+    "11,6",
+    "12,6",
+    "13,6",
+    "14,6",
+    "15,6",
+    "9,7",
+    "10,7",
+    "11,7",
+    "12,7",
+    "13,7",
+    "14,7",
+    "15,7",
+    "9,8",
+    "10,8",
+    "11,8",
+    "12,8",
+    "13,8",
+    "14,8",
+    "15,8",
+    "9,9",
+    "10,9",
+    "11,9",
+    "12,9",
+    "13,9",
+    "14,9",
+    "15,9",
+    "9,10",
+    "10,10",
+    "11,10",
+    "12,10",
+    "13,10",
+    "14,10",
+    "15,10",
+    "9,11",
+    "10,11",
+    "11,11",
+    "12,11",
+    "13,11",
+    "14,11",
+    "15,11",
+    "9,12",
+    "10,12",
+    "11,12",
+    "12,12",
+    "13,12",
+    "14,12",
+    "15,12",
+    "16,7",
+    "17,7",
+    "16,8",
+    "17,8",
+    "16,9",
+    "17,9",
+    "16,10",
+    "17,10",
+    "16,11",
+    "17,11",
+    "16,12",
+    "17,12",
+    "11,13",
+    "12,13",
+    "13,13",
+    "14,13",
+    "15,13",
+    "16,13",
+    "17,13"
+  ],
+  "objects": {
+    "12,7": {
+      "t": "castle",
+      "img": "castle.jpg",
+      "owner": "player",
+      "label": "Стальной Холм"
+    },
+    "3,8": {
+      "t": "sawmill",
+      "img": "sawmill.jpg",
+      "owner": null,
+      "label": "Лесопилка"
+    },
+    "20,6": {
+      "t": "mine",
+      "img": "mine.jpg",
+      "kind": "ore",
+      "owner": null,
+      "label": "Железная шахта"
+    },
+    "8,3": {
+      "t": "enemy",
+      "img": "orc.jpg",
+      "name": "Орочий дозор",
+      "stacks": [
+        [
+          "orcs",
+          12
+        ],
+        [
+          "wolves",
+          5
+        ]
+      ],
+      "reward": 700,
+      "xp": 65
+    },
+    "12,14": {
+      "t": "chest",
+      "img": "chest.jpg"
+    },
+    "4,6": {
+      "t": "portal",
+      "img": "portal.jpg"
+    },
+    "22,11": {
+      "t": "enemy",
+      "img": "necromancer.jpg",
+      "name": "Армия мертвецов",
+      "stacks": [
+        [
+          "skeletons",
+          30
+        ],
+        [
+          "necros",
+          8
+        ]
+      ],
+      "reward": 1850,
+      "xp": 175,
+      "undead": true
+    },
+    "10,7": {
+      "t": "artifact",
+      "img": "chest.jpg",
+      "artifact": "sword"
+    },
+    "13,6": {
+      "t": "mine",
+      "img": "mine.jpg",
+      "kind": "gems",
+      "owner": null,
+      "label": "Шахта самоцветов"
+    },
+    "15,9": {
+      "t": "artifact",
+      "img": "chest.jpg",
+      "artifact": "shield"
+    },
+    "23,3": {
+      "t": "enemy",
+      "img": "necromancer.jpg",
+      "name": "Легион Морвейна",
+      "stacks": [
+        [
+          "necros",
+          6
+        ],
+        [
+          "skeletons",
+          22
+        ],
+        [
+          "orcs",
+          10
+        ]
+      ],
+      "reward": 2400,
+      "xp": 220,
+      "boss": true
+    },
+    "16,11": {
+      "t": "artifact",
+      "img": "chest.jpg",
+      "artifact": "crown"
+    },
+    "18,3": {
+      "t": "enemy",
+      "img": "orc.jpg",
+      "name": "Разбойничий лагерь",
+      "stacks": [
+        [
+          "orcs",
+          18
+        ],
+        [
+          "wolves",
+          8
+        ]
+      ],
+      "reward": 1200,
+      "xp": 110
+    },
+    "21,5": {
+      "t": "chest",
+      "img": "chest.jpg"
+    },
+    "23,8": {
+      "t": "artifact",
+      "img": "chest.jpg",
+      "artifact": "crown"
+    },
+    "18,10": {
+      "t": "mine",
+      "img": "mine.jpg",
+      "kind": "ore",
+      "owner": null,
+      "label": "Северная шахта"
+    },
+    "20,12": {
+      "t": "sawmill",
+      "img": "sawmill.jpg",
+      "owner": null,
+      "label": "Дальняя лесопилка"
+    },
+    "22,14": {
+      "t": "enemy",
+      "img": "skeleton.jpg",
+      "name": "Костяной караул",
+      "stacks": [
+        [
+          "skeletons",
+          28
+        ],
+        [
+          "necros",
+          5
+        ]
+      ],
+      "reward": 1700,
+      "xp": 155
+    },
+    "24,16": {
+      "t": "chest",
+      "img": "chest.jpg"
+    },
+    "17,16": {
+      "t": "portal",
+      "img": "portal.jpg"
+    },
+    "14,15": {
+      "t": "enemy",
+      "img": "wolf.jpg",
+      "name": "Лесные хищники",
+      "stacks": [
+        [
+          "wolves",
+          20
+        ]
+      ],
+      "reward": 1050,
+      "xp": 95
+    },
+    "11,16": {
+      "t": "chest",
+      "img": "chest.jpg"
+    },
+    "9,18": {
+      "t": "artifact",
+      "img": "chest.jpg",
+      "artifact": "shield"
+    },
+    "4,16": {
+      "t": "enemy",
+      "img": "orc.jpg",
+      "name": "Пепельные мародёры",
+      "stacks": [
+        [
+          "orcs",
+          22
+        ],
+        [
+          "wolves",
+          10
+        ]
+      ],
+      "reward": 1450,
+      "xp": 130
+    },
+    "2,13": {
+      "t": "mine",
+      "img": "mine.jpg",
+      "kind": "gems",
+      "owner": null,
+      "label": "Хрустальный карьер"
+    },
+    "6,12": {
+      "t": "chest",
+      "img": "chest.jpg"
+    },
+    "19,18": {
+      "t": "enemy",
+      "img": "necromancer.jpg",
+      "name": "Чёрный ковен",
+      "stacks": [
+        [
+          "necros",
+          8
+        ],
+        [
+          "skeletons",
+          35
+        ]
+      ],
+      "reward": 2600,
+      "xp": 240
+    },
+    "5,10": {
+      "t": "shrine",
+      "img": "portal.jpg",
+      "label": "Святилище ветров"
+    },
+    "8,14": {
+      "t": "camp",
+      "img": "castle.jpg",
+      "label": "Наёмный лагерь"
+    },
+    "16,6": {
+      "t": "caravan",
+      "img": "chest.jpg",
+      "label": "Купеческий караван"
+    },
+    "12,18": {
+      "t": "trap",
+      "img": "chest.jpg",
+      "label": "Заброшенная повозка"
+    },
+    "24,11": {
+      "t": "shrine",
+      "img": "portal.jpg",
+      "label": "Алтарь Севера"
+    },
+    "15,13": {
+      "t": "camp",
+      "img": "castle.jpg",
+      "label": "Пограничный лагерь"
+    },
+    "5,15": {
+      "t": "ruins",
+      "img": "castle.jpg",
+      "label": "Руины старого форта"
+    },
+    "7,11": {
+      "t": "event",
+      "img": "chest.jpg",
+      "event": "ivan1",
+      "label": "След пропавшего отряда"
+    },
+    "10,12": {
+      "t": "event",
+      "img": "portal.jpg",
+      "event": "varvara1",
+      "label": "Искажённый источник"
+    },
+    "12,4": {
+      "t": "village",
+      "img": "castle.jpg",
+      "label": "Озёрный посад"
+    },
+    "14,6": {
+      "t": "ruins",
+      "img": "castle.jpg",
+      "label": "Башня Серых Магов"
+    },
+    "16,9": {
+      "t": "event",
+      "img": "chest.jpg",
+      "event": "ivan2",
+      "label": "Знамя павшего рыцаря"
+    },
+    "17,13": {
+      "t": "event",
+      "img": "portal.jpg",
+      "event": "varvara2",
+      "label": "Осколок небесного кристалла"
+    },
+    "19,7": {
+      "t": "village",
+      "img": "castle.jpg",
+      "label": "Каменный Брод"
+    },
+    "21,10": {
+      "t": "ruins",
+      "img": "castle.jpg",
+      "label": "Разорённое аббатство"
+    },
+    "23,12": {
+      "t": "event",
+      "img": "chest.jpg",
+      "event": "world1",
+      "label": "Посланник Некрополя"
+    },
+    "6,18": {
+      "t": "village",
+      "img": "castle.jpg",
+      "label": "Портовый хутор"
+    },
+    "13,17": {
+      "t": "ruins",
+      "img": "castle.jpg",
+      "label": "Храм Затонувших"
+    },
+    "20,17": {
+      "t": "event",
+      "img": "portal.jpg",
+      "event": "world2",
+      "label": "Разлом Пепла"
+    }
+  },
+  "build": {
+    "barracks": false,
+    "range": false,
+    "stable": false,
+    "griffin": false,
+    "mage": false,
+    "market": false,
+    "citadel": false
+  },
+  "avail": {
+    "pikes": 16,
+    "bows": 0,
+    "cavs": 0,
+    "griffins": 0,
+    "mages": 0
+  },
+  "settings": {
+    "sound": true
+  },
+  "q": {
+    "wood": false,
+    "ore": false,
+    "gems": false,
+    "artifacts": 0,
+    "boss": false,
+    "tutorialMove": false,
+    "tutorialTown": true,
+    "altar": false,
+    "obelisk": false,
+    "ivanStory": 0,
+    "varvaraStory": 0,
+    "villages": 0,
+    "ruins": 0
+  },
+  "story": {
+    "ivan": 0,
+    "varvara": 0,
+    "world": 0
+  },
+  "reputation": 0,
+  "logs": [
+    "• Кампания началась. Морвейн укрепляет восточные земли."
+  ],
+  "battle": null,
+  "garrison": {
+    "pikes": 0,
+    "bows": 0,
+    "cavs": 0,
+    "griffins": 0,
+    "mages": 0
+  },
+  "freePlay": false
+}
