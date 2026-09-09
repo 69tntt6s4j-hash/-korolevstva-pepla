@@ -1,0 +1,302 @@
+{
+  "environment": "Codex in-app browser; responsive viewport emulation; not a physical iPhone Safari run",
+  "results": [
+    {
+      "scene": "map",
+      "bodyWidth": 375,
+      "documentWidth": 375,
+      "height": 812,
+      "missingImages": [],
+      "ready": "true",
+      "width": 375
+    },
+    {
+      "scene": "castle",
+      "bodyWidth": 375,
+      "documentWidth": 375,
+      "height": 812,
+      "missingImages": [],
+      "ready": "true",
+      "width": 375
+    },
+    {
+      "scene": "movement",
+      "bodyWidth": 375,
+      "documentWidth": 375,
+      "height": 812,
+      "missingImages": [],
+      "ready": "true",
+      "width": 375
+    },
+    {
+      "scene": "selected",
+      "bodyWidth": 375,
+      "documentWidth": 375,
+      "height": 812,
+      "missingImages": [],
+      "ready": "true",
+      "width": 375
+    },
+    {
+      "scene": "threat",
+      "bodyWidth": 375,
+      "documentWidth": 375,
+      "height": 812,
+      "missingImages": [],
+      "ready": "true",
+      "width": 375
+    },
+    {
+      "scene": "dungeon",
+      "bodyWidth": 375,
+      "documentWidth": 375,
+      "height": 812,
+      "missingImages": [],
+      "ready": "true",
+      "width": 375
+    },
+    {
+      "scene": "dungeon-fog",
+      "bodyWidth": 375,
+      "documentWidth": 375,
+      "height": 812,
+      "missingImages": [],
+      "ready": "true",
+      "width": 375
+    },
+    {
+      "scene": "battle-surface",
+      "bodyWidth": 375,
+      "documentWidth": 375,
+      "height": 812,
+      "missingImages": [],
+      "ready": "true",
+      "width": 375
+    },
+    {
+      "scene": "battle-abyss",
+      "bodyWidth": 375,
+      "documentWidth": 375,
+      "height": 812,
+      "missingImages": [],
+      "ready": "true",
+      "width": 375
+    },
+    {
+      "scene": "city",
+      "bodyWidth": 375,
+      "documentWidth": 375,
+      "height": 812,
+      "missingImages": [],
+      "ready": "true",
+      "width": 375
+    },
+    {
+      "scene": "hero",
+      "bodyWidth": 375,
+      "documentWidth": 375,
+      "height": 812,
+      "missingImages": [],
+      "ready": "true",
+      "width": 375
+    },
+    {
+      "scene": "map",
+      "bodyWidth": 390,
+      "documentWidth": 390,
+      "height": 844,
+      "missingImages": [],
+      "ready": "true",
+      "width": 390
+    },
+    {
+      "scene": "castle",
+      "bodyWidth": 390,
+      "documentWidth": 390,
+      "height": 844,
+      "missingImages": [],
+      "ready": "true",
+      "width": 390
+    },
+    {
+      "scene": "movement",
+      "bodyWidth": 390,
+      "documentWidth": 390,
+      "height": 844,
+      "missingImages": [],
+      "ready": "true",
+      "width": 390
+    },
+    {
+      "scene": "selected",
+      "bodyWidth": 390,
+      "documentWidth": 390,
+      "height": 844,
+      "missingImages": [],
+      "ready": "true",
+      "width": 390
+    },
+    {
+      "scene": "threat",
+      "bodyWidth": 390,
+      "documentWidth": 390,
+      "height": 844,
+      "missingImages": [],
+      "ready": "true",
+      "width": 390
+    },
+    {
+      "scene": "dungeon",
+      "bodyWidth": 390,
+      "documentWidth": 390,
+      "height": 844,
+      "missingImages": [],
+      "ready": "true",
+      "width": 390
+    },
+    {
+      "scene": "dungeon-fog",
+      "bodyWidth": 390,
+      "documentWidth": 390,
+      "height": 844,
+      "missingImages": [],
+      "ready": "true",
+      "width": 390
+    },
+    {
+      "scene": "battle-surface",
+      "bodyWidth": 390,
+      "documentWidth": 390,
+      "height": 844,
+      "missingImages": [],
+      "ready": "true",
+      "width": 390
+    },
+    {
+      "scene": "battle-abyss",
+      "bodyWidth": 390,
+      "documentWidth": 390,
+      "height": 844,
+      "missingImages": [],
+      "ready": "true",
+      "width": 390
+    },
+    {
+      "scene": "city",
+      "bodyWidth": 390,
+      "documentWidth": 390,
+      "height": 844,
+      "missingImages": [],
+      "ready": "true",
+      "width": 390
+    },
+    {
+      "scene": "hero",
+      "bodyWidth": 390,
+      "documentWidth": 390,
+      "height": 844,
+      "missingImages": [],
+      "ready": "true",
+      "width": 390
+    },
+    {
+      "scene": "map",
+      "bodyWidth": 430,
+      "documentWidth": 430,
+      "height": 932,
+      "missingImages": [],
+      "ready": "true",
+      "width": 430
+    },
+    {
+      "scene": "castle",
+      "bodyWidth": 430,
+      "documentWidth": 430,
+      "height": 932,
+      "missingImages": [],
+      "ready": "true",
+      "width": 430
+    },
+    {
+      "scene": "movement",
+      "bodyWidth": 430,
+      "documentWidth": 430,
+      "height": 932,
+      "missingImages": [],
+      "ready": "true",
+      "width": 430
+    },
+    {
+      "scene": "selected",
+      "bodyWidth": 430,
+      "documentWidth": 430,
+      "height": 932,
+      "missingImages": [],
+      "ready": "true",
+      "width": 430
+    },
+    {
+      "scene": "threat",
+      "bodyWidth": 430,
+      "documentWidth": 430,
+      "height": 932,
+      "missingImages": [],
+      "ready": "true",
+      "width": 430
+    },
+    {
+      "scene": "dungeon",
+      "bodyWidth": 430,
+      "documentWidth": 430,
+      "height": 932,
+      "missingImages": [],
+      "ready": "true",
+      "width": 430
+    },
+    {
+      "scene": "dungeon-fog",
+      "bodyWidth": 430,
+      "documentWidth": 430,
+      "height": 932,
+      "missingImages": [],
+      "ready": "true",
+      "width": 430
+    },
+    {
+      "scene": "battle-surface",
+      "bodyWidth": 430,
+      "documentWidth": 430,
+      "height": 932,
+      "missingImages": [],
+      "ready": "true",
+      "width": 430
+    },
+    {
+      "scene": "battle-abyss",
+      "bodyWidth": 430,
+      "documentWidth": 430,
+      "height": 932,
+      "missingImages": [],
+      "ready": "true",
+      "width": 430
+    },
+    {
+      "scene": "city",
+      "bodyWidth": 430,
+      "documentWidth": 430,
+      "height": 932,
+      "missingImages": [],
+      "ready": "true",
+      "width": 430
+    },
+    {
+      "scene": "hero",
+      "bodyWidth": 430,
+      "documentWidth": 430,
+      "height": 932,
+      "missingImages": [],
+      "ready": "true",
+      "width": 430
+    }
+  ]
+}

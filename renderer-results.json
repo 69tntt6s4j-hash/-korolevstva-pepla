@@ -1,0 +1,247 @@
+{
+  "total": 48,
+  "passed": 48,
+  "failed": 0,
+  "results": [
+    {
+      "id": "R01",
+      "name": "World/projected/screen round-trips across all cells and zooms",
+      "status": "pass"
+    },
+    {
+      "id": "R02",
+      "name": "Pinch/zoom preserves world point beneath finger",
+      "status": "pass"
+    },
+    {
+      "id": "R03",
+      "name": "Viewport resize preserves camera focus and pending animation",
+      "status": "pass"
+    },
+    {
+      "id": "R04",
+      "name": "Camera clamp handles undersized world without NaN",
+      "status": "pass"
+    },
+    {
+      "id": "R05",
+      "name": "Tap selects a real projected castle sprite",
+      "status": "pass"
+    },
+    {
+      "id": "R06",
+      "name": "Ground tap schedules a valid path without teleporting",
+      "status": "pass"
+    },
+    {
+      "id": "R07",
+      "name": "Surface interpolation belongs only to movement owner",
+      "status": "pass"
+    },
+    {
+      "id": "R08",
+      "name": "All active building footprints block transit; all approaches remain reachable",
+      "status": "pass"
+    },
+    {
+      "id": "R09",
+      "name": "An imported route cannot cross a newly solid building",
+      "status": "pass"
+    },
+    {
+      "id": "R10",
+      "name": "Fog has UNKNOWN EXPLORED VISIBLE states and does not mutate exploration",
+      "status": "pass"
+    },
+    {
+      "id": "R11",
+      "name": "Hidden static and roaming objects are not hit targets",
+      "status": "pass"
+    },
+    {
+      "id": "R12",
+      "name": "Dungeon motion commits exactly one cell after interpolation",
+      "status": "pass"
+    },
+    {
+      "id": "R13",
+      "name": "Dungeon route is cancelled on day change without consuming new movement",
+      "status": "pass"
+    },
+    {
+      "id": "R14",
+      "name": "Dungeon route does not move another selected hero",
+      "status": "pass"
+    },
+    {
+      "id": "R15",
+      "name": "A final movement point still allows adjacent enemy interaction",
+      "status": "pass"
+    },
+    {
+      "id": "R16",
+      "name": "Unseen dungeon targets cannot be approached or activated remotely",
+      "status": "pass"
+    },
+    {
+      "id": "R17",
+      "name": "Every dungeon landmark has a route after clearing guards",
+      "status": "pass"
+    },
+    {
+      "id": "R18",
+      "name": "Every dungeon bridge connects two navigable cells",
+      "status": "pass"
+    },
+    {
+      "id": "R19",
+      "name": "Dungeon transition preserves the surface hero coordinate",
+      "status": "pass"
+    },
+    {
+      "id": "R20",
+      "name": "Dungeon battle save/load retains source, units, turn and campaign",
+      "status": "pass"
+    },
+    {
+      "id": "R21",
+      "name": "Dungeon battle result removes only the defeated source and persists",
+      "status": "pass"
+    },
+    {
+      "id": "R22",
+      "name": "Battle animation snapshots cannot change HP, RNG or rewards",
+      "status": "pass"
+    },
+    {
+      "id": "R23",
+      "name": "Ranged attacks and spells have separate projectile events",
+      "status": "pass"
+    },
+    {
+      "id": "R24",
+      "name": "Final killing blow is available to the death timeline before battle clear",
+      "status": "pass"
+    },
+    {
+      "id": "R25",
+      "name": "A new battle discards all previous visual events",
+      "status": "pass"
+    },
+    {
+      "id": "R26",
+      "name": "9.1.x save migration retains progress and settings",
+      "status": "pass"
+    },
+    {
+      "id": "R27",
+      "name": "Defeated threatening force clears stale 54/92/100 threat on load",
+      "status": "pass"
+    },
+    {
+      "id": "R28",
+      "name": "Direct engine restore and every later day maintain no-source invariant",
+      "status": "pass"
+    },
+    {
+      "id": "R29",
+      "name": "Living enemy still captures economy and raises threat",
+      "status": "pass"
+    },
+    {
+      "id": "R30",
+      "name": "Garrison/citadel siege survives renderer migration",
+      "status": "pass"
+    },
+    {
+      "id": "R31",
+      "name": "No threat source closes the siege quest in the UI",
+      "status": "pass"
+    },
+    {
+      "id": "R32",
+      "name": "Canvas draw is pure, cached and DPR-capped on both worlds",
+      "status": "pass"
+    },
+    {
+      "id": "R33",
+      "name": "Hidden tab cancels RAF, music and gestures; return resumes",
+      "status": "pass"
+    },
+    {
+      "id": "R34",
+      "name": "Six scored themes use lead, harmony, bass, arpeggio and multiple timbres",
+      "status": "pass"
+    },
+    {
+      "id": "R35",
+      "name": "Music crossfade retirement and all audio timers stop cleanly",
+      "status": "pass"
+    },
+    {
+      "id": "R36",
+      "name": "Music switches and volume retain zero correctly",
+      "status": "pass"
+    },
+    {
+      "id": "R37",
+      "name": "Battle pointer cancel, drag and multi-touch cannot issue actions",
+      "status": "pass"
+    },
+    {
+      "id": "R38",
+      "name": "Required atlases exist locally with intact source frames",
+      "status": "pass"
+    },
+    {
+      "id": "R39",
+      "name": "Service-worker ignores QA, sibling navigation and foreign resources",
+      "status": "pass"
+    },
+    {
+      "id": "R40",
+      "name": "Service-worker and manifest identify the current release",
+      "status": "pass"
+    },
+    {
+      "id": "R41",
+      "name": "Roaming actor interpolates independently from its committed model coordinate",
+      "status": "pass"
+    },
+    {
+      "id": "R42",
+      "name": "Capture VFX stays outside saved state and expires",
+      "status": "pass"
+    },
+    {
+      "id": "R43",
+      "name": "Corrupt dungeon coordinates, object status and music volume fail explicitly",
+      "status": "pass"
+    },
+    {
+      "id": "R44",
+      "name": "Healing and non-damaging spells have presentation events",
+      "status": "pass"
+    },
+    {
+      "id": "R45",
+      "name": "Attack hit test accepts the upper sprite, not only its ground anchor",
+      "status": "pass"
+    },
+    {
+      "id": "R46",
+      "name": "Battle ground hit testing covers entire valid diamonds without gaps",
+      "status": "pass"
+    },
+    {
+      "id": "R47",
+      "name": "Canvas pointer moves the selected stack once and locks repeat input during animation",
+      "status": "pass"
+    },
+    {
+      "id": "R48",
+      "name": "Opening a menu cancels offscreen camera animation and the idle RAF loop",
+      "status": "pass"
+    }
+  ]
+}

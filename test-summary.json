@@ -1,0 +1,29 @@
+{
+  "utc": "2026-09-09T17:04:51.140634+00:00",
+  "total": 180,
+  "passed": 180,
+  "failed": 0,
+  "suites": [
+    {
+      "suite": "regression.cjs",
+      "total": 123,
+      "passed": 123,
+      "failed": 0,
+      "exitCode": 0
+    },
+    {
+      "suite": "v9.cjs",
+      "total": 9,
+      "passed": 9,
+      "failed": 0,
+      "exitCode": 0
+    },
+    {
+      "suite": "renderer.cjs",
+      "total": 48,
+      "passed": 48,
+      "failed": 0,
+      "exitCode": 0
+    }
+  ]
+}

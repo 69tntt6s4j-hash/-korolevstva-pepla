@@ -1,104 +1,116 @@
 {
-  "scope": "Production text, version/config and tests including fixtures. Excludes QA, reports, README and binary images. This is a structural replacement, not a small patch.",
-  "files": [
-    {
-      "file": "VERSION-8.6.5.txt",
-      "status": "deleted",
-      "addedLines": 0,
-      "removedLines": 12
-    },
-    {
-      "file": "VERSION-8.7.0-full-fix.txt",
-      "status": "added",
-      "addedLines": 6,
-      "removedLines": 0
-    },
-    {
-      "file": "game-controls.js",
-      "status": "added",
-      "addedLines": 153,
-      "removedLines": 0
-    },
-    {
-      "file": "game-core.js",
-      "status": "added",
-      "addedLines": 1514,
-      "removedLines": 0
-    },
-    {
-      "file": "game-data.js",
-      "status": "added",
-      "addedLines": 334,
-      "removedLines": 0
-    },
-    {
-      "file": "game-ui.js",
-      "status": "added",
-      "addedLines": 983,
-      "removedLines": 0
-    },
-    {
-      "file": "index.html",
-      "status": "modified",
-      "addedLines": 33,
-      "removedLines": 917
-    },
-    {
-      "file": "manifest.webmanifest",
-      "status": "added",
-      "addedLines": 16,
-      "removedLines": 0
-    },
-    {
-      "file": "package.json",
-      "status": "added",
-      "addedLines": 8,
-      "removedLines": 0
-    },
-    {
-      "file": "sw.js",
-      "status": "added",
-      "addedLines": 28,
-      "removedLines": 0
-    },
-    {
-      "file": "tests/fixtures/balance865.json",
-      "status": "added",
-      "addedLines": 292,
-      "removedLines": 0
-    },
-    {
-      "file": "tests/fixtures/legacy865.json",
-      "status": "added",
-      "addedLines": 539,
-      "removedLines": 0
-    },
-    {
-      "file": "tests/helpers.cjs",
-      "status": "added",
-      "addedLines": 9,
-      "removedLines": 0
-    },
-    {
-      "file": "tests/mock-dom.cjs",
-      "status": "added",
-      "addedLines": 28,
-      "removedLines": 0
-    },
-    {
-      "file": "tests/regression.cjs",
-      "status": "added",
-      "addedLines": 75,
-      "removedLines": 0
-    },
-    {
-      "file": "tests/ui-checks.cjs",
-      "status": "added",
-      "addedLines": 51,
-      "removedLines": 0
-    }
-  ],
-  "addedLines": 4069,
-  "removedLines": 929,
-  "patchBytes": 281621
+  "base": "original 9.1.2 ZIP",
+  "inventory": {
+    "added": 68,
+    "modified": 16,
+    "deleted": 39,
+    "unchanged": 27
+  },
+  "runtimeAndTestsTextDiff": {
+    "insertions": 444,
+    "deletions": 699,
+    "files": [
+      {
+        "file": "game-controls.js",
+        "insertions": 8,
+        "deletions": 1
+      },
+      {
+        "file": "game-core.js",
+        "insertions": 30,
+        "deletions": 15
+      },
+      {
+        "file": "game-data.js",
+        "insertions": 9,
+        "deletions": 7
+      },
+      {
+        "file": "game-ui.js",
+        "insertions": 89,
+        "deletions": 419
+      },
+      {
+        "file": "game.css",
+        "insertions": 14,
+        "deletions": 0
+      },
+      {
+        "file": "index.html",
+        "insertions": 13,
+        "deletions": 223
+      },
+      {
+        "file": "manifest.webmanifest",
+        "insertions": 11,
+        "deletions": 3
+      },
+      {
+        "file": "music-engine.js",
+        "insertions": 29,
+        "deletions": 0
+      },
+      {
+        "file": "package.json",
+        "insertions": 3,
+        "deletions": 3
+      },
+      {
+        "file": "release-920.js",
+        "insertions": 2,
+        "deletions": 0
+      },
+      {
+        "file": "scene-battle.js",
+        "insertions": 25,
+        "deletions": 0
+      },
+      {
+        "file": "scene-camera.js",
+        "insertions": 23,
+        "deletions": 0
+      },
+      {
+        "file": "scene-renderer.js",
+        "insertions": 78,
+        "deletions": 0
+      },
+      {
+        "file": "sw.js",
+        "insertions": 4,
+        "deletions": 3
+      },
+      {
+        "file": "tests/mock-dom.cjs",
+        "insertions": 1,
+        "deletions": 1
+      },
+      {
+        "file": "tests/regression.cjs",
+        "insertions": 12,
+        "deletions": 12
+      },
+      {
+        "file": "tests/render-contracts.cjs",
+        "insertions": 21,
+        "deletions": 0
+      },
+      {
+        "file": "tests/renderer.cjs",
+        "insertions": 60,
+        "deletions": 0
+      },
+      {
+        "file": "tests/ui-checks.cjs",
+        "insertions": 10,
+        "deletions": 10
+      },
+      {
+        "file": "tests/v9.cjs",
+        "insertions": 2,
+        "deletions": 2
+      }
+    ]
+  },
+  "scope": "Text diff counts runtime + tests only; documentation, QA evidence and binary artwork are inventoried separately. Generated reports count as added files."
 }

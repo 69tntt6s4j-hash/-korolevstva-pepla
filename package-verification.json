@@ -1,0 +1,34 @@
+{
+  "archive": "korolevstva_pepla_9_2_0_living_world_engine.zip",
+  "utc": "2026-09-09T17:04:53.001685+00:00",
+  "entries": 111,
+  "crc": "passed",
+  "allEntriesMatchProjectBytes": true,
+  "rootIndexPresent": true,
+  "unsafePaths": false,
+  "unpackedTests": [
+    {
+      "suite": "regression.cjs",
+      "passed": 123,
+      "failed": 0,
+      "exitCode": 0
+    },
+    {
+      "suite": "v9.cjs",
+      "passed": 9,
+      "failed": 0,
+      "exitCode": 0
+    },
+    {
+      "suite": "renderer.cjs",
+      "passed": 48,
+      "failed": 0,
+      "exitCode": 0
+    }
+  ],
+  "totalPassed": 180,
+  "totalFailed": 0,
+  "originalAndBackupSha256": "fad3c24675d830a6aeac434f75be4407a2abe8856c2ca0cad0f82b14f417c5dc",
+  "originalUnchanged": true,
+  "archiveSha256": "See adjacent .zip.sha256 file; hash is external to avoid self-reference."
+}

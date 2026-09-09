@@ -1,0 +1,17 @@
+{
+  "checkedAt": "2026-09-09T12:24:43.451331+00:00",
+  "originalUnchanged": true,
+  "backupIdentical": true,
+  "files": [
+    {
+      "name": "korolevstva_pepla_9_1_2.zip",
+      "bytes": 8107318,
+      "sha256": "fad3c24675d830a6aeac434f75be4407a2abe8856c2ca0cad0f82b14f417c5dc"
+    },
+    {
+      "name": "korolevstva_pepla_9_1_2-backup.zip",
+      "bytes": 8107318,
+      "sha256": "fad3c24675d830a6aeac434f75be4407a2abe8856c2ca0cad0f82b14f417c5dc"
+    }
+  ]
+}

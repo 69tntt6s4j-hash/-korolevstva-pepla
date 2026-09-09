@@ -1,16 +1,30 @@
 {
-  "units": "identical",
-  "enemies": "identical",
-  "staticEnemyArmiesRewardsXP": "identical",
-  "comparedEnemyIds": [
-    "object-8-3",
-    "deadarmy",
-    "necropolis",
-    "object-18-3",
-    "object-22-14",
-    "object-14-15",
-    "object-4-16",
-    "object-19-18"
+  "base": "9.1.2",
+  "release": "9.2.0",
+  "catalogsUnchanged": [
+    "units",
+    "enemies",
+    "battleTraits",
+    "builds",
+    "troopUpgrades",
+    "skills",
+    "artifactDefs",
+    "objects"
   ],
-  "scope": "Base definitions only. Effective balance changes when formerly broken skills and defence begin to work."
+  "objectCount": 50,
+  "dungeonObjectCount": 9,
+  "methodsCompared": 62,
+  "methodsChanged": [
+    "commit",
+    "replaceState",
+    "applyMovementStep",
+    "enemyWorldTurn",
+    "dungeonPath",
+    "leaveDungeon",
+    "commandDungeonInteract",
+    "surfaceEnemiesRemain",
+    "settleNecropolisThreat",
+    "finishBattle"
+  ],
+  "combatMathIdentical": true
 }

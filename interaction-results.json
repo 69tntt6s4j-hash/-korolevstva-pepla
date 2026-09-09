@@ -1,0 +1,17 @@
+{
+  "viewport": {
+    "width": 390,
+    "height": 844
+  },
+  "zoomButton": "pass: camera changes with document width unchanged",
+  "drag": "pass: movement remains 12/12, no false tap",
+  "musicToggle": "pass: enabled/disabled after pointer gesture, no browser errors",
+  "audioListening": "not evaluated",
+  "renderPerformance": {
+    "frames": 180,
+    "meanMilliseconds": 1.5656,
+    "p95Milliseconds": 2,
+    "maxMilliseconds": 41,
+    "environment": "desktop in-app browser; not iPhone hardware"
+  }
+}

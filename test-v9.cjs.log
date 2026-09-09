@@ -1,0 +1,10 @@
+PASS 9.0 state validates
+PASS Abyss cave exists
+PASS Threat grows on enemy world turn
+PASS Enemy captures player economy
+PASS Citadel improves siege defense
+PASS Dungeon has three advancing stages and time passes
+PASS Dungeon weak-army gate works
+PASS Dungeon boss reduces threat
+PASS 9.0 state round-trips save envelope
+{"total":9,"passed":9}
