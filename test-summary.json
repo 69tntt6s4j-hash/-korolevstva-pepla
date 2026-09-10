@@ -1,27 +1,41 @@
 {
-  "utc": "2026-09-09T17:04:51.140634+00:00",
-  "total": 180,
-  "passed": 180,
+  "functionalAndPresentationTests": 191,
+  "passed": 191,
   "failed": 0,
+  "assetReferences": 39,
   "suites": [
     {
       "suite": "regression.cjs",
-      "total": 123,
+      "checks": 123,
       "passed": 123,
       "failed": 0,
       "exitCode": 0
     },
     {
       "suite": "v9.cjs",
-      "total": 9,
+      "checks": 9,
       "passed": 9,
       "failed": 0,
       "exitCode": 0
     },
     {
       "suite": "renderer.cjs",
-      "total": 48,
+      "checks": 48,
       "passed": 48,
+      "failed": 0,
+      "exitCode": 0
+    },
+    {
+      "suite": "polish.cjs",
+      "checks": 11,
+      "passed": 11,
+      "failed": 0,
+      "exitCode": 0
+    },
+    {
+      "suite": "asset-integrity.cjs",
+      "checks": 39,
+      "passed": 39,
       "failed": 0,
       "exitCode": 0
     }

@@ -1,6 +1,6 @@
 /* Scope-specific cache only. Cache-safe GitHub Pages release. */
 'use strict';
-const VERSION='9.2.0';
+const VERSION='9.2.1';
 const SCOPE=self.registration.scope;
 const PREFIX='ash-full-fix:'+SCOPE+':';
 const CACHE=PREFIX+VERSION;
@@ -10,7 +10,7 @@ const INDEX=new URL('index.html',SCOPE).href;
 
 self.addEventListener('install',event=>event.waitUntil((async()=>{
   const cache=await caches.open(CACHE);
-  await cache.addAll([...URLS]);
+  await cache.addAll([...URLS].map(url=>new Request(url,{cache:'reload'})));
   if(typeof self.skipWaiting==='function')await self.skipWaiting();
 })()));
 

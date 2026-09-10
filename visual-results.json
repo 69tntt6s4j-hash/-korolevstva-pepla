@@ -1,302 +1,325 @@
 {
-  "environment": "Codex in-app browser; responsive viewport emulation; not a physical iPhone Safari run",
+  "environment": "Codex in-app browser; not physical iPhone Safari",
   "results": [
     {
+      "documentWidth": 390,
+      "missingImages": [],
+      "performance": "{\"frames\":180,\"mean\":1.3077777771486176,\"p95\":2,\"max\":17}",
+      "queue": null,
+      "ready": "true",
       "scene": "map",
-      "bodyWidth": 375,
-      "documentWidth": 375,
-      "height": 812,
-      "missingImages": [],
-      "ready": "true",
-      "width": 375
+      "width": 390
     },
     {
+      "documentWidth": 390,
+      "missingImages": [],
+      "performance": null,
+      "queue": null,
+      "ready": "true",
       "scene": "castle",
-      "bodyWidth": 375,
-      "documentWidth": 375,
-      "height": 812,
-      "missingImages": [],
-      "ready": "true",
-      "width": 375
+      "width": 390
     },
     {
+      "documentWidth": 390,
+      "missingImages": [],
+      "performance": null,
+      "queue": null,
+      "ready": "true",
       "scene": "movement",
-      "bodyWidth": 375,
-      "documentWidth": 375,
-      "height": 812,
-      "missingImages": [],
-      "ready": "true",
-      "width": 375
+      "width": 390
     },
     {
+      "documentWidth": 390,
+      "missingImages": [],
+      "performance": null,
+      "queue": null,
+      "ready": "true",
       "scene": "selected",
-      "bodyWidth": 375,
-      "documentWidth": 375,
-      "height": 812,
-      "missingImages": [],
-      "ready": "true",
-      "width": 375
+      "width": 390
     },
     {
+      "documentWidth": 390,
+      "missingImages": [],
+      "performance": null,
+      "queue": null,
+      "ready": "true",
       "scene": "threat",
-      "bodyWidth": 375,
-      "documentWidth": 375,
-      "height": 812,
-      "missingImages": [],
-      "ready": "true",
-      "width": 375
+      "width": 390
     },
     {
+      "documentWidth": 390,
+      "missingImages": [],
+      "performance": null,
+      "queue": null,
+      "ready": "true",
       "scene": "dungeon",
-      "bodyWidth": 375,
-      "documentWidth": 375,
-      "height": 812,
-      "missingImages": [],
-      "ready": "true",
-      "width": 375
+      "width": 390
     },
     {
+      "documentWidth": 390,
+      "missingImages": [],
+      "performance": null,
+      "queue": null,
+      "ready": "true",
       "scene": "dungeon-fog",
-      "bodyWidth": 375,
-      "documentWidth": 375,
-      "height": 812,
-      "missingImages": [],
-      "ready": "true",
-      "width": 375
+      "width": 390
     },
     {
+      "documentWidth": 390,
+      "missingImages": [],
+      "performance": null,
+      "queue": {
+        "count": 7,
+        "scrollWidth": 374,
+        "width": 374
+      },
+      "ready": "true",
       "scene": "battle-surface",
-      "bodyWidth": 375,
-      "documentWidth": 375,
-      "height": 812,
-      "missingImages": [],
-      "ready": "true",
-      "width": 375
+      "width": 390
     },
     {
+      "documentWidth": 390,
+      "missingImages": [],
+      "performance": null,
+      "queue": {
+        "count": 7,
+        "scrollWidth": 374,
+        "width": 374
+      },
+      "ready": "true",
       "scene": "battle-abyss",
-      "bodyWidth": 375,
-      "documentWidth": 375,
-      "height": 812,
-      "missingImages": [],
-      "ready": "true",
-      "width": 375
+      "width": 390
     },
     {
+      "documentWidth": 390,
+      "missingImages": [],
+      "performance": null,
+      "queue": null,
+      "ready": "true",
       "scene": "city",
-      "bodyWidth": 375,
-      "documentWidth": 375,
-      "height": 812,
-      "missingImages": [],
-      "ready": "true",
-      "width": 375
+      "width": 390
     },
     {
+      "documentWidth": 390,
+      "missingImages": [],
+      "performance": null,
+      "queue": null,
+      "ready": "true",
       "scene": "hero",
-      "bodyWidth": 375,
+      "width": 390
+    },
+    {
       "documentWidth": 375,
-      "height": 812,
       "missingImages": [],
+      "performance": null,
+      "queue": null,
       "ready": "true",
+      "scene": "castle",
       "width": 375
     },
     {
+      "documentWidth": 375,
+      "missingImages": [],
+      "performance": null,
+      "queue": null,
+      "ready": "true",
+      "scene": "movement",
+      "width": 375
+    },
+    {
+      "documentWidth": 375,
+      "missingImages": [],
+      "performance": null,
+      "queue": null,
+      "ready": "true",
+      "scene": "selected",
+      "width": 375
+    },
+    {
+      "documentWidth": 375,
+      "missingImages": [],
+      "performance": null,
+      "queue": null,
+      "ready": "true",
+      "scene": "threat",
+      "width": 375
+    },
+    {
+      "documentWidth": 375,
+      "missingImages": [],
+      "performance": null,
+      "queue": null,
+      "ready": "true",
+      "scene": "dungeon",
+      "width": 375
+    },
+    {
+      "documentWidth": 375,
+      "missingImages": [],
+      "performance": null,
+      "queue": null,
+      "ready": "true",
+      "scene": "dungeon-fog",
+      "width": 375
+    },
+    {
+      "documentWidth": 375,
+      "missingImages": [],
+      "performance": null,
+      "queue": {
+        "count": 7,
+        "scrollWidth": 359,
+        "width": 359
+      },
+      "ready": "true",
+      "scene": "battle-surface",
+      "width": 375
+    },
+    {
+      "documentWidth": 375,
+      "missingImages": [],
+      "performance": null,
+      "queue": {
+        "count": 7,
+        "scrollWidth": 359,
+        "width": 359
+      },
+      "ready": "true",
+      "scene": "battle-abyss",
+      "width": 375
+    },
+    {
+      "documentWidth": 375,
+      "missingImages": [],
+      "performance": null,
+      "queue": null,
+      "ready": "true",
+      "scene": "city",
+      "width": 375
+    },
+    {
+      "documentWidth": 375,
+      "missingImages": [],
+      "performance": null,
+      "queue": null,
+      "ready": "true",
+      "scene": "hero",
+      "width": 375
+    },
+    {
+      "documentWidth": 430,
+      "missingImages": [],
+      "performance": null,
+      "queue": null,
+      "ready": "true",
       "scene": "map",
-      "bodyWidth": 390,
-      "documentWidth": 390,
-      "height": 844,
-      "missingImages": [],
-      "ready": "true",
-      "width": 390
+      "width": 430
     },
     {
+      "documentWidth": 430,
+      "missingImages": [],
+      "performance": null,
+      "queue": null,
+      "ready": "true",
       "scene": "castle",
-      "bodyWidth": 390,
-      "documentWidth": 390,
-      "height": 844,
-      "missingImages": [],
-      "ready": "true",
-      "width": 390
+      "width": 430
     },
     {
+      "documentWidth": 430,
+      "missingImages": [],
+      "performance": null,
+      "queue": null,
+      "ready": "true",
       "scene": "movement",
-      "bodyWidth": 390,
-      "documentWidth": 390,
-      "height": 844,
-      "missingImages": [],
-      "ready": "true",
-      "width": 390
+      "width": 430
     },
     {
+      "documentWidth": 430,
+      "missingImages": [],
+      "performance": null,
+      "queue": null,
+      "ready": "true",
       "scene": "selected",
-      "bodyWidth": 390,
-      "documentWidth": 390,
-      "height": 844,
-      "missingImages": [],
-      "ready": "true",
-      "width": 390
+      "width": 430
     },
     {
+      "documentWidth": 430,
+      "missingImages": [],
+      "performance": null,
+      "queue": null,
+      "ready": "true",
       "scene": "threat",
-      "bodyWidth": 390,
-      "documentWidth": 390,
-      "height": 844,
-      "missingImages": [],
-      "ready": "true",
-      "width": 390
+      "width": 430
     },
     {
+      "documentWidth": 430,
+      "missingImages": [],
+      "performance": null,
+      "queue": null,
+      "ready": "true",
       "scene": "dungeon",
-      "bodyWidth": 390,
-      "documentWidth": 390,
-      "height": 844,
-      "missingImages": [],
-      "ready": "true",
-      "width": 390
+      "width": 430
     },
     {
+      "documentWidth": 430,
+      "missingImages": [],
+      "performance": null,
+      "queue": null,
+      "ready": "true",
       "scene": "dungeon-fog",
-      "bodyWidth": 390,
-      "documentWidth": 390,
-      "height": 844,
-      "missingImages": [],
-      "ready": "true",
-      "width": 390
+      "width": 430
     },
     {
+      "documentWidth": 430,
+      "missingImages": [],
+      "performance": null,
+      "queue": {
+        "count": 7,
+        "scrollWidth": 414,
+        "width": 414
+      },
+      "ready": "true",
       "scene": "battle-surface",
-      "bodyWidth": 390,
-      "documentWidth": 390,
-      "height": 844,
-      "missingImages": [],
-      "ready": "true",
-      "width": 390
+      "width": 430
     },
     {
+      "documentWidth": 430,
+      "missingImages": [],
+      "performance": null,
+      "queue": {
+        "count": 7,
+        "scrollWidth": 414,
+        "width": 414
+      },
+      "ready": "true",
       "scene": "battle-abyss",
-      "bodyWidth": 390,
-      "documentWidth": 390,
-      "height": 844,
-      "missingImages": [],
-      "ready": "true",
-      "width": 390
+      "width": 430
     },
     {
+      "documentWidth": 430,
+      "missingImages": [],
+      "performance": null,
+      "queue": null,
+      "ready": "true",
       "scene": "city",
-      "bodyWidth": 390,
-      "documentWidth": 390,
-      "height": 844,
-      "missingImages": [],
-      "ready": "true",
-      "width": 390
+      "width": 430
     },
     {
+      "documentWidth": 430,
+      "missingImages": [],
+      "performance": null,
+      "queue": null,
+      "ready": "true",
       "scene": "hero",
-      "bodyWidth": 390,
-      "documentWidth": 390,
-      "height": 844,
-      "missingImages": [],
-      "ready": "true",
-      "width": 390
+      "width": 430
     },
     {
+      "documentWidth": 375,
+      "missingImages": [],
+      "queue": null,
+      "ready": "true",
       "scene": "map",
-      "bodyWidth": 430,
-      "documentWidth": 430,
-      "height": 932,
-      "missingImages": [],
-      "ready": "true",
-      "width": 430
-    },
-    {
-      "scene": "castle",
-      "bodyWidth": 430,
-      "documentWidth": 430,
-      "height": 932,
-      "missingImages": [],
-      "ready": "true",
-      "width": 430
-    },
-    {
-      "scene": "movement",
-      "bodyWidth": 430,
-      "documentWidth": 430,
-      "height": 932,
-      "missingImages": [],
-      "ready": "true",
-      "width": 430
-    },
-    {
-      "scene": "selected",
-      "bodyWidth": 430,
-      "documentWidth": 430,
-      "height": 932,
-      "missingImages": [],
-      "ready": "true",
-      "width": 430
-    },
-    {
-      "scene": "threat",
-      "bodyWidth": 430,
-      "documentWidth": 430,
-      "height": 932,
-      "missingImages": [],
-      "ready": "true",
-      "width": 430
-    },
-    {
-      "scene": "dungeon",
-      "bodyWidth": 430,
-      "documentWidth": 430,
-      "height": 932,
-      "missingImages": [],
-      "ready": "true",
-      "width": 430
-    },
-    {
-      "scene": "dungeon-fog",
-      "bodyWidth": 430,
-      "documentWidth": 430,
-      "height": 932,
-      "missingImages": [],
-      "ready": "true",
-      "width": 430
-    },
-    {
-      "scene": "battle-surface",
-      "bodyWidth": 430,
-      "documentWidth": 430,
-      "height": 932,
-      "missingImages": [],
-      "ready": "true",
-      "width": 430
-    },
-    {
-      "scene": "battle-abyss",
-      "bodyWidth": 430,
-      "documentWidth": 430,
-      "height": 932,
-      "missingImages": [],
-      "ready": "true",
-      "width": 430
-    },
-    {
-      "scene": "city",
-      "bodyWidth": 430,
-      "documentWidth": 430,
-      "height": 932,
-      "missingImages": [],
-      "ready": "true",
-      "width": 430
-    },
-    {
-      "scene": "hero",
-      "bodyWidth": 430,
-      "documentWidth": 430,
-      "height": 932,
-      "missingImages": [],
-      "ready": "true",
-      "width": 430
+      "width": 375
     }
   ]
 }
