@@ -573,7 +573,9 @@
       this.$('battleHint').textContent=player?'Выберите доступную клетку или цель. ':b.phase==='enemy'?'Ход противника…':'Действие выполняется…';
       const h=this.engine.s.heroes[b.heroId];
       this.$('battleStatus').textContent='Мана '+h.mana+'/'+h.manaMax+' · '+(a?C.stackDef(a).n+' · Инициатива '+(C.stackDef(a).init??C.stackDef(a).spd):'Завершение хода');
-      this.$('turnbar').innerHTML=b.order.map(id=>b.stacks.find(st=>st.id===id&&st.hp>0)).filter(Boolean).map(st=>'<div class="turnchip '+(st.id===b.selectedId?'active':'')+'" title="'+escape(C.stackDef(st).traitText||'')+'">'+(st.side==='p'?'🟦 ':'🟥 ')+C.stackDef(st).n+' · ⚡'+(C.stackDef(st).init??C.stackDef(st).spd)+'</div>').join('');
+      const queue=b.order.map(id=>b.stacks.find(st=>st.id===id&&st.hp>0)).filter(Boolean),queueKey=JSON.stringify([b.selectedId,queue.map(st=>[st.id,st.type,st.side,st.qty])]);
+      if(this.queueKey!==queueKey){this.queueKey=queueKey;this.$('turnbar').innerHTML=queue.map(st=>{const def=C.stackDef(st),frame=Scenes.actorFrames[Scenes.actorIndex[st.type]??8],label=escape(def.n+' · '+st.qty+' · Инициатива '+(def.init??def.spd)+' · '+(def.traitText||''));return '<div class="turnchip '+(st.side==='p'?'player':'enemy')+(st.id===b.selectedId?' active':'')+'" role="listitem" aria-label="'+label+'" title="'+label+'"'+(st.id===b.selectedId?' aria-current="true"':'')+'><svg viewBox="'+frame.join(' ')+'" preserveAspectRatio="xMidYMid meet" aria-hidden="true"><defs><clipPath id="queue-'+escape(st.id)+'"><rect x="'+frame[0]+'" y="'+frame[1]+'" width="'+frame[2]+'" height="'+frame[3]+'" /></clipPath></defs><image clip-path="url(#queue-'+escape(st.id)+')" href="assets/actors-v2.png" width="1254" height="1254" /></svg><span>'+st.qty+'</span></div>'}).join('');this.$('turnbar').setAttribute('role','list');this.$('turnbar').setAttribute('aria-label','Очередь инициативы')}
+
       const board=this.$('bgrid');
       board.innerHTML='';
       const battleId=b.id,turnId=b.turnId;

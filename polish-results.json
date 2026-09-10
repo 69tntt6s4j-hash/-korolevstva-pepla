@@ -1,0 +1,62 @@
+{
+  "total": 11,
+  "passed": 11,
+  "failed": 0,
+  "results": [
+    {
+      "id": "P01",
+      "name": "Gameplay modules and data identical to 9.2.0 except version",
+      "status": "pass"
+    },
+    {
+      "id": "P02",
+      "name": "Floor detail is deterministic, clipped and varies by position",
+      "status": "pass"
+    },
+    {
+      "id": "P03",
+      "name": "Dungeon scenery does not enter hit targets or mutate campaign",
+      "status": "pass"
+    },
+    {
+      "id": "P04",
+      "name": "Static floor cache remains unchanged across frames",
+      "status": "pass"
+    },
+    {
+      "id": "P05",
+      "name": "Battle draw, shadows and impact do not mutate committed result",
+      "status": "pass"
+    },
+    {
+      "id": "P06",
+      "name": "Animation timing preserved from baseline; impact is a 300ms overlay",
+      "status": "pass"
+    },
+    {
+      "id": "P07",
+      "name": "Initiative markup preserves exact model order and quantities",
+      "status": "pass"
+    },
+    {
+      "id": "P08",
+      "name": "Every initiative portrait exists with exact case",
+      "status": "pass"
+    },
+    {
+      "id": "P09",
+      "name": "Water and lava animation stays inside clipped strips",
+      "status": "pass"
+    },
+    {
+      "id": "P10",
+      "name": "SW precache bypasses HTTP cache while retaining canonical URLs",
+      "status": "pass"
+    },
+    {
+      "id": "P11",
+      "name": "Active release metadata agrees",
+      "status": "pass"
+    }
+  ]
+}

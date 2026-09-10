@@ -1,10 +1,10 @@
 {
   "name": "korolevstva-pepla",
-  "version": "9.2.0",
+  "version": "9.2.1",
   "private": true,
   "description": "Королевства Пепла — автономная браузерная игра",
   "scripts": {
-    "test": "node tests/regression.cjs && node tests/v9.cjs && node tests/renderer.cjs"
+    "test": "node tests/regression.cjs && node tests/v9.cjs && node tests/renderer.cjs && node tests/polish.cjs && node tests/asset-integrity.cjs"
   },
   "engines": {
     "node": ">=18"

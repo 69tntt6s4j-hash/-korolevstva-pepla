@@ -1,0 +1,24 @@
+{
+  "version": "9.2.1",
+  "name": "Королевства Пепла 9.2.1 — Visual Polish",
+  "baseline": "9.2.0",
+  "gameplayLogicChanged": false,
+  "saveSchemaChanged": false,
+  "newGameplayAssets": [],
+  "requiredAssets": [
+    "assets/world-sprites.png",
+    "assets/actors-v2.png",
+    "assets/terrain-materials.png"
+  ],
+  "checksums": {
+    "index.html": "7b6e94c0eab13104a8582b1cbb2ec335da3762f33d86c57955148ccabcf69226",
+    "game-data.js": "d643c75545f26aca3f83b5614c5bb63be41262b045104520daeec8abe2978271",
+    "game-core.js": "527afc9a4ff9bfb2bbb2d509aa431d61588c25844581e22d63d2919797133181",
+    "game-controls.js": "32bcbcb18c03f6c2e38b22a8930928c5fb7725dbb23f295ac86ad0076f91143e",
+    "game-ui.js": "8c97ab655ed4067b40219cf6aa22ba5c2776a09dbbafa7a006eb45046219adb0",
+    "scene-renderer.js": "d7862b4e23216ff318d4eb77e876583d45429b648a5d645e45742214f0027c55",
+    "scene-battle.js": "b2a6ca921f61f49eaad10a1ab3d745fbc93ae36a9edee7576df811d49885cec6",
+    "game.css": "ed96d889ca6c26a8b8d6202fe2ca47e9ccd19389b7f20bfa8979f421d4f08338",
+    "sw.js": "914c7775fc4ebaee8c2a76879b9adcbffbf59f1c8c1626a5e47296d491d12255"
+  }
+}

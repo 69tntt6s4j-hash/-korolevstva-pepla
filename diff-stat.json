@@ -1,116 +1,89 @@
 {
-  "base": "original 9.1.2 ZIP",
-  "inventory": {
-    "added": 68,
-    "modified": 16,
-    "deleted": 39,
-    "unchanged": 27
+  "added": [
+    "9.2.1-release.json",
+    "REPORT-9.2.1.md",
+    "VERSION-9.2.1.txt",
+    "qa/asset-integrity.json",
+    "qa/baseline-9.2.0-tests.json",
+    "qa/compare-07-dungeon-fog-390.png",
+    "qa/compare-09-battle-abyss-390.png",
+    "qa/gameplay-baseline.json",
+    "qa/http-assets.json",
+    "qa/polish-results.json",
+    "qa/screenshots/12-zoom-drag-390.png",
+    "qa/test-asset-integrity.cjs.log",
+    "qa/test-polish.cjs.log",
+    "tests/asset-integrity.cjs",
+    "tests/polish.cjs"
+  ],
+  "modified": [
+    "CHANGED-FILES.md",
+    "CHANGELOG.md",
+    "README.md",
+    "game-data.js",
+    "game-ui.js",
+    "game.css",
+    "index.html",
+    "manifest.webmanifest",
+    "package.json",
+    "qa/VISUAL-QA.md",
+    "qa/contact-375.jpg",
+    "qa/contact-390.jpg",
+    "qa/contact-430.jpg",
+    "qa/diff-stat.json",
+    "qa/interaction-results.json",
+    "qa/package-verification.json",
+    "qa/regression-results.json",
+    "qa/scenarios.js",
+    "qa/screenshots/01-map-375.png",
+    "qa/screenshots/01-map-390.png",
+    "qa/screenshots/01-map-430.png",
+    "qa/screenshots/02-castle-375.png",
+    "qa/screenshots/02-castle-390.png",
+    "qa/screenshots/02-castle-430.png",
+    "qa/screenshots/03-movement-375.png",
+    "qa/screenshots/03-movement-390.png",
+    "qa/screenshots/03-movement-430.png",
+    "qa/screenshots/04-selected-375.png",
+    "qa/screenshots/04-selected-390.png",
+    "qa/screenshots/04-selected-430.png",
+    "qa/screenshots/05-threat-375.png",
+    "qa/screenshots/05-threat-390.png",
+    "qa/screenshots/05-threat-430.png",
+    "qa/screenshots/06-dungeon-375.png",
+    "qa/screenshots/06-dungeon-390.png",
+    "qa/screenshots/06-dungeon-430.png",
+    "qa/screenshots/07-dungeon-fog-375.png",
+    "qa/screenshots/07-dungeon-fog-390.png",
+    "qa/screenshots/07-dungeon-fog-430.png",
+    "qa/screenshots/08-battle-surface-375.png",
+    "qa/screenshots/08-battle-surface-390.png",
+    "qa/screenshots/08-battle-surface-430.png",
+    "qa/screenshots/09-battle-abyss-375.png",
+    "qa/screenshots/09-battle-abyss-390.png",
+    "qa/screenshots/09-battle-abyss-430.png",
+    "qa/test-summary.json",
+    "qa/visual-results.json",
+    "qa/visual.html",
+    "scene-battle.js",
+    "scene-renderer.js",
+    "sw.js",
+    "tests/ui-checks.cjs"
+  ],
+  "removed": [
+    "AUDIT-9.1.2.md",
+    "TECHNICAL-REPORT.md",
+    "qa/balance-preservation.json",
+    "qa/baseline-390.png",
+    "qa/baseline-regression-results.json",
+    "qa/screenshots/12-zoom-and-drag-390.png",
+    "qa/source-archive-integrity.json",
+    "qa/source-diff.patch"
+  ],
+  "unchangedCount": 51,
+  "textDiffExcludingQAAndMarkdown": {
+    "insertions": 90,
+    "deletions": 19
   },
-  "runtimeAndTestsTextDiff": {
-    "insertions": 444,
-    "deletions": 699,
-    "files": [
-      {
-        "file": "game-controls.js",
-        "insertions": 8,
-        "deletions": 1
-      },
-      {
-        "file": "game-core.js",
-        "insertions": 30,
-        "deletions": 15
-      },
-      {
-        "file": "game-data.js",
-        "insertions": 9,
-        "deletions": 7
-      },
-      {
-        "file": "game-ui.js",
-        "insertions": 89,
-        "deletions": 419
-      },
-      {
-        "file": "game.css",
-        "insertions": 14,
-        "deletions": 0
-      },
-      {
-        "file": "index.html",
-        "insertions": 13,
-        "deletions": 223
-      },
-      {
-        "file": "manifest.webmanifest",
-        "insertions": 11,
-        "deletions": 3
-      },
-      {
-        "file": "music-engine.js",
-        "insertions": 29,
-        "deletions": 0
-      },
-      {
-        "file": "package.json",
-        "insertions": 3,
-        "deletions": 3
-      },
-      {
-        "file": "release-920.js",
-        "insertions": 2,
-        "deletions": 0
-      },
-      {
-        "file": "scene-battle.js",
-        "insertions": 25,
-        "deletions": 0
-      },
-      {
-        "file": "scene-camera.js",
-        "insertions": 23,
-        "deletions": 0
-      },
-      {
-        "file": "scene-renderer.js",
-        "insertions": 78,
-        "deletions": 0
-      },
-      {
-        "file": "sw.js",
-        "insertions": 4,
-        "deletions": 3
-      },
-      {
-        "file": "tests/mock-dom.cjs",
-        "insertions": 1,
-        "deletions": 1
-      },
-      {
-        "file": "tests/regression.cjs",
-        "insertions": 12,
-        "deletions": 12
-      },
-      {
-        "file": "tests/render-contracts.cjs",
-        "insertions": 21,
-        "deletions": 0
-      },
-      {
-        "file": "tests/renderer.cjs",
-        "insertions": 60,
-        "deletions": 0
-      },
-      {
-        "file": "tests/ui-checks.cjs",
-        "insertions": 10,
-        "deletions": 10
-      },
-      {
-        "file": "tests/v9.cjs",
-        "insertions": 2,
-        "deletions": 2
-      }
-    ]
-  },
-  "scope": "Text diff counts runtime + tests only; documentation, QA evidence and binary artwork are inventoried separately. Generated reports count as added files."
+  "note": "Physical lines; existing source uses long lines. Old QA evidence and old audit documents are omitted from new release, preserved in 9.2.0."
 }

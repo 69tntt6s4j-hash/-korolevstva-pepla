@@ -1,0 +1,241 @@
+{
+  "total": 39,
+  "passed": 39,
+  "failed": 0,
+  "results": [
+    {
+      "file": "archer-portrait.jpg",
+      "status": 200,
+      "bytes": 29205,
+      "matchesDisk": true
+    },
+    {
+      "file": "archer.jpg",
+      "status": 200,
+      "bytes": 26442,
+      "matchesDisk": true
+    },
+    {
+      "file": "assets/actors-v2.png",
+      "status": 200,
+      "bytes": 1403700,
+      "matchesDisk": true
+    },
+    {
+      "file": "assets/terrain-materials.png",
+      "status": 200,
+      "bytes": 3604960,
+      "matchesDisk": true
+    },
+    {
+      "file": "assets/world-sprites.png",
+      "status": 200,
+      "bytes": 2299875,
+      "matchesDisk": true
+    },
+    {
+      "file": "castle.jpg",
+      "status": 200,
+      "bytes": 48026,
+      "matchesDisk": true
+    },
+    {
+      "file": "cavalier-portrait.jpg",
+      "status": 200,
+      "bytes": 35196,
+      "matchesDisk": true
+    },
+    {
+      "file": "cavalier.jpg",
+      "status": 200,
+      "bytes": 30437,
+      "matchesDisk": true
+    },
+    {
+      "file": "chest.jpg",
+      "status": 200,
+      "bytes": 37043,
+      "matchesDisk": true
+    },
+    {
+      "file": "city.jpg",
+      "status": 200,
+      "bytes": 184644,
+      "matchesDisk": true
+    },
+    {
+      "file": "game-controls.js",
+      "status": 200,
+      "bytes": 6825,
+      "matchesDisk": true
+    },
+    {
+      "file": "game-core.js",
+      "status": 200,
+      "bytes": 76197,
+      "matchesDisk": true
+    },
+    {
+      "file": "game-data.js",
+      "status": 200,
+      "bytes": 18094,
+      "matchesDisk": true
+    },
+    {
+      "file": "game-ui.js",
+      "status": 200,
+      "bytes": 57076,
+      "matchesDisk": true
+    },
+    {
+      "file": "game.css",
+      "status": 200,
+      "bytes": 12966,
+      "matchesDisk": true
+    },
+    {
+      "file": "griffin-portrait.jpg",
+      "status": 200,
+      "bytes": 64403,
+      "matchesDisk": true
+    },
+    {
+      "file": "griffin.jpg",
+      "status": 200,
+      "bytes": 31874,
+      "matchesDisk": true
+    },
+    {
+      "file": "hero-portrait.jpg",
+      "status": 200,
+      "bytes": 37567,
+      "matchesDisk": true
+    },
+    {
+      "file": "hero.jpg",
+      "status": 200,
+      "bytes": 73237,
+      "matchesDisk": true
+    },
+    {
+      "file": "icon-180.png",
+      "status": 200,
+      "bytes": 1765,
+      "matchesDisk": true
+    },
+    {
+      "file": "icon-512.png",
+      "status": 200,
+      "bytes": 5128,
+      "matchesDisk": true
+    },
+    {
+      "file": "mage-portrait.jpg",
+      "status": 200,
+      "bytes": 33819,
+      "matchesDisk": true
+    },
+    {
+      "file": "mage.jpg",
+      "status": 200,
+      "bytes": 28745,
+      "matchesDisk": true
+    },
+    {
+      "file": "manifest.webmanifest",
+      "status": 200,
+      "bytes": 522,
+      "matchesDisk": true
+    },
+    {
+      "file": "mine.jpg",
+      "status": 200,
+      "bytes": 43232,
+      "matchesDisk": true
+    },
+    {
+      "file": "music-engine.js",
+      "status": 200,
+      "bytes": 4397,
+      "matchesDisk": true
+    },
+    {
+      "file": "necromancer.jpg",
+      "status": 200,
+      "bytes": 29393,
+      "matchesDisk": true
+    },
+    {
+      "file": "orc.jpg",
+      "status": 200,
+      "bytes": 29548,
+      "matchesDisk": true
+    },
+    {
+      "file": "pikeman-portrait.jpg",
+      "status": 200,
+      "bytes": 32545,
+      "matchesDisk": true
+    },
+    {
+      "file": "pikeman.jpg",
+      "status": 200,
+      "bytes": 29514,
+      "matchesDisk": true
+    },
+    {
+      "file": "portal.jpg",
+      "status": 200,
+      "bytes": 38451,
+      "matchesDisk": true
+    },
+    {
+      "file": "qa/scenarios.js",
+      "status": 200,
+      "bytes": 2811,
+      "matchesDisk": true
+    },
+    {
+      "file": "release-920.js",
+      "status": 200,
+      "bytes": 399,
+      "matchesDisk": true
+    },
+    {
+      "file": "sawmill.jpg",
+      "status": 200,
+      "bytes": 43476,
+      "matchesDisk": true
+    },
+    {
+      "file": "scene-battle.js",
+      "status": 200,
+      "bytes": 10733,
+      "matchesDisk": true
+    },
+    {
+      "file": "scene-camera.js",
+      "status": 200,
+      "bytes": 2766,
+      "matchesDisk": true
+    },
+    {
+      "file": "scene-renderer.js",
+      "status": 200,
+      "bytes": 22151,
+      "matchesDisk": true
+    },
+    {
+      "file": "skeleton.jpg",
+      "status": 200,
+      "bytes": 29281,
+      "matchesDisk": true
+    },
+    {
+      "file": "wolf.jpg",
+      "status": 200,
+      "bytes": 25245,
+      "matchesDisk": true
+    }
+  ]
+}

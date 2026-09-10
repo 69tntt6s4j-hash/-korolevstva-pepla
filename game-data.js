@@ -1,4 +1,4 @@
-/* Living World Engine 9.2.0: content and navigation catalog derived from 9.1.2. */
+/* Living World Engine 9.2.1: content and navigation catalog derived from 9.1.2. */
 (function(root,factory){
   const data=factory();
   if(typeof module==='object'&&module.exports)module.exports=data;
@@ -250,7 +250,7 @@
     }
   }
   ;
-  const VERSION='9.2.0', SCHEMA=1, W=26,H=20,WORLD_W=2600,WORLD_H=2000;
+  const VERSION='9.2.1', SCHEMA=1, W=26,H=20,WORLD_W=2600,WORLD_H=2000;
   const skills={
     logistics:{
       name:'Логистика',description:'+2 движения за ранг',max:3

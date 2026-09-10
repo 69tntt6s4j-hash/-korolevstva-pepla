@@ -1,0 +1,3 @@
+Королевства Пепла 9.2.1 — Visual Polish
+BASELINE: 9.2.0
+GAMEPLAY LOGIC CHANGED: NO

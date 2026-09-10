@@ -1,34 +1,42 @@
 {
-  "archive": "korolevstva_pepla_9_2_0_living_world_engine.zip",
-  "utc": "2026-09-09T17:04:53.001685+00:00",
-  "entries": 111,
+  "archive": "korolevstva_pepla_9_2_1_visual_polish.zip",
+  "entryCount": 118,
   "crc": "passed",
-  "allEntriesMatchProjectBytes": true,
-  "rootIndexPresent": true,
-  "unsafePaths": false,
+  "allEntriesMatchProject": true,
+  "rootIndex": true,
+  "requiredAtlasesIncluded": true,
   "unpackedTests": [
     {
       "suite": "regression.cjs",
-      "passed": 123,
-      "failed": 0,
-      "exitCode": 0
+      "exitCode": 0,
+      "output": "{\"total\":123,\"passed\":123,\"failed\":0}"
     },
     {
       "suite": "v9.cjs",
-      "passed": 9,
-      "failed": 0,
-      "exitCode": 0
+      "exitCode": 0,
+      "output": "PASS 9.0 state validates\nPASS Abyss cave exists\nPASS Threat grows on enemy world turn\nPASS Enemy captures player economy\nPASS Citadel improves siege defense\nPASS Dungeon has three advancing stages and time passes\nPASS Dungeon weak-army gate works\nPASS Dungeon boss reduces threat\nPASS 9.0 state round-trips save envelope\n{\"total\":9,\"passed\":9}"
     },
     {
       "suite": "renderer.cjs",
-      "passed": 48,
-      "failed": 0,
-      "exitCode": 0
+      "exitCode": 0,
+      "output": "{\"total\":48,\"passed\":48,\"failed\":0}"
+    },
+    {
+      "suite": "polish.cjs",
+      "exitCode": 0,
+      "output": "{\"total\":11,\"passed\":11,\"failed\":0}"
+    },
+    {
+      "suite": "asset-integrity.cjs",
+      "exitCode": 0,
+      "output": "{\"assetReferences\":39,\"passed\":39,\"failed\":0}"
     }
   ],
-  "totalPassed": 180,
-  "totalFailed": 0,
-  "originalAndBackupSha256": "fad3c24675d830a6aeac434f75be4407a2abe8856c2ca0cad0f82b14f417c5dc",
-  "originalUnchanged": true,
-  "archiveSha256": "See adjacent .zip.sha256 file; hash is external to avoid self-reference."
+  "baselineZipUnchanged": true,
+  "baselineSha256": "6f913207eca5365f506aefd9c83b8c5222ccfb28224c6f954800795ec5f0d5aa",
+  "archiveSha256": "Adjacent .zip.sha256 file (external to avoid self-reference)",
+  "verifiedAtUTC": "2026-09-10T00:27:35.294505+00:00",
+  "viewportRecords": 33,
+  "screenshots": 34,
+  "releaseMetadataHashesVerified": true
 }

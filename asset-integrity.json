@@ -1,0 +1,363 @@
+{
+  "total": 39,
+  "passed": 39,
+  "failed": 0,
+  "caseSensitive": true,
+  "dynamicReferencesNote": "Dynamic UI image paths are additionally covered through data catalogs and browser loaded-image checks.",
+  "results": [
+    {
+      "file": "archer-portrait.jpg",
+      "sources": [
+        "game-data.js",
+        "game-ui.js",
+        "sw.js"
+      ],
+      "exists": true
+    },
+    {
+      "file": "archer.jpg",
+      "sources": [
+        "game-data.js",
+        "game-ui.js",
+        "sw.js"
+      ],
+      "exists": true
+    },
+    {
+      "file": "assets/actors-v2.png",
+      "sources": [
+        "game-data.js",
+        "game-ui.js",
+        "scene-battle.js",
+        "scene-renderer.js",
+        "sw.js"
+      ],
+      "exists": true
+    },
+    {
+      "file": "assets/terrain-materials.png",
+      "sources": [
+        "game-data.js",
+        "game-ui.js",
+        "scene-battle.js",
+        "scene-renderer.js",
+        "sw.js"
+      ],
+      "exists": true
+    },
+    {
+      "file": "assets/world-sprites.png",
+      "sources": [
+        "game-data.js",
+        "game-ui.js",
+        "scene-battle.js",
+        "scene-renderer.js",
+        "sw.js"
+      ],
+      "exists": true
+    },
+    {
+      "file": "castle.jpg",
+      "sources": [
+        "game-data.js",
+        "sw.js"
+      ],
+      "exists": true
+    },
+    {
+      "file": "cavalier-portrait.jpg",
+      "sources": [
+        "game-data.js",
+        "game-ui.js",
+        "sw.js"
+      ],
+      "exists": true
+    },
+    {
+      "file": "cavalier.jpg",
+      "sources": [
+        "game-data.js",
+        "game-ui.js",
+        "sw.js"
+      ],
+      "exists": true
+    },
+    {
+      "file": "chest.jpg",
+      "sources": [
+        "game-data.js",
+        "game-ui.js",
+        "sw.js"
+      ],
+      "exists": true
+    },
+    {
+      "file": "city.jpg",
+      "sources": [
+        "game-data.js",
+        "game-ui.js",
+        "game.css",
+        "sw.js"
+      ],
+      "exists": true
+    },
+    {
+      "file": "game-controls.js",
+      "sources": [
+        "index.html",
+        "qa/visual.html",
+        "sw.js"
+      ],
+      "exists": true
+    },
+    {
+      "file": "game-core.js",
+      "sources": [
+        "index.html",
+        "qa/visual.html",
+        "sw.js"
+      ],
+      "exists": true
+    },
+    {
+      "file": "game-data.js",
+      "sources": [
+        "index.html",
+        "qa/visual.html",
+        "sw.js"
+      ],
+      "exists": true
+    },
+    {
+      "file": "game-ui.js",
+      "sources": [
+        "index.html",
+        "qa/visual.html",
+        "sw.js"
+      ],
+      "exists": true
+    },
+    {
+      "file": "game.css",
+      "sources": [
+        "index.html",
+        "qa/visual.html",
+        "sw.js"
+      ],
+      "exists": true
+    },
+    {
+      "file": "griffin-portrait.jpg",
+      "sources": [
+        "game-data.js",
+        "game-ui.js",
+        "sw.js"
+      ],
+      "exists": true
+    },
+    {
+      "file": "griffin.jpg",
+      "sources": [
+        "game-data.js",
+        "game-ui.js",
+        "sw.js"
+      ],
+      "exists": true
+    },
+    {
+      "file": "hero-portrait.jpg",
+      "sources": [
+        "game-data.js",
+        "game-ui.js",
+        "sw.js"
+      ],
+      "exists": true
+    },
+    {
+      "file": "hero.jpg",
+      "sources": [
+        "game-core.js",
+        "game-data.js",
+        "game-ui.js",
+        "sw.js"
+      ],
+      "exists": true
+    },
+    {
+      "file": "icon-180.png",
+      "sources": [
+        "index.html",
+        "manifest.webmanifest",
+        "sw.js",
+        "qa/visual.html"
+      ],
+      "exists": true
+    },
+    {
+      "file": "icon-512.png",
+      "sources": [
+        "manifest.webmanifest",
+        "sw.js"
+      ],
+      "exists": true
+    },
+    {
+      "file": "mage-portrait.jpg",
+      "sources": [
+        "game-data.js",
+        "game-ui.js",
+        "sw.js"
+      ],
+      "exists": true
+    },
+    {
+      "file": "mage.jpg",
+      "sources": [
+        "game-core.js",
+        "game-data.js",
+        "game-ui.js",
+        "sw.js"
+      ],
+      "exists": true
+    },
+    {
+      "file": "manifest.webmanifest",
+      "sources": [
+        "index.html",
+        "qa/visual.html",
+        "sw.js"
+      ],
+      "exists": true
+    },
+    {
+      "file": "mine.jpg",
+      "sources": [
+        "game-data.js",
+        "sw.js"
+      ],
+      "exists": true
+    },
+    {
+      "file": "music-engine.js",
+      "sources": [
+        "index.html",
+        "qa/visual.html",
+        "sw.js"
+      ],
+      "exists": true
+    },
+    {
+      "file": "necromancer.jpg",
+      "sources": [
+        "game-core.js",
+        "game-data.js",
+        "game-ui.js",
+        "index.html",
+        "sw.js",
+        "qa/visual.html"
+      ],
+      "exists": true
+    },
+    {
+      "file": "orc.jpg",
+      "sources": [
+        "game-data.js",
+        "sw.js"
+      ],
+      "exists": true
+    },
+    {
+      "file": "pikeman-portrait.jpg",
+      "sources": [
+        "game-data.js",
+        "game-ui.js",
+        "sw.js"
+      ],
+      "exists": true
+    },
+    {
+      "file": "pikeman.jpg",
+      "sources": [
+        "game-data.js",
+        "game-ui.js",
+        "sw.js"
+      ],
+      "exists": true
+    },
+    {
+      "file": "portal.jpg",
+      "sources": [
+        "game-data.js",
+        "sw.js"
+      ],
+      "exists": true
+    },
+    {
+      "file": "qa/scenarios.js",
+      "sources": [
+        "qa/visual.html"
+      ],
+      "exists": true
+    },
+    {
+      "file": "release-920.js",
+      "sources": [
+        "index.html",
+        "qa/visual.html",
+        "sw.js"
+      ],
+      "exists": true
+    },
+    {
+      "file": "sawmill.jpg",
+      "sources": [
+        "game-data.js",
+        "sw.js"
+      ],
+      "exists": true
+    },
+    {
+      "file": "scene-battle.js",
+      "sources": [
+        "index.html",
+        "qa/visual.html",
+        "sw.js"
+      ],
+      "exists": true
+    },
+    {
+      "file": "scene-camera.js",
+      "sources": [
+        "index.html",
+        "qa/visual.html",
+        "sw.js"
+      ],
+      "exists": true
+    },
+    {
+      "file": "scene-renderer.js",
+      "sources": [
+        "index.html",
+        "qa/visual.html",
+        "sw.js"
+      ],
+      "exists": true
+    },
+    {
+      "file": "skeleton.jpg",
+      "sources": [
+        "game-data.js",
+        "sw.js"
+      ],
+      "exists": true
+    },
+    {
+      "file": "wolf.jpg",
+      "sources": [
+        "game-data.js",
+        "sw.js"
+      ],
+      "exists": true
+    }
+  ]
+}
